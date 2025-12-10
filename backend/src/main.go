@@ -1,7 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -10,7 +14,19 @@ import (
 var DB *gorm.DB
 
 func ConnectDataBase() {
-	dsn := "host=localhost user=postgres password=admin dbname=postgres port=5432 sslmode=disable"
+	// Load .env file if it exists
+	_ = godotenv.Load("../.env")
+
+	// Get database configuration from environment variables
+	dbHost := getEnv("DB_HOST", "localhost")
+	dbPort := getEnv("DB_PORT", "5432")
+	dbUser := getEnv("DB_USER", "postgres")
+	dbPassword := getEnv("DB_PASSWORD", "admin")
+	dbName := getEnv("DB_NAME", "financeapp")
+	dbSSLMode := getEnv("DB_SSLMODE", "disable")
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		dbHost, dbUser, dbPassword, dbName, dbPort, dbSSLMode)
 
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
@@ -27,6 +43,14 @@ func ConnectDataBase() {
 	}
 
 	DB = database
+}
+
+func getEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
 }
 
 func main() {

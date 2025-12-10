@@ -1,11 +1,10 @@
 {
-  "name": "new-frontend",
+  "name": "finance-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve --port 8081",
     "build": "vue-cli-service build",
-    "postbuild": "rm -r ../application/src/main/resources/static/ && cp -r dist/. ../application/src/main/resources/static/",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
