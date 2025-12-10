@@ -5,12 +5,12 @@
     :rules="nameRules"
     :counter="20"
     label="Bezeichnung"
-    required
+    :required="required"
   />
 </template>
 <script>
 export default {
-  props: ["value"],
+  props: ["value", "required"],
   data() {
     return {
       nameRules: [

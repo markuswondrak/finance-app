@@ -45,7 +45,11 @@ export default {
   methods: {
     transform: (f, v) => (f ? f(v) : v),
     filter(cols) {
-      return cols.filter(col => !col.hide || this.$vuetify.breakpoint.mdAndUp);
+      // Show column when: NOT hidden OR on desktop
+      return cols.filter(col => {
+        if (!col.hide) return true; // Always show non-hidden columns
+        return this.$vuetify.breakpoint.mdAndUp; // Hidden columns only on desktop
+      });
     }
   },
   computed: {

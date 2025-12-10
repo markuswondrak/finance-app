@@ -80,7 +80,7 @@ export const monthlyCostToForm = cost =>
 export const baseFormToCost = form => ({
   id: form.id,
   name: form.name,
-  amount: form.amount * (form.incoming ? 1 : -1),
+  amount: form.amount === 0 ? 0 : form.amount * (form.incoming ? 1 : -1),
 })
 
 

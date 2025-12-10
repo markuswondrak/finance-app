@@ -27,7 +27,7 @@ export default {
   props: ["entry"],
   computed: {
     visible() {
-      return this.entry.from || this.entry.to;
+      return !!(this.entry.from || this.entry.to);
     }
   },
   data() {

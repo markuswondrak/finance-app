@@ -7,10 +7,15 @@ export default {
   },
   methods: {
     fetchData: async function(url) {
-      const response = await fetch(url);
-      const result = await response.json();
-      this.loaded = true;
-      return result;
+      try {
+        const response = await fetch(url);
+        const result = await response.json();
+        this.loaded = true;
+        return result;
+      } catch (error) {
+        this.loaded = 'error';
+        throw error;
+      }
     }
   }
 

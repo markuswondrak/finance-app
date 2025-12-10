@@ -4,7 +4,7 @@
     :rules="valueRules"
     @blur="inputChanged"
     @focus="focus = true"
-    required
+    :required="required"
     :label="label"
   />
 </template>
@@ -12,7 +12,7 @@
 import { toCurrency } from "../Utils";
 
 export default {
-  props: ["id", "label", "value"],
+  props: ["id", "label", "value", "required"],
   data() {
     return {
       focus: false,
