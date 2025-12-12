@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 import DeleteButton from '@/components/DeleteButton.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -7,8 +7,11 @@ Vue.use(Vuetify);
 
 describe('DeleteButton.vue', () => {
   let vuetify;
+  let localVue;
 
   beforeEach(() => {
+    localVue = createLocalVue();
+
     // Create a div with data-app attribute for Vuetify
     const app = document.createElement('div');
     app.setAttribute('data-app', 'true');
@@ -28,6 +31,7 @@ describe('DeleteButton.vue', () => {
   it('should render with correct props', () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -39,6 +43,7 @@ describe('DeleteButton.vue', () => {
   it('should initialize with dialog closed', () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -50,6 +55,7 @@ describe('DeleteButton.vue', () => {
   it('should display item name in dialog title', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Rent Payment'
       }
@@ -67,6 +73,7 @@ describe('DeleteButton.vue', () => {
   it('should display confirmation text with item name', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Cost'
       }
@@ -85,6 +92,7 @@ describe('DeleteButton.vue', () => {
   it('should have trash icon button', () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -100,6 +108,7 @@ describe('DeleteButton.vue', () => {
   it('should open dialog when activator button is clicked', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -113,6 +122,7 @@ describe('DeleteButton.vue', () => {
   it('should close dialog when cancel button is clicked', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -132,6 +142,7 @@ describe('DeleteButton.vue', () => {
   it('should emit confirm event when delete button is clicked', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -152,6 +163,7 @@ describe('DeleteButton.vue', () => {
   it('should have error color on delete button', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -170,6 +182,7 @@ describe('DeleteButton.vue', () => {
   it('should have text prop on cancel button', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -188,6 +201,7 @@ describe('DeleteButton.vue', () => {
   it('should have max-width on dialog', () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test Item'
       }
@@ -200,6 +214,7 @@ describe('DeleteButton.vue', () => {
   it('should handle empty name prop', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: ''
       }
@@ -216,6 +231,7 @@ describe('DeleteButton.vue', () => {
   it('should handle special characters in name', async () => {
     const wrapper = mount(DeleteButton, {
       vuetify,
+      localVue,
       propsData: {
         name: 'Test & Special <Name>'
       }

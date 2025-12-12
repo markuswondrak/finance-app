@@ -30,6 +30,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -43,6 +44,7 @@ describe('CostTable.vue', () => {
   it('should display table when entries exist', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -59,6 +61,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: [],
         cols: mockCols
@@ -73,6 +76,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: null,
         cols: mockCols
@@ -86,6 +90,7 @@ describe('CostTable.vue', () => {
   it('should render table headers with correct labels', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -103,6 +108,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -119,6 +125,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -132,6 +139,7 @@ describe('CostTable.vue', () => {
   it('should display entry data in table cells', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -158,6 +166,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: colsWithTransformer
@@ -171,6 +180,7 @@ describe('CostTable.vue', () => {
   it('should not transform values when no transformer is provided', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -250,6 +260,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -264,6 +275,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -276,7 +288,7 @@ describe('CostTable.vue', () => {
     expect(deleteButtons.at(2).props().name).toBe('Utilities');
   });
 
-  it('should emit delelete-clicked event when delete is confirmed', () => {
+  it('should emit delelete-clicked event when delete is confirmed', async () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
@@ -288,14 +300,16 @@ describe('CostTable.vue', () => {
 
     const deleteButtons = wrapper.findAllComponents({ name: 'DeleteButton' });
     deleteButtons.at(0).vm.$emit('confirm');
+    await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted()['delelete-clicked']).toBeTruthy();
-    expect(wrapper.emitted()['delelete-clicked'][0]).toEqual([mockEntries[0]]);
+    expect(wrapper.emitted()['delete-clicked']).toBeTruthy();
+    expect(wrapper.emitted()['delete-clicked'][0]).toEqual([mockEntries[0]]);
   });
 
   it('should have fixed-header on table', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -310,6 +324,7 @@ describe('CostTable.vue', () => {
   it('should render header slot content', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -327,6 +342,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -343,6 +359,7 @@ describe('CostTable.vue', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
       localVue,
+      localVue,
       propsData: {
         entries: mockEntries,
         cols: mockCols
@@ -355,6 +372,7 @@ describe('CostTable.vue', () => {
   it('should handle empty cols array', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,
@@ -369,6 +387,7 @@ describe('CostTable.vue', () => {
   it('should have action cell with right alignment', () => {
     const wrapper = shallowMount(CostTable, {
       vuetify,
+      localVue,
       localVue,
       propsData: {
         entries: mockEntries,

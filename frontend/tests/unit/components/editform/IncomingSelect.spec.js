@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 import IncomingSelect from '@/components/editform/IncomingSelect.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -7,13 +7,16 @@ Vue.use(Vuetify);
 
 describe('IncomingSelect.vue', () => {
   let vuetify;
+  let localVue;
 
   beforeEach(() => {
+    localVue = createLocalVue();
     vuetify = new Vuetify();
   });
 
   it('should render with correct props', () => {
     const wrapper = shallowMount(IncomingSelect, {
+      localVue,
       vuetify,
       propsData: {
         value: true

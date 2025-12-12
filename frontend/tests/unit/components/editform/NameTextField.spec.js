@@ -1,4 +1,4 @@
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import NameTextField from '@/components/editform/NameTextField.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -7,13 +7,16 @@ Vue.use(Vuetify);
 
 describe('NameTextField.vue', () => {
   let vuetify;
+  let localVue;
 
   beforeEach(() => {
+    localVue = createLocalVue();
     vuetify = new Vuetify();
   });
 
   it('should render with correct props', () => {
     const wrapper = shallowMount(NameTextField, {
+      localVue,
       vuetify,
       propsData: {
         value: 'Test Name'

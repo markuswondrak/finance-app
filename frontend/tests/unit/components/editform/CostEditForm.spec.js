@@ -1,4 +1,4 @@
-import { shallowMount, mount } from '@vue/test-utils';
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils';
 import CostEditForm from '@/components/editform/CostEditForm.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
@@ -7,15 +7,30 @@ Vue.use(Vuetify);
 
 describe('CostEditForm.vue', () => {
   let vuetify;
+  let localVue;
 
   beforeEach(() => {
+    localVue = createLocalVue();
+
+    const app = document.createElement('div');
+    app.setAttribute('data-app', 'true');
+    document.body.appendChild(app);
+
     vuetify = new Vuetify();
+  });
+
+  afterEach(() => {
+    const app = document.querySelector('[data-app]');
+    if (app) {
+      document.body.removeChild(app);
+    }
   });
 
   it('should render with required props', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -35,6 +50,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -55,6 +71,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -72,6 +89,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -89,6 +107,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = mount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -109,6 +128,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = mount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -129,6 +149,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Monthly Cost',
         changed: false,
@@ -150,6 +171,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -168,6 +190,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -186,6 +209,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = mount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -211,6 +235,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = mount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -236,6 +261,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -257,6 +283,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: false,
@@ -278,6 +305,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -299,6 +327,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -320,6 +349,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -342,6 +372,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Cost saved successfully!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -360,6 +391,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,
@@ -380,6 +412,7 @@ describe('CostEditForm.vue', () => {
     const successMsg = jest.fn(() => 'Success!');
     const wrapper = shallowMount(CostEditForm, {
       vuetify,
+      localVue,
       propsData: {
         title: 'Edit Cost',
         changed: true,

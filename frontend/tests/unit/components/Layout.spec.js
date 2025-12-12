@@ -2,6 +2,7 @@ import { shallowMount, mount, createLocalVue } from '@vue/test-utils';
 import Layout from '@/Layout.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import VueRouter from 'vue-router'; // Added this import as it's used in the instruction
 
 Vue.use(Vuetify);
 
@@ -11,6 +12,7 @@ describe('Layout.vue', () => {
 
   beforeEach(() => {
     localVue = createLocalVue();
+    localVue.use(VueRouter);
     vuetify = new Vuetify();
   });
 

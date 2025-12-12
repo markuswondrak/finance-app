@@ -1,24 +1,27 @@
-import { shallowMount, mount } from '@vue/test-utils';
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils';
 import ResponsiveDateCol from '@/components/ResponsiveDateCol.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
 
 Vue.filter('displayLongMonth', (value) => {
   if (!value) return '';
   return `${value}`;
 });
 
+Vue.use(Vuetify);
+
 describe('ResponsiveDateCol.vue', () => {
   let vuetify;
+  let localVue;
 
   beforeEach(() => {
+    localVue = createLocalVue();
     vuetify = new Vuetify();
   });
 
   it('should render with correct props', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
+      localVue,
       vuetify,
       propsData: {
         entry: {
@@ -35,6 +38,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should be visible when entry has from date', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -50,6 +54,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should be visible when entry has to date', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -65,6 +70,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should be visible when entry has both from and to dates', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -80,6 +86,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should not be visible when entry has neither from nor to date', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -95,6 +102,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should initialize with dialog closed', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -111,6 +119,7 @@ describe('ResponsiveDateCol.vue', () => {
     // Use mount() instead of shallowMount() to properly render dialog slot content
     const wrapper = mount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -130,6 +139,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should not render dialog when not visible', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -146,6 +156,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should display entry name in dialog title', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Monthly Rent',
@@ -162,6 +173,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should display from date when present', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -179,6 +191,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should display to date when present', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -196,6 +209,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should display both from and to dates when both present', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -215,6 +229,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should have correct dialog width', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -231,6 +246,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should render as td element with right alignment', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: 'Test',
@@ -247,6 +263,7 @@ describe('ResponsiveDateCol.vue', () => {
   it('should handle entry with empty name', () => {
     const wrapper = shallowMount(ResponsiveDateCol, {
       vuetify,
+      localVue,
       propsData: {
         entry: {
           name: '',

@@ -46,7 +46,8 @@ export default {
   },
   computed: {
     displayDate() {
-      return displayMonth(this.value, false, null);
+      const dateObj = this.value ? { year: this.value[0], month: this.value[1] } : null;
+      return displayMonth(dateObj, false, null);
     },
     date() {
       return this.value ? this.value.join('-') : null;

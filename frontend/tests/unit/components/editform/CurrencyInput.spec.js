@@ -1,20 +1,24 @@
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import CurrencyInput from '@/components/editform/CurrencyInput.vue';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import { toCurrency } from '@/components/Utils';
 
 Vue.use(Vuetify);
+import { toCurrency } from '@/components/Utils';
+
 
 describe('CurrencyInput.vue', () => {
   let vuetify;
+  let localVue;
 
   beforeEach(() => {
+    localVue = createLocalVue();
     vuetify = new Vuetify();
   });
 
   it('should render with correct props', () => {
     const wrapper = shallowMount(CurrencyInput, {
+      localVue,
       vuetify,
       propsData: {
         id: 'amount-input',
@@ -31,6 +35,7 @@ describe('CurrencyInput.vue', () => {
   it('should display formatted currency when not focused', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -46,6 +51,7 @@ describe('CurrencyInput.vue', () => {
   it('should display raw value when focused', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -60,6 +66,7 @@ describe('CurrencyInput.vue', () => {
   it('should set focus to true on focus event', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -76,6 +83,7 @@ describe('CurrencyInput.vue', () => {
   it('should emit input event with numeric value on blur', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -93,6 +101,7 @@ describe('CurrencyInput.vue', () => {
   it('should emit 0 when input is not a valid number', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -109,6 +118,7 @@ describe('CurrencyInput.vue', () => {
   it('should handle decimal numbers', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -124,6 +134,7 @@ describe('CurrencyInput.vue', () => {
   it('should handle negative numbers', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -139,6 +150,7 @@ describe('CurrencyInput.vue', () => {
   it('should have validation rules', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -153,6 +165,7 @@ describe('CurrencyInput.vue', () => {
   it('should validate positive non-zero values', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -169,6 +182,7 @@ describe('CurrencyInput.vue', () => {
   it('should be required', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
@@ -185,6 +199,7 @@ describe('CurrencyInput.vue', () => {
   it('should pass label prop to v-text-field', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Custom Label',
@@ -199,6 +214,7 @@ describe('CurrencyInput.vue', () => {
   it('should handle zero value display', () => {
     const wrapper = shallowMount(CurrencyInput, {
       vuetify,
+      localVue,
       propsData: {
         id: 'amount-input',
         label: 'Betrag',
