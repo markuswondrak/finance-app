@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <v-dialog v-model="dialog" max-width="800" persistent>
       <template v-slot:activator="{ on }">
         <v-btn :icon="!btnText" :text="!!btnText" small v-on="on">
@@ -31,7 +31,7 @@
       </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" bottom color="success" :timeout="7000">{{ successMsg(name) }}</v-snackbar>
-  </div>
+  </span>
 </template>
 <script>
 export default {

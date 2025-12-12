@@ -28,38 +28,17 @@
           <v-card no-body>
             <v-tabs v-model="tab" grow>
               <v-tabs-slider />
-              <v-tab>Monatliche Kosten</v-tab>
-              <v-tab-item>
-                <fixed-costs-table
-                  :entries="monthly"
-                  :cols="monthlyCols"
-                  formComponent="monthly-cost-edit-form"
-                />
-              </v-tab-item>
-              <v-tab>Vierteljährliche Kosten</v-tab>
-              <v-tab-item>
-                <fixed-costs-table
-                  :entries="quaterly"
-                  :cols="quaterlyCols"
-                  formComponent="quaterly-cost-edit-form"
-                />
-              </v-tab-item>
-              <v-tab>Halbjährliche Kosten</v-tab>
-              <v-tab-item>
-                <fixed-costs-table
-                  :entries="halfyearly"
-                  :cols="halfyearlyCols"
-                  formComponent="halfyearly-cost-edit-form"
-                />
-              </v-tab-item>
-              <v-tab>Jährliche Kosten</v-tab>
-              <v-tab-item>
-                <fixed-costs-table
-                  :entries="yearly"
-                  :cols="yearlyCols"
-                  formComponent="yearly-cost-edit-form"
-                />
-              </v-tab-item>
+              <template v-for="config in tabsConfig">
+                <v-tab :key="config.label">{{ config.label }}</v-tab>
+                <v-tab-item :key="config.label + '-content'">
+                  <fixed-costs-table
+                    :entries="config.entries"
+                    :cols="config.cols"
+                    :formComponent="config.formComponent"
+                    @delete-clicked="deleteCost"
+                  />
+                </v-tab-item>
+              </template>
             </v-tabs>
           </v-card>
         </v-skeleton-loader>
@@ -138,6 +117,34 @@ export default {
   computed: {
     currentBalanceDisplay() {
       return `${this.currentBalance} €`;
+    },
+    tabsConfig() {
+      return [
+        {
+          label: 'Monatliche Kosten',
+          entries: this.monthly,
+          cols: this.monthlyCols,
+          formComponent: 'monthly-cost-edit-form'
+        },
+        {
+          label: 'Vierteljährliche Kosten',
+          entries: this.quaterly,
+          cols: this.quaterlyCols,
+          formComponent: 'quaterly-cost-edit-form'
+        },
+        {
+          label: 'Halbjährliche Kosten',
+          entries: this.halfyearly,
+          cols: this.halfyearlyCols,
+          formComponent: 'halfyearly-cost-edit-form'
+        },
+        {
+          label: 'Jährliche Kosten',
+          entries: this.yearly,
+          cols: this.yearlyCols,
+          formComponent: 'yearly-cost-edit-form'
+        }
+      ];
     }
   },
   created: async function() {
@@ -148,6 +155,18 @@ export default {
     this.yearly = data.yearly;
 
     this.currentBalance = data.currentBalance;
+  },
+  methods: {
+    async deleteCost(cost) {
+      await fetch(`/api/costs/${cost.id}`, { method: 'DELETE' });
+      const data = await this.fetchData("/api/costs");
+      this.monthly = data.monthly;
+      this.quaterly = data.quaterly;
+      this.halfyearly = data.halfyearly;
+      this.yearly = data.yearly;
+
+      this.currentBalance = data.currentBalance;
+    }
   }
 };
 </script>

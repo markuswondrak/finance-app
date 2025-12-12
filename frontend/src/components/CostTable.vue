@@ -19,7 +19,7 @@
             <slot name="content" :entry="entry" />
             <td align="right" class="action-cell">
               <slot name="edit-button" :entry="entry" />
-              <delete-button :name="entry.name" @confirm="$emit('delelete-clicked', entry)"/>
+              <delete-button :name="entry.name" @confirm="$emit('delete-clicked', entry)"/>
             </td>
           </tr>
         </tbody>

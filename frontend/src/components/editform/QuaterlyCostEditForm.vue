@@ -4,6 +4,7 @@
     :title="title('Vierteljährliche Kosten')"
     :changed="changed"
     :btn-text="btnText"
+    :name="form.name"
     @save="saveCost"
     ref="editform"
   >

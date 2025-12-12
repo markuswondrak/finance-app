@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <cost-table :entries="entries" :cols="cols">
+      <cost-table :entries="entries" :cols="cols" @delete-clicked="$emit('delete-clicked', $event)">
         <template v-if="$vuetify.breakpoint.smAndDown" v-slot:header>
           <th />
         </template>

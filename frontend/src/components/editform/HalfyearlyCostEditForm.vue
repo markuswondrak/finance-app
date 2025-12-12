@@ -4,6 +4,7 @@
     :title="title('Halbjährige Kosten')"
     :changed="changed"
     :btn-text="btnText"
+    :name="form.name"
     @save="saveCost"
     ref="editform"
   >
