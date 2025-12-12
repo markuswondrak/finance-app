@@ -271,7 +271,9 @@ describe('Utils.js', () => {
       expect(result).toEqual({
         id: 1,
         name: 'Salary',
-        amount: 3000
+        amount: 3000,
+        from: null,
+        to: null
       });
     });
 
@@ -288,7 +290,9 @@ describe('Utils.js', () => {
       expect(result).toEqual({
         id: 2,
         name: 'Rent',
-        amount: -1000
+        amount: -1000,
+        from: null,
+        to: null
       });
     });
 

@@ -4,6 +4,8 @@
     :title="title('Jährliche Kosten')"
     :changed="changed"
     :btn-text="btnText"
+    @save="saveCost"
+    ref="editform"
   >
     <v-row>
       <v-col>
@@ -36,7 +38,8 @@ import {
   CommonForm,
   monthlyCostToForm,
   toSelectItems,
-  monthMap
+  monthMap,
+  baseFormToCost
 } from "../Utils";
 import CostEditForm from "./CostEditForm";
 import NameTextField from "./NameTextField";
@@ -56,8 +59,15 @@ const costToForm = cost => {
       };
 };
 
+const formToCost = form => {
+  return {
+    ...baseFormToCost(form),
+    dueMonth: form.month + 1
+  };
+};
+
 export default {
-  mixins: [CommonForm(costToForm)],
+  mixins: [CommonForm(costToForm, formToCost, "/api/costs/yearly")],
   components: {
     CostEditForm,
     NameTextField,

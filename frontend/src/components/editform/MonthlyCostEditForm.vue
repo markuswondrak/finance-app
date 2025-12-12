@@ -4,6 +4,8 @@
     :title="title('Monatliche Kosten')"
     :changed="changed"
     :btn-text="btnText"
+    @save="saveCost"
+    ref="editform"
   >
     <v-row>
       <v-col>
@@ -27,14 +29,14 @@
 </template>
 <script>
 import CurrencyInput from "./CurrencyInput";
-import { CommonForm, monthlyCostToForm } from "../Utils";
+import { CommonForm, monthlyCostToForm, monthlyFormToCost } from "../Utils";
 import CostEditForm from "./CostEditForm";
 import NameTextField from "./NameTextField";
 import FromToDateFields from "./FromToDateFields";
 import IncomingSelect from "./IncomingSelect";
 
 export default {
-  mixins: [CommonForm(monthlyCostToForm)],
+  mixins: [CommonForm(monthlyCostToForm, monthlyFormToCost, "/api/costs/monthly")],
   components: {
     CostEditForm,
     NameTextField,

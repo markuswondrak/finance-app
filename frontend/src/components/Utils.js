@@ -20,13 +20,13 @@ export const monthMap = [
 export const displayMonth = (yearMonth, responsive = true, empty = '-') => {
   if (!yearMonth) return empty;
 
-  const {year, month} = yearMonth;
+  const { year, month } = yearMonth;
 
   const displayMonth = responsive && window.innerWidth < 768 ?
     month : monthMap[month - 1];
 
   return `${displayMonth} / ${year}`;
-} 
+}
 
 const delimiter = (list) => list.length > 2 ? ', ' : ' und ';
 
@@ -81,7 +81,11 @@ export const baseFormToCost = form => ({
   id: form.id,
   name: form.name,
   amount: form.amount === 0 ? 0 : form.amount * (form.incoming ? 1 : -1),
+  from: form.fromTo ? form.fromTo.from : null,
+  to: form.fromTo ? form.fromTo.to : null
 })
+
+export const monthlyFormToCost = baseFormToCost;
 
 
 
@@ -110,9 +114,9 @@ export const CommonForm = (costToForm, formToCost, endpoint) => ({
       return costName => `${name} '${costName}' erfolgreich ${this.cost && this.cost.name ? "geändert" : "hinzugefügt"}`
     },
     saveCost: async function () {
-      
+
       const cost = formToCost(this.form)
-      
+
       await fetch(endpoint, {
         method: 'post', body: JSON.stringify(cost), headers: {
           'Content-Type': 'application/json'
