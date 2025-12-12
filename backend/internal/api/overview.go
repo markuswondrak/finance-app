@@ -1,10 +1,11 @@
-package main
+package api
 
 import (
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"wondee/finance-app-backend/internal/models"
 )
 
 const MAX_ENTRIES = 10 // 50
@@ -15,10 +16,10 @@ type Overview struct {
 }
 
 type OverviewEntry struct {
-	YearMonth       YearMonth `json:"yearMonth"`
-	CurrentAmount   int       `json:"currentAmount"`
-	SumFixedCosts   int       `json:"sumFixedCosts"`
-	SumSpecialCosts int       `json:"sumSpecialCosts"`
+	YearMonth       models.YearMonth `json:"yearMonth"`
+	CurrentAmount   int              `json:"currentAmount"`
+	SumFixedCosts   int              `json:"sumFixedCosts"`
+	SumSpecialCosts int              `json:"sumSpecialCosts"`
 }
 
 type CostDetail struct {
@@ -36,11 +37,11 @@ type OverviewDetail struct {
 	SpecialCosts []CostDetail      `json:"specialCosts"`
 }
 
-func GetOverview(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, createOverview())
+func (s *Server) GetOverview(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, s.createOverview())
 }
 
-func GetOverviewDetail(c *gin.Context) {
+func (s *Server) GetOverviewDetail(c *gin.Context) {
 	n, err := strconv.Atoi(c.Query("index"))
 
 	if err != nil {
@@ -50,25 +51,25 @@ func GetOverviewDetail(c *gin.Context) {
 
 	c.IndentedJSON(
 		http.StatusOK,
-		createOverviewDetail(n),
+		s.createOverviewDetail(n),
 	)
 }
 
-func createOverviewDetail(n int) OverviewDetail {
+func (s *Server) createOverviewDetail(n int) OverviewDetail {
 	if n > MAX_ENTRIES {
 		return OverviewDetail{}
 	}
 
-	relevantFixedCostsMap := createRelevantMap()
-	specialCostMap := createSpecialCostMap()
+	relevantFixedCostsMap := s.createRelevantMap()
+	specialCostMap := s.createSpecialCostMap()
 
-	yearMonth := AddMonths(CurrentYearMonth(), n)
+	yearMonth := models.AddMonths(models.CurrentYearMonth(), n)
 
 	fixedCosts := make([]FixedCostDetail, 0)
 	specialCosts := make([]CostDetail, 0)
 
 	for _, cost := range relevantFixedCostsMap[yearMonth.Month] {
-		if IsRelevant(yearMonth, cost.From, cost.To) {
+		if models.IsRelevant(yearMonth, cost.From, cost.To) {
 
 			costDetail := FixedCostDetail{}
 			costDetail.Amount = cost.Amount
@@ -109,23 +110,23 @@ func determineDisplayType(dueMonth []int) string {
 	}
 }
 
-func createOverview() Overview {
+func (s *Server) createOverview() Overview {
 	// TODO retrieve current amount
 
 	currentAmount := 3000
 	entries := make([]OverviewEntry, MAX_ENTRIES)
 
-	relevantFixedCostsMap := createRelevantMap()
-	specialCostMap := createSpecialCostMap()
+	relevantFixedCostsMap := s.createRelevantMap()
+	specialCostMap := s.createSpecialCostMap()
 
 	tmpAmount := currentAmount
-	tmpYearMonth := CurrentYearMonth()
+	tmpYearMonth := models.CurrentYearMonth()
 
 	for i := range entries {
 		sumFixedCosts := 0
 
 		for _, fixcost := range relevantFixedCostsMap[tmpYearMonth.Month] {
-			if IsRelevant(tmpYearMonth, fixcost.From, fixcost.To) {
+			if models.IsRelevant(tmpYearMonth, fixcost.From, fixcost.To) {
 				sumFixedCosts += fixcost.Amount
 			}
 		}
@@ -143,7 +144,7 @@ func createOverview() Overview {
 			SumFixedCosts:   sumFixedCosts,
 			SumSpecialCosts: sumSpecialCosts,
 		}
-		tmpYearMonth = NextYearMonth(tmpYearMonth)
+		tmpYearMonth = models.NextYearMonth(tmpYearMonth)
 		tmpAmount = newTmpAmount
 	}
 
@@ -154,12 +155,12 @@ func createOverview() Overview {
 
 }
 
-func createRelevantMap() map[int][]FixedCost {
-	result := make(map[int][]FixedCost)
-	for _, cost := range *LoadFixedCosts() {
+func (s *Server) createRelevantMap() map[int][]models.FixedCost {
+	result := make(map[int][]models.FixedCost)
+	for _, cost := range *s.Repo.LoadFixedCosts() {
 		for _, dueMonth := range cost.DueMonth {
 			if result[dueMonth] == nil {
-				result[dueMonth] = []FixedCost{cost}
+				result[dueMonth] = []models.FixedCost{cost}
 			} else {
 				result[dueMonth] =
 					append(result[dueMonth], cost)
@@ -170,11 +171,11 @@ func createRelevantMap() map[int][]FixedCost {
 	return result
 }
 
-func createSpecialCostMap() map[YearMonth][]SpecialCost {
-	result := make(map[YearMonth][]SpecialCost)
-	for _, cost := range *LoadSpecialCosts() {
+func (s *Server) createSpecialCostMap() map[models.YearMonth][]models.SpecialCost {
+	result := make(map[models.YearMonth][]models.SpecialCost)
+	for _, cost := range *s.Repo.LoadSpecialCosts() {
 		if result[*cost.DueDate] == nil {
-			result[*cost.DueDate] = []SpecialCost{cost}
+			result[*cost.DueDate] = []models.SpecialCost{cost}
 		} else {
 			result[*cost.DueDate] =
 				append(result[*cost.DueDate], cost)

@@ -111,6 +111,85 @@ finance-app/
     └── package.json
 ```
 
+## Speckit Workflow Documentation
+
+This project uses a modular **Speckit** workflow system for feature specification and development. The workflows are organized with a clear separation between execution logic and supporting documentation.
+
+### Workflow Structure
+
+```
+.agent/workflows/              # Main workflow definitions (compact, execution-focused)
+├── speckit.specify.md        # Create feature specifications (3.7 KB)
+├── speckit.checklist.md      # Generate quality checklists (4.5 KB)
+├── speckit.clarify.md        # Clarify requirements
+├── speckit.plan.md           # Create implementation plans
+├── speckit.tasks.md          # Generate task breakdowns
+└── speckit.implement.md      # Execute implementation
+
+.specify/docs/                # Supporting documentation (detailed, reusable)
+├── specify/
+│   ├── specification-guidelines.md
+│   ├── success-criteria-guidelines.md
+│   └── validation-process.md
+└── checklist/
+    ├── core-concept.md
+    ├── quality-dimensions.md
+    ├── domain-examples.md
+    └── clarification-algorithm.md
+```
+
+### Key Benefits
+
+**Modular Design**:
+- **Compact workflows**: 70-75% smaller, fit better in AI context windows
+- **Reusable documentation**: Guidelines can be referenced by multiple workflows
+- **Easy maintenance**: Update examples without touching workflow logic
+- **Clear separation**: Execution steps vs detailed guidance
+
+**Workflow Files** (`.agent/workflows/`):
+- Contain execution orchestration and steps
+- Reference detailed documentation when needed
+- Focus on "what to do" and "when to do it"
+
+**Documentation Files** (`.specify/docs/`):
+- Contain detailed guidelines, examples, and patterns
+- Provide comprehensive reference material
+- Explain "how to do it" and "why"
+
+### Available Workflows
+
+| Workflow | Purpose | Size |
+|----------|---------|------|
+| `/speckit.specify` | Create feature specifications from natural language | 3.7 KB |
+| `/speckit.checklist` | Generate requirements quality checklists | 4.5 KB |
+| `/speckit.clarify` | Ask clarifying questions to refine specs | 11.5 KB |
+| `/speckit.plan` | Create technical implementation plans | 3.3 KB |
+| `/speckit.tasks` | Generate dependency-ordered task breakdowns | 6.5 KB |
+| `/speckit.implement` | Execute implementation plan | 7.6 KB |
+
+### Documentation Organization
+
+**Specification Documentation** (`.specify/docs/specify/`):
+- `specification-guidelines.md` - Core principles for writing specs
+- `success-criteria-guidelines.md` - How to write measurable success criteria
+- `validation-process.md` - Quality validation procedures
+
+**Checklist Documentation** (`.specify/docs/checklist/`):
+- `core-concept.md` - "Unit Tests for English" philosophy
+- `quality-dimensions.md` - How to write checklist items
+- `domain-examples.md` - Real-world examples (UX, API, Security)
+- `clarification-algorithm.md` - Question generation logic
+
+### Usage Example
+
+When using `/speckit.specify`, the workflow:
+1. Reads the compact main workflow for execution steps
+2. References `specification-guidelines.md` for writing principles
+3. References `success-criteria-guidelines.md` for examples
+4. References `validation-process.md` for quality checks
+
+This modular approach keeps workflows focused and documentation comprehensive.
+
 ## Troubleshooting
 
 ### Database connection fails

@@ -1,24 +1,25 @@
-package main
+package api
 
 import (
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"wondee/finance-app-backend/internal/models"
 )
 
 type JsonSpecialCost struct {
-	ID      int        `json:"id"`
-	Name    string     `json:"name"`
-	Amount  int        `json:"amount"`
-	DueDate *YearMonth `json:"dueDate"`
+	ID      int               `json:"id"`
+	Name    string            `json:"name"`
+	Amount  int               `json:"amount"`
+	DueDate *models.YearMonth `json:"dueDate"`
 }
 
-func GetSpecialCosts(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, createSpecialCosts())
+func (s *Server) GetSpecialCosts(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, s.createSpecialCosts())
 }
 
-func SaveSpecialCosts(c *gin.Context) {
+func (s *Server) SaveSpecialCosts(c *gin.Context) {
 	var cost JsonSpecialCost
 	err := c.ShouldBindJSON(&cost)
 
@@ -27,17 +28,17 @@ func SaveSpecialCosts(c *gin.Context) {
 		return
 	}
 
-	dbObject := SpecialCost{
+	dbObject := models.SpecialCost{
 		ID:      cost.ID,
 		Name:    cost.Name,
 		Amount:  cost.Amount,
 		DueDate: cost.DueDate,
 	}
 
-	SaveSpecialCost(&dbObject)
+	s.Repo.SaveSpecialCost(&dbObject)
 }
 
-func DeleteSpecialCosts(c *gin.Context) {
+func (s *Server) DeleteSpecialCosts(c *gin.Context) {
 	param := c.Param("id")
 	id, err := strconv.Atoi(param)
 
@@ -46,13 +47,13 @@ func DeleteSpecialCosts(c *gin.Context) {
 		return
 	}
 
-	DeleteSpecialCost(id)
+	s.Repo.DeleteSpecialCost(id)
 }
 
-func createSpecialCosts() (result []JsonSpecialCost) {
+func (s *Server) createSpecialCosts() (result []JsonSpecialCost) {
 	result = make([]JsonSpecialCost, 0)
 
-	specialCosts := LoadSpecialCosts()
+	specialCosts := s.Repo.LoadSpecialCosts()
 
 	for _, cost := range *specialCosts {
 		result = append(result, JsonSpecialCost{

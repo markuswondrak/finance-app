@@ -9,13 +9,15 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+
+	"wondee/finance-app-backend/internal/api"
+	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/storage"
 )
 
-var DB *gorm.DB
-
-func ConnectDataBase() {
+func ConnectDataBase() *gorm.DB {
 	// Load .env file if it exists
-	_ = godotenv.Load("../.env")
+	_ = godotenv.Load("../../.env")
 
 	// Get database configuration from environment variables
 	dbHost := getEnv("DB_HOST", "localhost")
@@ -36,13 +38,13 @@ func ConnectDataBase() {
 		panic("Failed to connect to database!")
 	}
 
-	err = database.AutoMigrate(&FixedCost{}, &SpecialCost{})
+	err = database.AutoMigrate(&models.FixedCost{}, &models.SpecialCost{})
 
 	if err != nil {
 		panic(err)
 	}
 
-	DB = database
+	return database
 }
 
 func getEnv(key, defaultValue string) string {
@@ -56,21 +58,23 @@ func getEnv(key, defaultValue string) string {
 func main() {
 	router := gin.Default()
 
-	ConnectDataBase()
+	db := ConnectDataBase()
+	repo := &storage.GormRepository{DB: db}
+	server := api.NewServer(repo)
 
-	router.GET("/api/overview/all", GetOverview)
-	router.GET("/api/overview/detail", GetOverviewDetail)
+	router.GET("/api/overview/all", server.GetOverview)
+	router.GET("/api/overview/detail", server.GetOverviewDetail)
 
-	router.GET("/api/costs", GetFixedCosts)
-	router.DELETE("/api/costs/:id", DeleteFixedCosts)
-	router.POST("/api/costs/monthly", SaveMonthlyFixedCosts)
-	router.POST("/api/costs/halfyearly", SaveHalfYearlyFixedCosts)
-	router.POST("/api/costs/yearly", SaveYearlyFixedCosts)
-	router.POST("/api/costs/quaterly", SaveQuaterlyFixedCosts)
+	router.GET("/api/costs", server.GetFixedCosts)
+	router.DELETE("/api/costs/:id", server.DeleteFixedCosts)
+	router.POST("/api/costs/monthly", server.SaveMonthlyFixedCosts)
+	router.POST("/api/costs/halfyearly", server.SaveHalfYearlyFixedCosts)
+	router.POST("/api/costs/yearly", server.SaveYearlyFixedCosts)
+	router.POST("/api/costs/quaterly", server.SaveQuaterlyFixedCosts)
 
-	router.GET("/api/specialcosts", GetSpecialCosts)
-	router.POST("/api/specialcosts", SaveSpecialCosts)
-	router.DELETE("/api/specialcosts/:id", DeleteSpecialCosts)
+	router.GET("/api/specialcosts", server.GetSpecialCosts)
+	router.POST("/api/specialcosts", server.SaveSpecialCosts)
+	router.DELETE("/api/specialcosts/:id", server.DeleteSpecialCosts)
 
 	router.Run("localhost:8082")
 
