@@ -16,7 +16,7 @@ import {
   Legend
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
-import { toCurrency } from "../Utils";
+import { toCurrency, displayMonth } from "../Utils";
 
 ChartJS.register(
   CategoryScale,
@@ -41,7 +41,7 @@ export default {
       if (this.entries) {
         this.entries.forEach(entry => {
           data.push(entry.currentAmount);
-          labels.push(entry.displayMonth);
+          labels.push(displayMonth(entry.yearMonth));
         });
       }
 
