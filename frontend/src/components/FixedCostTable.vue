@@ -1,11 +1,12 @@
 <template>
-  <v-card>
+  <v-card class="card-accent-primary">
     <v-card-text>
       <v-data-table
         :headers="transformedHeaders"
         :items="entries"
         class="elevation-1"
         :no-data-text="'Keine Einträge bisher'"
+        hover
       >
         <!-- Custom item slots for each dynamic column to apply transformation and styleClass -->
         <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
@@ -26,7 +27,7 @@
     </v-card-text>
 
     <v-card-actions>
-      <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" />
+      <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" btn-color="primary" />
     </v-card-actions>
   </v-card>
 </template>

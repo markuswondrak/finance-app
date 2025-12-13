@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-table fixed-header :class="{ 'tight-table': xs }">
+  <v-card class="card-accent-primary" elevation="2">
+    <v-table fixed-header :class="{ 'tight-table': xs }" hover>
       <thead>
         <tr>
           <th>Monat</th>
@@ -17,7 +17,7 @@
           <td>{{ formatResponsive(toCurrency(entry.sumSpecialCosts)) }}</td>
           <td
             class="amount"
-            :class="{ 'negative-amount': entry.currentAmount < 0}"
+            :class="entry.currentAmount >= 0 ? 'positive-amount' : 'negative-amount'"
           >{{ formatResponsive(toCurrency(entry.currentAmount)) }}</td>
           <td align="right" class="action-cell">
             <overview-details v-if="!entry.empty" :detail="{...entry, index}" />

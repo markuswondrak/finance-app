@@ -1,15 +1,15 @@
 <template>
-  <v-banner sticky elevation="4" :icon="icon">
+  <v-banner sticky elevation="4" :icon="icon" :color="currentAmount >= 0 ? 'surface-bright' : 'surface'">
     <template v-slot:text>
       Aktueller Betrag:
-      <strong :class="{ red : currentAmount < 0 }">{{ toCurrency(currentAmount) }}</strong>
+      <strong :class="currentAmount >= 0 ? 'text-success' : 'text-error'">{{ toCurrency(currentAmount) }}</strong>
     </template>
     <template v-slot:actions>
-      <v-btn variant="text" @click="show = true">Ändern</v-btn>
+      <v-btn variant="text" color="primary" @click="show = true">Ändern</v-btn>
     </template>
     <v-dialog v-model="show" max-width="600">
-      <v-card>
-        <v-card-title>
+      <v-card class="card-accent-primary">
+        <v-card-title class="text-primary">
           <span>Aktuellen Betrag ändern</span>
         </v-card-title>
         <v-card-text>
@@ -22,7 +22,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn variant="text" @click="show = false">Abbrechen</v-btn>
-          <v-btn variant="text" @click="show = false">Speichern</v-btn>
+          <v-btn variant="flat" color="primary" @click="show = false">Speichern</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

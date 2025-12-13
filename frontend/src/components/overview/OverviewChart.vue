@@ -49,12 +49,16 @@ export default {
         labels,
         datasets: [
           {
-            backgroundColor: "#DDDDFF",
+            backgroundColor: "rgba(0, 184, 212, 0.2)",
             borderColor: "#777777",
-            borderWidth: 1,
-            pointRadius: 2,
-            pointHoverRadius: 5,
-            fill: false,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: "#00B8D4",
+            pointBorderColor: "#00E676",
+            pointHoverBackgroundColor: "#00E676",
+            fill: true,
+            tension: 0.3,
             data
           }
         ]

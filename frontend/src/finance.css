@@ -7,6 +7,80 @@ td.action-cell {
   padding: 0 7px !important;
 }
 
-
+/* Amount styling */
 .amount { font-weight: bold; }
-.negative-amount { color:red; }
+.negative-amount { color: #FF5252 !important; }
+.positive-amount { color: #00E676 !important; }
+
+/* Income/Expense colors */
+.text-income { color: #00E676 !important; }
+.text-expense { color: #FF5252 !important; }
+.bg-income { background-color: #00E676 !important; }
+.bg-expense { background-color: #FF5252 !important; }
+
+/* Gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #00B8D4 0%, #0097A7 100%) !important;
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #00E676 0%, #00C853 100%) !important;
+}
+
+.gradient-error {
+  background: linear-gradient(135deg, #FF5252 0%, #E53935 100%) !important;
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #7C4DFF 0%, #651FFF 100%) !important;
+}
+
+.gradient-dark {
+  background: linear-gradient(135deg, #2A2A2A 0%, #1E1E1E 100%) !important;
+}
+
+/* App bar gradient */
+.gradient-app-bar {
+  background: linear-gradient(90deg, #1E1E1E 0%, #0097A7 50%, #1E1E1E 100%) !important;
+}
+
+/* Card enhancements */
+.v-card {
+  border-left: 3px solid transparent;
+}
+
+.card-accent-primary {
+  border-left-color: #00B8D4 !important;
+}
+
+.card-accent-success {
+  border-left-color: #00E676 !important;
+}
+
+.card-accent-error {
+  border-left-color: #FF5252 !important;
+}
+
+/* Glow effects for buttons */
+.btn-glow-primary:hover {
+  box-shadow: 0 0 20px rgba(0, 184, 212, 0.4);
+}
+
+.btn-glow-success:hover {
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+}
+
+/* Navigation active state enhancement */
+.v-list-item--active {
+  border-left: 3px solid #00B8D4;
+}
+
+/* Footer link styling */
+.v-footer a {
+  color: #00B8D4;
+  text-decoration: none;
+}
+
+.v-footer a:hover {
+  color: #00E676;
+}
