@@ -114,6 +114,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Validation checkpoints**: Verify each phase completion before proceeding
 
 7. Implementation execution rules:
+   - **Testing execution**: When running tests, always use the `--run` flag to ensure non-interactive execution.
    - **Setup first**: Initialize project structure, dependencies, configuration
    - **Tests before code**: If you need to write tests for contracts, entities, and integration scenarios
    - **Core development**: Implement models, services, CLI commands, endpoints
