@@ -3,3 +3,6 @@ src/__debug*
 # Environment variables
 .env
 .env.local
+
+# Database data
+db/data/
