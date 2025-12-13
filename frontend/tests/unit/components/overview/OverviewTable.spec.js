@@ -1,19 +1,18 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import OverviewTable from '@/components/overview/OverviewTable.vue';
-import { toCurrency } from '@/components/Utils';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
-Vue.filter('currency', toCurrency);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('OverviewTable.vue', () => {
     let vuetify;
-    let localVue;
 
     beforeEach(() => {
-        localVue = createLocalVue();
-        vuetify = new Vuetify();
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
     });
 
     const mockEntries = [
@@ -34,10 +33,9 @@ describe('OverviewTable.vue', () => {
     ];
 
     it('should render table rows for entries', () => {
-        const wrapper = shallowMount(OverviewTable, {
-            vuetify,
-            localVue,
-            propsData: {
+        const wrapper = mount(OverviewTable, {
+            global: { plugins: [vuetify] },
+            props: {
                 entries: mockEntries
             }
         });
@@ -47,31 +45,29 @@ describe('OverviewTable.vue', () => {
     });
 
     it('should display correct data in columns', () => {
-        const wrapper = shallowMount(OverviewTable, {
-            vuetify,
-            localVue,
-            propsData: {
+        const wrapper = mount(OverviewTable, {
+            global: { plugins: [vuetify] },
+            props: {
                 entries: mockEntries
             }
         });
 
-        const firstRowCells = wrapper.findAll('tbody tr').at(0).findAll('td');
+        const firstRowCells = wrapper.findAll('tbody tr')[0].findAll('td');
         // Month
-        expect(firstRowCells.at(0).text()).toContain('Januar / 2023');
+        expect(firstRowCells[0].text()).toContain('Januar / 2023');
         // Fixed Costs
-        expect(firstRowCells.at(1).text()).toContain('100 €');
+        expect(firstRowCells[1].text()).toContain('100 €');
         // Special Costs
-        expect(firstRowCells.at(2).text()).toContain('50 €');
+        expect(firstRowCells[2].text()).toContain('50 €');
         // Balance
-        expect(firstRowCells.at(3).text()).toContain('850 €');
+        expect(firstRowCells[3].text()).toContain('850 €');
     });
 
     it('should apply negative-amount class for negative balance', () => {
         const entries = [{ ...mockEntries[0], currentAmount: -100 }];
-        const wrapper = shallowMount(OverviewTable, {
-            vuetify,
-            localVue,
-            propsData: {
+        const wrapper = mount(OverviewTable, {
+            global: { plugins: [vuetify] },
+            props: {
                 entries
             }
         });
@@ -81,10 +77,18 @@ describe('OverviewTable.vue', () => {
     });
 
     it('should render OverviewDetails and SpecialCostForm', () => {
-        const wrapper = shallowMount(OverviewTable, {
-            vuetify,
-            localVue,
-            propsData: {
+        const OverviewDetailsStub = { name: 'OverviewDetails', template: '<div class="overview-details-stub"></div>' };
+        const SpecialCostFormStub = { name: 'SpecialCostForm', template: '<div class="special-cost-form-stub"></div>' };
+
+        const wrapper = mount(OverviewTable, {
+            global: {
+                plugins: [vuetify],
+                stubs: {
+                    OverviewDetails: OverviewDetailsStub,
+                    SpecialCostForm: SpecialCostFormStub
+                }
+            },
+            props: {
                 entries: mockEntries
             }
         });

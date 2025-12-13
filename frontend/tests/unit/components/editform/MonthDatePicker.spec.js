@@ -1,127 +1,130 @@
-import { shallowMount, mount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import MonthDatePicker from '@/components/editform/MonthDatePicker.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('MonthDatePicker.vue', () => {
     let vuetify;
-    let localVue;
 
     beforeEach(() => {
-        localVue = createLocalVue();
-        vuetify = new Vuetify();
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
     });
 
     it('should render with label', () => {
         const wrapper = mount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
+            global: { plugins: [vuetify] },
+            props: {
                 label: 'Test Label',
-                value: ['2023', '01']
+                modelValue: [2023, 1]
             }
         });
 
-        const textField = wrapper.findComponent({ name: 'v-text-field' });
+        const textField = wrapper.findComponent({ name: 'VTextField' });
         expect(textField.props().label).toBe('Test Label');
     });
 
     it('should display formatted date', () => {
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: ['2023', '01']
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: [2023, 1]
             }
         });
 
         expect(wrapper.vm.displayDate).toBe('Januar / 2023');
     });
 
-    it('should emit input event when date selected', () => {
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: ['2023', '01']
+    it('should emit update:modelValue event when date selected', () => {
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: [2023, 1]
             }
         });
 
-        wrapper.vm.input('2023-02');
-        expect(wrapper.emitted().input).toBeTruthy();
-        expect(wrapper.emitted().input[0]).toEqual([['2023', '02']]);
+        // Simulate input from VDatePicker (passes Date object or ISO string)
+        // VDatePicker usually passes Date object.
+        const date = new Date(2023, 1, 15); // Feb 2023
+        wrapper.vm.input(date);
+        
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+        // input converts date to [Year, Month] (1-based)
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual([[2023, 2]]);
     });
 
     it('should handle null input', () => {
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: null
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: null
             }
         });
 
         wrapper.vm.input(null);
-        expect(wrapper.emitted().input[0]).toEqual([null]);
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual([null]);
     });
 
     it('should validate rules', () => {
-        const rule = jest.fn(() => true);
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: ['2023', '01'],
+        const rule = vi.fn(() => true);
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: [2023, 1],
                 rules: [rule]
             }
         });
 
-        wrapper.vm.input('2023-02');
+        const date = new Date(2023, 1, 15); // Feb
+        wrapper.vm.input(date);
+        
         expect(rule).toHaveBeenCalled();
         expect(wrapper.vm.errorMessages).toEqual([]);
     });
 
     it('should set error messages if validation fails', () => {
-        const rule = jest.fn(() => 'Error message');
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: ['2023', '01'],
+        const rule = vi.fn(() => 'Error message');
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: [2023, 1],
                 rules: [rule]
             }
         });
 
-        wrapper.vm.input('2023-02');
+        const date = new Date(2023, 1, 15);
+        wrapper.vm.input(date);
         expect(wrapper.vm.errorMessages).toEqual(['Error message']);
     });
 
     it('should use min date prop', () => {
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: ['2023', '01'],
-                min: '2022-01'
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: [2023, 1],
+                min: [2022, 1]
             }
         });
 
-        expect(wrapper.vm.minDate).toBe('2022-01');
+        // minDate computed property returns Date object now
+        expect(wrapper.vm.minDate).toBeInstanceOf(Date);
+        expect(wrapper.vm.minDate.getFullYear()).toBe(2022);
+        expect(wrapper.vm.minDate.getMonth()).toBe(0); // Jan is 0
     });
 
-    it('should fallback to now for min date if not provided', () => {
-        const wrapper = shallowMount(MonthDatePicker, {
-            vuetify,
-            localVue,
-            propsData: {
-                value: ['2023', '01']
+    it('should fallback to undefined for min date if not provided', () => {
+        const wrapper = mount(MonthDatePicker, {
+            global: { plugins: [vuetify] },
+            props: {
+                modelValue: [2023, 1]
             }
         });
 
-        const now = new Date();
-        const expected = `${now.getFullYear()}-${now.getMonth() + 1}`;
-        expect(wrapper.vm.minDate).toBe(expected);
+        // The updated component returns undefined if min not provided
+        expect(wrapper.vm.minDate).toBeUndefined();
     });
 });

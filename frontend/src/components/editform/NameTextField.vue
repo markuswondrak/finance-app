@@ -1,7 +1,7 @@
 <template>
   <v-text-field
-    :value="value"
-    @change="$emit('input', $event)"
+    :model-value="modelValue"
+    @update:modelValue="$emit('update:modelValue', $event)"
     :rules="nameRules"
     :counter="20"
     label="Bezeichnung"
@@ -10,12 +10,13 @@
 </template>
 <script>
 export default {
-  props: ["value", "required"],
+  props: ["modelValue", "required"],
+  emits: ["update:modelValue"],
   data() {
     return {
       nameRules: [
         v => !!v || "Bezeichnung darf nicht leer sein",
-        v => v.length <= 20 || "Bezeichnung muss weniger als 20 Zeichen haben"
+        v => (v && v.length <= 20) || "Bezeichnung muss weniger als 20 Zeichen haben"
       ]
     };
   }

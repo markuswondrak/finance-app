@@ -10,15 +10,22 @@
         >
           <v-card>
             <v-card-text>
-              <cost-table
-                :entries="entries"
-                :cols="cols"
-                @edit-clicked="openEdit($event)"
+              <v-data-table
+                :headers="headers"
+                :items="entries"
+                class="elevation-1"
+                :no-data-text="'Keine Einträge bisher'"
               >
-                <template v-slot:edit-button="slotProps">
-                  <special-cost-form :cost="slotProps.entry"/>    
+                <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
+                  <td :key="header.name">
+                    {{ transform(header.transformer, item[header.name]) }}
+                  </td>
                 </template>
-              </cost-table>
+                <template v-slot:item.actions="{ item }">
+                  <special-cost-form :cost="item"/>
+                  <delete-button :name="item.name" @confirm="deleteCost(item)"/>
+                </template>
+              </v-data-table>
             </v-card-text>
             <v-card-actions>
               <special-cost-form btn-text="Neue Sonderkosten Hinzufügen" />
@@ -32,7 +39,6 @@
 
 <script>
 import LoadablePage from "./LoadablePage";
-import CostTable from "./CostTable";
 
 import {
   CommonForm,
@@ -41,6 +47,7 @@ import {
   displayMonth
 } from "./Utils";
 import SpecialCostForm from './editform/SpecialCostForm.vue';
+import DeleteButton from './DeleteButton.vue';
 
 const cols = [
   { name: "name", label: "Bezeichnung" },
@@ -65,14 +72,34 @@ const costToForm = cost => {
 export default {
   mixins: [LoadablePage, CommonForm(costToForm)],
   components: {
-    CostTable,
-    SpecialCostForm
+    SpecialCostForm,
+    DeleteButton
   },
   data() {
     return {
       entries: [],
       cols
     };
+  },
+  computed: {
+    headers() {
+       const h = this.cols.map(col => ({
+          title: col.label,
+          key: col.name,
+          sortable: false,
+          transformer: col.transformer
+       }));
+       h.push({ title: '', key: 'actions', sortable: false, align: 'right' });
+       return h;
+    }
+  },
+  methods: {
+    transform: (f, v) => (f ? f(v) : v),
+    async deleteCost(cost) {
+      await fetch(`/api/specialcosts/${cost.id}`, { method: 'DELETE' });
+      const data = await this.fetchData("/api/specialcosts");
+      this.entries = data;
+    }
   },
   created: async function() {
     const data = await this.fetchData("/api/specialcosts");

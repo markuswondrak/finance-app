@@ -34,7 +34,7 @@
   </cost-edit-form>
 </template>
 <script>
-import CurrencyInput from "./CurrencyInput";
+import CurrencyInput from "./CurrencyInput.vue";
 import {
   CommonForm,
   monthlyCostToForm,
@@ -42,10 +42,10 @@ import {
   toSelectItems,
   baseFormToCost
 } from "../Utils";
-import CostEditForm from "./CostEditForm";
-import NameTextField from "./NameTextField";
-import FromToDateFields from "./FromToDateFields";
-import IncomingSelect from "./IncomingSelect";
+import CostEditForm from "./CostEditForm.vue";
+import NameTextField from "./NameTextField.vue";
+import FromToDateFields from "./FromToDateFields.vue";
+import IncomingSelect from "./IncomingSelect.vue";
 
 const costToForm = cost => {
   const form = monthlyCostToForm(cost);

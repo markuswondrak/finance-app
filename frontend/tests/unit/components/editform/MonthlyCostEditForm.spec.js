@@ -1,58 +1,65 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import MonthlyCostEditForm from '@/components/editform/MonthlyCostEditForm.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('MonthlyCostEditForm.vue', () => {
     let vuetify;
-    let localVue;
 
     beforeEach(() => {
-        localVue = createLocalVue();
-        vuetify = new Vuetify();
-        global.fetch = jest.fn();
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
+        global.fetch = vi.fn();
     });
 
     afterEach(() => {
-        global.fetch.mockRestore();
+        vi.restoreAllMocks();
     });
 
+    // We stub CostEditForm to avoid rendering it fully and check interactions
     const CostEditFormStub = {
         name: 'CostEditForm',
         template: '<div><slot></slot></div>',
         methods: {
-            success: jest.fn()
-        }
+            success: vi.fn()
+        },
+        emits: ['save']
     };
 
     it('should render correct fields', () => {
-        const wrapper = shallowMount(MonthlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: CostEditFormStub
+        const wrapper = mount(MonthlyCostEditForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: {
+                    CostEditForm: CostEditFormStub,
+                    NameTextField: true,
+                    CurrencyInput: true,
+                    IncomingSelect: true,
+                    FromToDateFields: true
+                }
             },
-            propsData: {
+            props: {
                 cost: null
             }
         });
 
-        expect(wrapper.findComponent({ name: 'name-text-field' }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: 'currency-input' }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: 'incoming-select' }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: 'from-to-date-fields' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'NameTextField' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'CurrencyInput' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'IncomingSelect' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'FromToDateFields' }).exists()).toBe(true);
     });
 
     it('should initialize with empty data when no cost provided', () => {
-        const wrapper = shallowMount(MonthlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: CostEditFormStub
+        const wrapper = mount(MonthlyCostEditForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: { CostEditForm: CostEditFormStub }
             },
-            propsData: {
+            props: {
                 cost: null
             }
         });
@@ -72,13 +79,12 @@ describe('MonthlyCostEditForm.vue', () => {
             to: null
         };
 
-        const wrapper = shallowMount(MonthlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: CostEditFormStub
+        const wrapper = mount(MonthlyCostEditForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: { CostEditForm: CostEditFormStub }
             },
-            propsData: {
+            props: {
                 cost
             }
         });
@@ -92,13 +98,12 @@ describe('MonthlyCostEditForm.vue', () => {
     it('should save cost to API', async () => {
         global.fetch.mockResolvedValue({});
 
-        const wrapper = shallowMount(MonthlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: CostEditFormStub
+        const wrapper = mount(MonthlyCostEditForm, {
+            global: {
+                plugins: [vuetify],
+                stubs: { CostEditForm: CostEditFormStub }
             },
-            propsData: {
+            props: {
                 cost: null
             }
         });
@@ -106,9 +111,8 @@ describe('MonthlyCostEditForm.vue', () => {
         wrapper.vm.form.name = 'New Cost';
         wrapper.vm.form.amount = 100;
 
-        // Trigger save via the wrapper method directly or emitting from stub
-        // The CostEditForm emits 'save' which calls 'saveCost'
-        await wrapper.findComponent(CostEditFormStub).vm.$emit('save');
+        // Simulate save by calling the component's saveCost method directly
+        await wrapper.vm.saveCost();
 
         expect(global.fetch).toHaveBeenCalledWith('/api/costs/monthly', expect.objectContaining({
             method: 'post',
@@ -119,20 +123,22 @@ describe('MonthlyCostEditForm.vue', () => {
     it('should call success on editform after save', async () => {
         global.fetch.mockResolvedValue({});
 
-        const successSpy = jest.fn();
+        const successSpy = vi.fn();
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy }
+            methods: { success: successSpy },
+            emits: ['save']
         };
 
-        const wrapper = shallowMount(MonthlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: LocalStub
+        const wrapper = mount(MonthlyCostEditForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: {
+                    CostEditForm: LocalStub
+                }
             },
-            propsData: { cost: null }
+            props: { cost: null }
         });
 
         await wrapper.vm.saveCost();

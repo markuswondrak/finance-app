@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   toCurrency,
   monthMap,
@@ -44,7 +45,12 @@ describe('Utils.js', () => {
 
   describe('displayMonth', () => {
     beforeEach(() => {
-      global.window = { innerWidth: 1024 };
+      // Vitest jsdom environment has window
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 1024,
+      });
     });
 
     it('should display full month name for desktop', () => {
@@ -53,13 +59,13 @@ describe('Utils.js', () => {
     });
 
     it('should display month number for mobile when responsive is true', () => {
-      global.window.innerWidth = 500;
+      window.innerWidth = 500;
       const yearMonth = { year: 2023, month: 12 };
       expect(displayMonth(yearMonth, true)).toBe('12 / 2023');
     });
 
     it('should display full month name when responsive is false', () => {
-      global.window.innerWidth = 500;
+      window.innerWidth = 500;
       const yearMonth = { year: 2023, month: 6 };
       expect(displayMonth(yearMonth, false)).toBe('Juni / 2023');
     });
@@ -311,8 +317,8 @@ describe('Utils.js', () => {
   });
 
   describe('CommonForm mixin', () => {
-    const mockCostToForm = jest.fn(cost => cost ? { ...cost } : { id: null, name: '' });
-    const mockFormToCost = jest.fn(form => ({ ...form }));
+    const mockCostToForm = vi.fn(cost => cost ? { ...cost } : { id: null, name: '' });
+    const mockFormToCost = vi.fn(form => ({ ...form }));
     const mockEndpoint = '/api/test';
 
     let mixin;
@@ -375,11 +381,11 @@ describe('Utils.js', () => {
 
     describe('saveCost method', () => {
       beforeEach(() => {
-        global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
+        global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
       });
 
       afterEach(() => {
-        global.fetch.mockRestore();
+        vi.restoreAllMocks();
       });
 
       it('should call fetch with correct parameters', async () => {
@@ -391,7 +397,7 @@ describe('Utils.js', () => {
           form,
           $refs: {
             editform: {
-              success: jest.fn()
+              success: vi.fn()
             }
           }
         };

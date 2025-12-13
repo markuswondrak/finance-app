@@ -1,9 +1,9 @@
 <template>
   <span>
     <v-dialog v-model="dialog" max-width="800" persistent>
-      <template v-slot:activator="{ on }">
-        <v-btn :icon="!btnText" :text="!!btnText" small v-on="on">
-          <v-icon v-if="!btnText" small>{{ btnIcon }}</v-icon>
+      <template v-slot:activator="{ props }">
+        <v-btn :icon="!btnText" :variant="!!btnText ? 'text' : undefined" small v-bind="props">
+          <v-icon v-if="!btnText" size="small">{{ btnIcon }}</v-icon>
           <span v-if="!!btnText">{{ btnText }}</span>
         </v-btn>
       </template>
@@ -20,9 +20,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="dialog = false" :disbaled="saving">Abbrechen</v-btn>
+          <v-btn variant="text" @click="dialog = false" :disabled="saving">Abbrechen</v-btn>
           <v-btn
-            text
+            variant="text"
             @click="$emit('save'); saving = true"
             :disabled="!valid || !changed"
             :loading="saving"
@@ -30,7 +30,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-snackbar v-model="snackbar" bottom color="success" :timeout="7000">{{ successMsg(name) }}</v-snackbar>
+    <v-snackbar v-model="snackbar" location="bottom" color="success" :timeout="7000">{{ successMsg(name) }}</v-snackbar>
   </span>
 </template>
 <script>

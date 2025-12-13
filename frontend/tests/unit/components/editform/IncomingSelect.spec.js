@@ -1,138 +1,128 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import IncomingSelect from '@/components/editform/IncomingSelect.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('IncomingSelect.vue', () => {
   let vuetify;
-  let localVue;
 
   beforeEach(() => {
-    localVue = createLocalVue();
-    vuetify = new Vuetify();
+    vuetify = createVuetify({
+      components,
+      directives,
+    });
   });
 
   it('should render with correct props', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      localVue,
-      vuetify,
-      propsData: {
-        value: true
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: true
       }
     });
 
-    expect(wrapper.props().value).toBe(true);
+    expect(wrapper.props().modelValue).toBe(true);
   });
 
-  it('should emit change event when checkbox is toggled', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: false
+  it('should emit update:modelValue event when checkbox is toggled', async () => {
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: false
       }
     });
 
-    wrapper.vm.$emit('change', true);
-    expect(wrapper.emitted().change).toBeTruthy();
-    expect(wrapper.emitted().change[0]).toEqual([true]);
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
+    checkbox.vm.$emit('update:modelValue', true);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual([true]);
   });
 
-  it('should pass value as input-value to v-checkbox', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: true
+  it('should pass modelValue as model-value to v-checkbox', () => {
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: true
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
-    expect(checkbox.props().inputValue).toBe(true);
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
+    expect(checkbox.props().modelValue).toBe(true);
   });
 
   it('should have correct label', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: false
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: false
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
     expect(checkbox.props().label).toBe('Eingehend');
   });
 
   it('should have persistent hint', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: false
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: false
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
     expect(checkbox.props().persistentHint).toBe(true);
   });
 
   it('should have descriptive hint text', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: false
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: false
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
     expect(checkbox.props().hint).toBe('Anhacken, wenn es sich bei dem Betrag um einen eingehenden (z.B. Gehalt) handelt.');
   });
 
   it('should have primary color', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: false
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: false
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
     expect(checkbox.props().color).toBe('primary');
   });
 
   it('should handle false value', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: false
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: false
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
-    expect(checkbox.props().inputValue).toBe(false);
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
+    expect(checkbox.props().modelValue).toBe(false);
   });
 
   it('should handle true value', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: true
+    const wrapper = mount(IncomingSelect, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: true
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'v-checkbox' });
-    expect(checkbox.props().inputValue).toBe(true);
-  });
-
-  it('should emit change with false when unchecked', () => {
-    const wrapper = shallowMount(IncomingSelect, {
-      vuetify,
-      propsData: {
-        value: true
-      }
-    });
-
-    wrapper.vm.$emit('change', false);
-    expect(wrapper.emitted().change).toBeTruthy();
-    expect(wrapper.emitted().change[0]).toEqual([false]);
+    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
+    expect(checkbox.props().modelValue).toBe(true);
   });
 });

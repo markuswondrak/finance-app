@@ -1,17 +1,26 @@
 <template>
   <v-card>
     <v-card-text>
-      <cost-table :entries="entries" :cols="cols" @delete-clicked="$emit('delete-clicked', $event)">
-        <template v-if="$vuetify.breakpoint.smAndDown" v-slot:header>
-          <th />
+      <v-data-table
+        :headers="transformedHeaders"
+        :items="entries"
+        class="elevation-1"
+        :no-data-text="'Keine Einträge bisher'"
+      >
+        <!-- Custom item slots for each dynamic column to apply transformation and styleClass -->
+        <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
+          <td :key="header.name" :class="header.styleClass">
+            {{ transform(header.transformer, item[header.name]) }}
+          </td>
         </template>
-        <template v-if="$vuetify.breakpoint.smAndDown" v-slot:content="slotProps">
-          <responsive-date-col :entry="slotProps.entry" />
+
+        <!-- Slot for action buttons (edit and delete) -->
+        <template v-slot:item.actions="{ item }">
+          <component :is="formComponent" :cost="item" />
+          <delete-button :name="item.name" @confirm="$emit('delete-clicked', item)"/>
         </template>
-        <template v-slot:edit-button="slotProps">
-          <component :is="formComponent" :cost="slotProps.entry" />
-        </template>
-      </cost-table>
+
+      </v-data-table>
     </v-card-text>
 
     <v-card-actions>
@@ -20,24 +29,59 @@
   </v-card>
 </template>
 <script>
-import CostTable from "./CostTable";
-import ResponsiveDateCol from "./ResponsiveDateCol";
-import MonthlyCostEditForm from "./editform/MonthlyCostEditForm";
-import QuaterlyCostEditForm from "./editform/QuaterlyCostEditForm";
-import HalfyearlyCostEditForm from "./editform/HalfyearlyCostEditForm";
-import YearlyCostEditForm from "./editform/YearlyCostEditForm";
+import { useDisplay } from 'vuetify'
+import { toCurrency } from "./Utils";
+import ResponsiveDateCol from "./ResponsiveDateCol.vue";
+import MonthlyCostEditForm from "./editform/MonthlyCostEditForm.vue";
+import QuaterlyCostEditForm from "./editform/QuaterlyCostEditForm.vue";
+import HalfyearlyCostEditForm from "./editform/HalfyearlyCostEditForm.vue";
+import YearlyCostEditForm from "./editform/YearlyCostEditForm.vue";
+import DeleteButton from './DeleteButton.vue';
 
 
 export default {
   props: ["entries", "cols", "formComponent"],
 
   components: {
-    CostTable,
     ResponsiveDateCol,
     MonthlyCostEditForm,
     QuaterlyCostEditForm,
     HalfyearlyCostEditForm,
-    YearlyCostEditForm
+    YearlyCostEditForm,
+    DeleteButton
+  },
+  setup() {
+    const { smAndDown, mdAndUp } = useDisplay();
+    return { smAndDown, mdAndUp };
+  },
+  methods: {
+    transform: (f, v) => (f ? f(v) : v),
+    filter(cols) {
+      return cols.filter(col => {
+        if (!col.hide) return true;
+        return this.mdAndUp;
+      });
+    }
+  },
+  computed: {
+    transformedHeaders() {
+      const filteredCols = this.filter(this.cols);
+      const headers = filteredCols.map(col => ({
+        title: col.label,
+        key: col.name,
+        sortable: false,
+        class: col.styleClass,
+        transformer: col.transformer
+      }));
+      headers.push({
+        title: '',
+        key: 'actions',
+        sortable: false,
+        align: 'right',
+        width: '100px'
+      });
+      return headers;
+    }
   }
 };
 </script>

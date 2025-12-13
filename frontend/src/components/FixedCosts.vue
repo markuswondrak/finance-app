@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-skeleton-loader
-          type="card-heading"
+          type="heading"
           :loading="!loaded"
           transition="scale-transition"
           class="mx-auto"
@@ -27,19 +27,27 @@
         >
           <v-card no-body>
             <v-tabs v-model="tab" grow>
-              <v-tabs-slider />
-              <template v-for="config in tabsConfig">
-                <v-tab :key="config.label">{{ config.label }}</v-tab>
-                <v-tab-item :key="config.label + '-content'">
-                  <fixed-costs-table
-                    :entries="config.entries"
-                    :cols="config.cols"
-                    :formComponent="config.formComponent"
-                    @delete-clicked="deleteCost"
-                  />
-                </v-tab-item>
-              </template>
+              <v-tab
+                v-for="config in tabsConfig"
+                :key="config.label"
+                :value="config.label"
+              >{{ config.label }}</v-tab>
             </v-tabs>
+
+            <v-window v-model="tab">
+              <v-window-item
+                v-for="config in tabsConfig"
+                :key="config.label + '-content'"
+                :value="config.label"
+              >
+                <fixed-costs-table
+                  :entries="config.entries"
+                  :cols="config.cols"
+                  :formComponent="config.formComponent"
+                  @delete-clicked="deleteCost"
+                />
+              </v-window-item>
+            </v-window>
           </v-card>
         </v-skeleton-loader>
       </v-col>
@@ -49,7 +57,7 @@
 
 
 <script>
-import FixedCostsTable from "./FixedCostTable";
+import FixedCostsTable from "./FixedCostTable.vue";
 import LoadablePage from "./LoadablePage";
 import {
   displayMonth,

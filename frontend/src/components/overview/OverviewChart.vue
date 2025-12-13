@@ -1,92 +1,99 @@
+<template>
+  <Line :data="chartData" :options="chartOptions" />
+</template>
+
 <script>
-import { Line } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import { Line } from 'vue-chartjs'
 import { toCurrency } from "../Utils";
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
+
 export default {
-  extends: Line,
+  components: {
+    Line
+  },
   props: ["entries"],
   computed: {
-    chartData: function() {
-      const chartData = { labels: [], data: [] };
-      if (!this.entries) return chartData;
-
-      this.entries.forEach(entry => {
-        chartData.data.push(entry.currentAmount);
-        chartData.labels.push(entry.displayMonth);
-      });
-
-      return chartData;
-    }
-  },
-  watch: {
-    entries: function() {
-      if (this._chart) {
-        this._chart.destroy();
+    chartData() {
+      const labels = [];
+      const data = [];
+      
+      if (this.entries) {
+        this.entries.forEach(entry => {
+          data.push(entry.currentAmount);
+          labels.push(entry.displayMonth);
+        });
       }
-      this.renderLineChart();
-    }
-  },
-  mounted() {
-    this.renderLineChart();
-  },
-  methods: {
-    renderLineChart() {
-      const { labels, data } = this.chartData;
-      this.renderChart(
-        {
-          labels,
-          datasets: [
-            {
-              backgroundColor: "#DDDDFF",
-              borderColor: "#777777",
-              borderWidth: 1,
-              pointRadius: 2,
-              pointHoverRadius: 5,
-              fill: false,
-              data
-            }
-          ]
+
+      return {
+        labels,
+        datasets: [
+          {
+            backgroundColor: "#DDDDFF",
+            borderColor: "#777777",
+            borderWidth: 1,
+            pointRadius: 2,
+            pointHoverRadius: 5,
+            fill: false,
+            data
+          }
+        ]
+      }
+    },
+    chartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: 20
         },
-        {
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: {
-            padding: 20
-          },
-          plugins: {},
+        plugins: {
           legend: {
             display: false
           },
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  fontColor: "white",
-                  callback: function(label) {
-                    return toCurrency(label);
-                  }
-                }
-              }
-            ],
-            xAxes: [
-              {
-                ticks: {
-                  fontColor: "white"
-                }
-              }
-            ]
-          },
-          tooltips: {
+          tooltip: {
             enabled: true,
-            mode: "single",
             callbacks: {
-              label: function(tooltipItems) {
-                return toCurrency(tooltipItems.yLabel);
+              label: function(context) {
+                 return toCurrency(context.parsed.y);
               }
             }
           }
+        },
+        scales: {
+          y: {
+             ticks: {
+               color: "white",
+               callback: function(value) {
+                 return toCurrency(value);
+               }
+             }
+          },
+          x: {
+             ticks: {
+               color: "white"
+             }
+          }
         }
-      );
+      }
     }
   }
 };

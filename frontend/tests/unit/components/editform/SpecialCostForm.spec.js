@@ -1,41 +1,44 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import SpecialCostForm from '@/components/editform/SpecialCostForm.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('SpecialCostForm.vue', () => {
     let vuetify;
-    let localVue;
 
     beforeEach(() => {
-        localVue = createLocalVue();
-        vuetify = new Vuetify();
-        global.fetch = jest.fn();
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
+        global.fetch = vi.fn();
     });
 
     afterEach(() => {
-        global.fetch.mockRestore();
+        vi.restoreAllMocks();
     });
 
     it('should call success on editform after save', async () => {
         global.fetch.mockResolvedValue({});
 
-        const successSpy = jest.fn();
+        const successSpy = vi.fn();
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy }
+            methods: { success: successSpy },
+            emits: ['save']
         };
 
-        const wrapper = shallowMount(SpecialCostForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: LocalStub
+        const wrapper = mount(SpecialCostForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: {
+                    CostEditForm: LocalStub
+                }
             },
-            propsData: { cost: null }
+            props: { cost: null }
         });
 
         wrapper.vm.form.name = 'Special Cost';
@@ -48,11 +51,15 @@ describe('SpecialCostForm.vue', () => {
     });
 
     it('should render MonthDatePicker', () => {
-        const wrapper = shallowMount(SpecialCostForm, {
-            vuetify,
-            localVue,
-            stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } } },
-            propsData: { cost: null }
+        const wrapper = mount(SpecialCostForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: { 
+                    CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } },
+                    MonthDatePicker: true 
+                }
+            },
+            props: { cost: null }
         });
 
         expect(wrapper.findComponent({ name: 'MonthDatePicker' }).exists()).toBe(true);

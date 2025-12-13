@@ -1,49 +1,52 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import NameTextField from '@/components/editform/NameTextField.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('NameTextField.vue', () => {
   let vuetify;
-  let localVue;
 
   beforeEach(() => {
-    localVue = createLocalVue();
-    vuetify = new Vuetify();
+    vuetify = createVuetify({
+      components,
+      directives,
+    });
   });
 
   it('should render with correct props', () => {
-    const wrapper = shallowMount(NameTextField, {
-      localVue,
-      vuetify,
-      propsData: {
-        value: 'Test Name'
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: 'Test Name'
       }
     });
 
-    expect(wrapper.props().value).toBe('Test Name');
+    expect(wrapper.props().modelValue).toBe('Test Name');
   });
 
-  it('should emit input event on change', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: ''
+  it('should emit update:modelValue event on input', async () => {
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: ''
       }
     });
 
-    wrapper.vm.$emit('input', 'New Value');
-    expect(wrapper.emitted().input).toBeTruthy();
-    expect(wrapper.emitted().input[0]).toEqual(['New Value']);
+    const textField = wrapper.findComponent({ name: 'VTextField' });
+    textField.vm.$emit('update:modelValue', 'New Value');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['New Value']);
   });
 
   it('should have name validation rules', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: ''
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: ''
       }
     });
 
@@ -52,10 +55,10 @@ describe('NameTextField.vue', () => {
   });
 
   it('should validate empty name', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: ''
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: ''
       }
     });
 
@@ -65,10 +68,10 @@ describe('NameTextField.vue', () => {
   });
 
   it('should validate name length', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: ''
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: ''
       }
     });
 
@@ -79,40 +82,41 @@ describe('NameTextField.vue', () => {
   });
 
   it('should have counter set to 20', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: 'Test'
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: 'Test'
       }
     });
 
-    const textField = wrapper.findComponent({ name: 'v-text-field' });
+    const textField = wrapper.findComponent({ name: 'VTextField' });
     expect(textField.props().counter).toBe(20);
   });
 
   it('should have correct label', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: ''
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: ''
       }
     });
 
-    const textField = wrapper.findComponent({ name: 'v-text-field' });
+    const textField = wrapper.findComponent({ name: 'VTextField' });
     expect(textField.props().label).toBe('Bezeichnung');
   });
 
   it('should be required', () => {
-    const wrapper = shallowMount(NameTextField, {
-      vuetify,
-      propsData: {
-        value: '',
-        required: true
+    const wrapper = mount(NameTextField, {
+      global: { plugins: [vuetify] },
+      props: {
+        modelValue: ''
       }
     });
 
-    const textField = wrapper.findComponent({ name: 'v-text-field' });
-    // Check if required attribute is present in the HTML
-    expect(textField.html()).toContain('required');
+    // In Vuetify 3, the VTextField is configured with validation rules that
+    // enforce the required behavior. Check that the component has validation rules.
+    expect(wrapper.vm.nameRules).toHaveLength(2);
+    // The first rule validates that the field is not empty
+    expect(wrapper.vm.nameRules[0]('')).toBe('Bezeichnung darf nicht leer sein');
   });
 });

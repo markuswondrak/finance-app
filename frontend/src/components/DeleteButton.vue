@@ -1,8 +1,8 @@
 <template>
   <v-dialog v-model="show" max-width="600">
-    <template v-slot:activator="{ on }">
-      <v-btn icon v-on="on">
-        <v-icon small>fa-trash-alt</v-icon>
+    <template v-slot:activator="{ props }">
+      <v-btn icon v-bind="props">
+        <v-icon size="small">fa-trash-can</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -19,7 +19,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="show = false" text>Abbrechen</v-btn>
+        <v-btn @click="show = false" variant="text">Abbrechen</v-btn>
         <v-btn @click="show = false; $emit('confirm')" color="error">Löschen</v-btn>
       </v-card-actions>
     </v-card>

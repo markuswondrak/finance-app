@@ -1,39 +1,38 @@
 <template>
   <v-card>
-    <v-simple-table fixed-header :class="{ 'tight-table': $vuetify.breakpoint.xs }">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th>Monat</th>
-            <th>Fixe Kosten</th>
-            <th>Sonder Kosten</th>
-            <th>Saldo</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          <tr :key="index" v-for="(entry, index) in entries">
-            <td>{{ entry | displayMonth }}</td>
-            <td>{{ entry.sumFixedCosts | currency | responsive }}</td>
-            <td>{{ entry.sumSpecialCosts | currency | responsive }}</td>
-            <td
-              class="amount"
-              :class="{ 'negative-amount': entry.currentAmount < 0}"
-            >{{ entry.currentAmount | currency | responsive }}</td>
-            <td align="right" class="action-cell">
-              <overview-details v-if="!entry.empty" :detail="{...entry, index}" />
-              <special-cost-form :cost="cost(index, entry.yearMonth)" icon="fa-plus-square"/>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
+    <v-table fixed-header :class="{ 'tight-table': xs }">
+      <thead>
+        <tr>
+          <th>Monat</th>
+          <th>Fixe Kosten</th>
+          <th>Sonder Kosten</th>
+          <th>Saldo</th>
+          <th />
+        </tr>
+      </thead>
+      <tbody>
+        <tr :key="index" v-for="(entry, index) in entries">
+          <td>{{ formatMonth(entry) }}</td>
+          <td>{{ formatResponsive(toCurrency(entry.sumFixedCosts)) }}</td>
+          <td>{{ formatResponsive(toCurrency(entry.sumSpecialCosts)) }}</td>
+          <td
+            class="amount"
+            :class="{ 'negative-amount': entry.currentAmount < 0}"
+          >{{ formatResponsive(toCurrency(entry.currentAmount)) }}</td>
+          <td align="right" class="action-cell">
+            <overview-details v-if="!entry.empty" :detail="{...entry, index}" />
+            <special-cost-form :cost="cost(index, entry.yearMonth)" icon="fa-square-plus"/>
+          </td>
+        </tr>
+      </tbody>
+    </v-table>
   </v-card>
 </template>
 <script>
-import OverviewDetails from "./OverviewDetails";
-import { displayMonth } from "../Utils";
-import SpecialCostForm from "../editform/SpecialCostForm";
+import { useDisplay } from 'vuetify'
+import OverviewDetails from "./OverviewDetails.vue";
+import { displayMonth, toCurrency } from "../Utils";
+import SpecialCostForm from "../editform/SpecialCostForm.vue";
 
 export default {
   props: ["entries"],
@@ -41,15 +40,21 @@ export default {
     OverviewDetails,
     SpecialCostForm
   },
+  setup() {
+    const { xs } = useDisplay();
+    return { xs };
+  },
   data() {
     return {
       month: "No Month"
     };
   },
-  filters: {
-    displayMonth: ({ yearMonth }) => displayMonth(yearMonth),
-
-    responsive: function(value) {
+  methods: {
+    toCurrency,
+    formatMonth({ yearMonth }) {
+       return displayMonth(yearMonth);
+    },
+    formatResponsive(value) {
       if (value.length > 5 && window.innerWidth < 768) {
         var tmp = value.split(" ");
         var rest = tmp[0].substring(0, tmp[0].length - 2);
@@ -57,9 +62,7 @@ export default {
       } else {
         return value;
       }
-    }
-  },
-  methods: {
+    },
     cost(index, dueYearMonth) {
       return {
         index,

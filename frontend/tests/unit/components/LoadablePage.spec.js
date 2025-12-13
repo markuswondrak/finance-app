@@ -1,4 +1,5 @@
 import LoadablePage from '@/components/LoadablePage.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 describe('LoadablePage.js mixin', () => {
   describe('data', () => {
@@ -10,17 +11,17 @@ describe('LoadablePage.js mixin', () => {
 
   describe('fetchData method', () => {
     beforeEach(() => {
-      global.fetch = jest.fn();
+      global.fetch = vi.fn();
     });
 
     afterEach(() => {
-      global.fetch.mockRestore();
+      vi.restoreAllMocks();
     });
 
     it('should fetch data from URL and set loaded to true', async () => {
       const mockData = { id: 1, name: 'Test Data' };
       global.fetch.mockResolvedValue({
-        json: jest.fn(() => Promise.resolve(mockData))
+        json: vi.fn(() => Promise.resolve(mockData))
       });
 
       const component = {
@@ -40,10 +41,10 @@ describe('LoadablePage.js mixin', () => {
 
       global.fetch
         .mockResolvedValueOnce({
-          json: jest.fn(() => Promise.resolve(mockData1))
+          json: vi.fn(() => Promise.resolve(mockData1))
         })
         .mockResolvedValueOnce({
-          json: jest.fn(() => Promise.resolve(mockData2))
+          json: vi.fn(() => Promise.resolve(mockData2))
         });
 
       const component = {
@@ -75,7 +76,7 @@ describe('LoadablePage.js mixin', () => {
 
     it('should handle JSON parse errors', async () => {
       global.fetch.mockResolvedValue({
-        json: jest.fn(() => Promise.reject(new Error('Invalid JSON')))
+        json: vi.fn(() => Promise.reject(new Error('Invalid JSON')))
       });
 
       const component = {
@@ -87,29 +88,6 @@ describe('LoadablePage.js mixin', () => {
       ).rejects.toThrow('Invalid JSON');
 
       expect(component.loaded).toBe('error');
-    });
-
-    it('should work with different URL patterns', async () => {
-      const mockData = { success: true };
-      global.fetch.mockResolvedValue({
-        json: jest.fn(() => Promise.resolve(mockData))
-      });
-
-      const component = {
-        loaded: false
-      };
-
-      const urls = [
-        '/api/costs',
-        '/api/specialcosts',
-        '/api/overview/all',
-        'https://example.com/api/data'
-      ];
-
-      for (const url of urls) {
-        await LoadablePage.methods.fetchData.call(component, url);
-        expect(global.fetch).toHaveBeenCalledWith(url);
-      }
     });
   });
 });

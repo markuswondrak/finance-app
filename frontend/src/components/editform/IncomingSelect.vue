@@ -1,7 +1,7 @@
 <template>
   <v-checkbox
-    :input-value="value"
-    @input="$emit('change', $event)"
+    :model-value="modelValue"
+    @update:modelValue="$emit('update:modelValue', $event)"
     hint="Anhacken, wenn es sich bei dem Betrag um einen eingehenden (z.B. Gehalt) handelt."
     persistent-hint
     label="Eingehend"
@@ -10,9 +10,7 @@
 </template>
 <script>
 export default {
-  props: ["value"]
+  props: ["modelValue"],
+  emits: ["update:modelValue"]
 };
 </script>
-
-
-    

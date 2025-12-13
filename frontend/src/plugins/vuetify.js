@@ -1,12 +1,28 @@
-import '@fortawesome/fontawesome-free/css/all.css' 
+import '@fortawesome/fontawesome-free/css/all.css'
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { h } from 'vue'
 
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
+// Font Awesome 6 iconset for Vuetify 3
+const fa6 = {
+  component: (props) => h('i', {
+    class: `fa-solid ${props.icon}`,
+    'aria-hidden': 'true',
+  }),
+}
 
-Vue.use(Vuetify);
-
-export default new Vuetify({
+export default createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: 'dark',
+  },
   icons: {
-    iconfont: 'fa',
-  },  
-});
+    defaultSet: 'fa6',
+    sets: {
+      fa6,
+    },
+  },
+})

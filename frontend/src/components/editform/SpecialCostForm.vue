@@ -32,11 +32,11 @@
   </cost-edit-form>
 </template>
 <script>
-import CostEditForm from "./CostEditForm";
-import NameTextField from "./NameTextField";
-import CurrencyInput from "./CurrencyInput";
-import IncomingSelect from "./IncomingSelect";
-import MonthDatePicker from "./MonthDatePicker";
+import CostEditForm from "./CostEditForm.vue";
+import NameTextField from "./NameTextField.vue";
+import CurrencyInput from "./CurrencyInput.vue";
+import IncomingSelect from "./IncomingSelect.vue";
+import MonthDatePicker from "./MonthDatePicker.vue";
 import { monthlyCostToForm, CommonForm, baseFormToCost } from "../Utils";
 
 const costToForm = cost => {

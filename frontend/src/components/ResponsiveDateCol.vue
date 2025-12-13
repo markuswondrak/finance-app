@@ -1,8 +1,8 @@
 <template>
-  <td  align="right">
+  <td align="right">
     <v-dialog v-model="dialog" width="500" v-if="visible">
-      <template v-slot:activator="{ on }">
-        <v-icon small v-on="on">fa-calendar-alt</v-icon>
+      <template v-slot:activator="{ props }">
+        <v-icon size="small" v-bind="props">fa-calendar-days</v-icon>
       </template>
       <v-card>
         <v-card-title>{{ entry.name }}</v-card-title>
@@ -10,11 +10,11 @@
         <v-card-text>
           <div v-if="entry.from">
             Ab
-            <strong>{{ entry.from | displayLongMonth }}</strong>
+            <strong>{{ formatMonth(entry.from) }}</strong>
           </div>
           <div v-if="entry.to">
             Bis
-            <strong>{{ entry.to | displayLongMonth }}</strong>
+            <strong>{{ formatMonth(entry.to) }}</strong>
           </div>
         </v-card-text>
       </v-card>
@@ -22,6 +22,7 @@
   </td>
 </template>
 <script>
+import { displayMonth } from "./Utils";
 
 export default {
   props: ["entry"],
@@ -34,6 +35,11 @@ export default {
     return {
       dialog: false
     };
+  },
+  methods: {
+    formatMonth(yearMonth) {
+      return displayMonth(yearMonth, false);
+    }
   }
 };
 </script>

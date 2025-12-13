@@ -2,42 +2,24 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mx-auto" outlined>
+        <v-card class="mx-auto" variant="outlined">
           <v-card-text>
-            <v-skeleton-loader
-              :loading="!loaded"
-              type="card"
-              transition="scale-transition"
-              class="mx-auto"
-            >
-              <overview-chart :entries="entries" />
-            </v-skeleton-loader>
+            <v-skeleton-loader v-if="!loaded" type="image" class="mx-auto" />
+            <overview-chart v-else :entries="entries" />
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <v-skeleton-loader
-          :loading="!loaded"
-          type="card-heading"
-          transition="scale-transition"
-          class="mx-auto"
-        >
-          <current-amount :currentAmount="currentAmount" />
-        </v-skeleton-loader>
+        <v-skeleton-loader v-if="!loaded" type="heading" class="mx-auto" />
+        <current-amount v-else :currentAmount="currentAmount" />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <v-skeleton-loader
-          :loading="!loaded"
-          type="table-tbody"
-          transition="scale-transition"
-          class="mx-auto"
-        >
-          <overview-table :entries="entries" />
-        </v-skeleton-loader>
+        <v-skeleton-loader v-if="!loaded" type="table" class="mx-auto" />
+        <overview-table v-else :entries="entries" />
       </v-col>
     </v-row>
   </v-container>
@@ -45,10 +27,10 @@
 
 
 <script>
-import OverviewChart from "./OverviewChart";
-import CurrentAmount from "./CurrentAmount";
+import OverviewChart from "./OverviewChart.vue";
+import CurrentAmount from "./CurrentAmount.vue";
 import LoadablePage from "../LoadablePage";
-import OverviewTable from "./OverviewTable";
+import OverviewTable from "./OverviewTable.vue";
 
 export default {
   mixins: [LoadablePage],

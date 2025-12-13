@@ -1,29 +1,32 @@
 <template>
   <v-row>
     <v-col>
-      <month-date-picker label="Gültig ab" v-model="value.from" :max="value.to" />
+      <month-date-picker label="Gültig ab" v-model="modelValue.from" :max="modelValue.to" />
     </v-col>
     <v-col>
-      <month-date-picker label="Gültig bis" v-model="value.to" :rules="toDateRules" :min="value.from" />
+      <month-date-picker label="Gültig bis" v-model="modelValue.to" :rules="toDateRules" :min="modelValue.from" />
     </v-col>
   </v-row>
 </template>
 <script>
-import MonthDatePicker from './MonthDatePicker'
+import MonthDatePicker from './MonthDatePicker.vue'
 
 export default {
-  props: ['value'],
+  props: ['modelValue'],
   components: {
     MonthDatePicker
   },
   data() {
     return {
       toDateRules: [
-        d =>
-          !d ||
-          !this.value.from ||
-          new Date(d) >= new Date(this.value.from) ||
-          "'Gültig bis' darf nicht kleiner als 'Gültig ab' sein"
+        d => {
+          if (!d || !this.modelValue.from) return true;
+          // modelValue.from is [year, month]
+          const fromDate = new Date(this.modelValue.from[0], this.modelValue.from[1] - 1);
+          // d is YYYY-MM string from MonthDatePicker
+          const toDate = new Date(d);
+          return toDate >= fromDate || "'Gültig bis' darf nicht kleiner als 'Gültig ab' sein";
+        }
       ]
     }
   }

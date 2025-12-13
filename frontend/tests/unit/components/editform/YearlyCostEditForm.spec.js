@@ -1,41 +1,44 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import YearlyCostEditForm from '@/components/editform/YearlyCostEditForm.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('YearlyCostEditForm.vue', () => {
     let vuetify;
-    let localVue;
 
     beforeEach(() => {
-        localVue = createLocalVue();
-        vuetify = new Vuetify();
-        global.fetch = jest.fn();
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
+        global.fetch = vi.fn();
     });
 
     afterEach(() => {
-        global.fetch.mockRestore();
+        vi.restoreAllMocks();
     });
 
     it('should call success on editform after save', async () => {
         global.fetch.mockResolvedValue({});
 
-        const successSpy = jest.fn();
+        const successSpy = vi.fn();
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy }
+            methods: { success: successSpy },
+            emits: ['save']
         };
 
-        const wrapper = shallowMount(YearlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: {
-                CostEditForm: LocalStub
+        const wrapper = mount(YearlyCostEditForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: {
+                    CostEditForm: LocalStub
+                }
             },
-            propsData: { cost: null }
+            props: { cost: null }
         });
 
         wrapper.vm.form.name = 'Yearly';
@@ -48,11 +51,12 @@ describe('YearlyCostEditForm.vue', () => {
     });
 
     it('should initialize logic correctly', () => {
-        const wrapper = shallowMount(YearlyCostEditForm, {
-            vuetify,
-            localVue,
-            stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } } },
-            propsData: { cost: null }
+        const wrapper = mount(YearlyCostEditForm, {
+            global: { 
+                plugins: [vuetify],
+                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } } }
+            },
+            props: { cost: null }
         });
         expect(wrapper.vm.items).toBeDefined();
         expect(wrapper.vm.items.length).toBe(12);

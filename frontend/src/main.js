@@ -1,24 +1,23 @@
 import './finance.css'
-import Vue from 'vue'
-import App from './App'
-import vuetify from './plugins/vuetify';
-import VueRouter from 'vue-router'
-
+import { createApp } from 'vue'
+import App from './App.vue'
+import vuetify from './plugins/vuetify'
+import router from './router'
 import LoadablePage from './components/LoadablePage'
 import { toCurrency, displayMonth } from './components/Utils' 
 
+const app = createApp(App)
 
-Vue.use(VueRouter);
-Vue.config.productionTip = false
+app.component('loadable-page', LoadablePage)
 
-Vue.component('loadable-page', LoadablePage);
+// Global properties for filters (migration strategy)
+app.config.globalProperties.$filters = {
+  currency: toCurrency,
+  displayMonth: (yearMonth) => displayMonth(yearMonth),
+  displayLongMonth: (yearMonth) => displayMonth(yearMonth, false)
+}
 
-Vue.filter('currency', toCurrency);
-Vue.filter('displayMonth', ({ yearMonth }) => displayMonth(yearMonth));
-Vue.filter('displayLongMonth',  yearMonth  => displayMonth(yearMonth, false));
+app.use(vuetify)
+app.use(router)
 
-
-new Vue({
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+app.mount('#app')

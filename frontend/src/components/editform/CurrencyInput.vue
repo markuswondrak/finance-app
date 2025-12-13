@@ -1,6 +1,6 @@
 <template>
   <v-text-field
-    :value="displayValue"
+    :model-value="displayValue"
     :rules="valueRules"
     @blur="inputChanged"
     @focus="focus = true"
@@ -12,7 +12,8 @@
 import { toCurrency } from "../Utils";
 
 export default {
-  props: ["id", "label", "value", "required"],
+  props: ["id", "label", "modelValue", "required"],
+  emits: ["update:modelValue"],
   data() {
     return {
       focus: false,
@@ -25,14 +26,14 @@ export default {
   
   computed: {
     displayValue() {
-      return this.focus ? this.value : toCurrency(this.value);
+      return this.focus ? this.modelValue : toCurrency(this.modelValue);
     }
   },
   methods: {
     inputChanged(e) {
       const newValue = Number(e.target.value);
       
-      this.$emit("input", isNaN(newValue) ? 0 : newValue);
+      this.$emit("update:modelValue", isNaN(newValue) ? 0 : newValue);
       this.focus = false;
     }
   }

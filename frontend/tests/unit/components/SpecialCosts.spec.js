@@ -1,22 +1,23 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import SpecialCosts from '@/components/SpecialCosts.vue';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-
-Vue.use(Vuetify);
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
 describe('SpecialCosts.vue', () => {
     let vuetify;
-    let localVue;
 
     beforeEach(() => {
-        localVue = createLocalVue();
-        vuetify = new Vuetify();
-        global.fetch = jest.fn();
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
+        global.fetch = vi.fn();
     });
 
     afterEach(() => {
-        global.fetch.mockRestore();
+        vi.restoreAllMocks();
     });
 
     const mockApiData = [
@@ -26,105 +27,107 @@ describe('SpecialCosts.vue', () => {
 
     it('should render container', () => {
         global.fetch.mockResolvedValue({
-            json: jest.fn(() => Promise.resolve(mockApiData))
+            json: vi.fn(() => Promise.resolve(mockApiData))
         });
 
-        const wrapper = shallowMount(SpecialCosts, {
-            vuetify,
-            localVue
+        const wrapper = mount(SpecialCosts, {
+            global: {
+                plugins: [vuetify],
+            }
         });
 
-        const container = wrapper.findComponent({ name: 'v-container' });
+        const container = wrapper.findComponent({ name: 'VContainer' });
         expect(container.exists()).toBe(true);
     });
 
     it('should fetch data on created', async () => {
         global.fetch.mockResolvedValue({
-            json: jest.fn(() => Promise.resolve(mockApiData))
+            json: vi.fn(() => Promise.resolve(mockApiData))
         });
 
-        const wrapper = shallowMount(SpecialCosts, {
-            vuetify,
-            localVue
+        const wrapper = mount(SpecialCosts, {
+            global: {
+                plugins: [vuetify],
+            }
         });
 
-        await wrapper.vm.$nextTick();
+        // Wait for created hook async
         await new Promise(resolve => setTimeout(resolve, 0));
-
+        
         expect(global.fetch).toHaveBeenCalledWith('/api/specialcosts');
     });
 
     it('should populate entries from API', async () => {
         global.fetch.mockResolvedValue({
-            json: jest.fn(() => Promise.resolve(mockApiData))
+            json: vi.fn(() => Promise.resolve(mockApiData))
         });
 
-        const wrapper = shallowMount(SpecialCosts, {
-            vuetify,
-            localVue
+        const wrapper = mount(SpecialCosts, {
+            global: {
+                plugins: [vuetify],
+            }
         });
 
-        await wrapper.vm.$nextTick();
         await new Promise(resolve => setTimeout(resolve, 0));
 
         expect(wrapper.vm.entries).toEqual(mockApiData);
     });
 
-    it('should render CostTable with correct props', async () => {
+    it('should render v-data-table with correct props', async () => {
         global.fetch.mockResolvedValue({
-            json: jest.fn(() => Promise.resolve(mockApiData))
+            json: vi.fn(() => Promise.resolve(mockApiData))
         });
 
-        const wrapper = shallowMount(SpecialCosts, {
-            vuetify,
-            localVue
+        const wrapper = mount(SpecialCosts, {
+            global: {
+                plugins: [vuetify],
+            }
         });
 
-        await wrapper.vm.$nextTick();
         await new Promise(resolve => setTimeout(resolve, 0));
 
-        const costTable = wrapper.findComponent({ name: 'CostTable' });
-        expect(costTable.exists()).toBe(true);
-        expect(costTable.props().entries).toEqual(mockApiData);
-        expect(costTable.props().cols).toBeDefined();
+        const dataTable = wrapper.findComponent({ name: 'VDataTable' });
+        expect(dataTable.exists()).toBe(true);
+        expect(dataTable.props().items).toEqual(mockApiData);
     });
 
-    it('should render SpecialCostForm in slots', () => {
+    it('should render SpecialCostForm in slots', async () => {
         global.fetch.mockResolvedValue({
-            json: jest.fn(() => Promise.resolve(mockApiData))
+            json: vi.fn(() => Promise.resolve(mockApiData))
         });
 
-        const wrapper = shallowMount(SpecialCosts, {
-            vuetify,
-            localVue
+        const wrapper = mount(SpecialCosts, {
+            global: {
+                plugins: [vuetify],
+            }
         });
 
-        const forms = wrapper.findAllComponents({ name: 'SpecialCostForm' });
-        // Note: SpecialCostForm is in scoped slot and action slot. 
-        // valid shallowMount might not render scoped slots content automatically depending on usage,
-        // but findComponent usually works if slot is rendered.
-        // However, CostTable renders the slots.
-        // Since we shallowMount SpecialCosts, CostTable is stubbed. 
-        // We need to verify that SpecialCostForm is PASSED to the slot of CostTable stub?
+        await new Promise(resolve => setTimeout(resolve, 0));
 
-        // Actually, verifying the child components are registered is a good sanity check
-        expect(wrapper.vm.$options.components.SpecialCostForm).toBeDefined();
+        // Verify SpecialCostForm is registered as a component
+        expect(wrapper.vm.$options.components).toHaveProperty('SpecialCostForm');
+        // Verify DeleteButton is also registered
+        expect(wrapper.vm.$options.components).toHaveProperty('DeleteButton');
     });
 
-    it('should have correct columns defined', () => {
+    it('should have correct columns defined in headers', async () => {
         global.fetch.mockResolvedValue({
-            json: jest.fn(() => Promise.resolve(mockApiData))
+            json: vi.fn(() => Promise.resolve(mockApiData))
         });
 
-        const wrapper = shallowMount(SpecialCosts, {
-            vuetify,
-            localVue
+        const wrapper = mount(SpecialCosts, {
+            global: {
+                plugins: [vuetify],
+            }
         });
+        
+        await new Promise(resolve => setTimeout(resolve, 0));
 
-        expect(wrapper.vm.cols).toEqual(expect.arrayContaining([
-            expect.objectContaining({ name: 'name', label: 'Bezeichnung' }),
-            expect.objectContaining({ name: 'amount', label: 'Betrag' }),
-            expect.objectContaining({ name: 'dueDate', label: 'Fällig am' })
+        const headers = wrapper.vm.headers;
+        expect(headers).toEqual(expect.arrayContaining([
+            expect.objectContaining({ title: 'Bezeichnung', key: 'name' }),
+            expect.objectContaining({ title: 'Betrag', key: 'amount' }),
+            expect.objectContaining({ title: 'Fällig am', key: 'dueDate' })
         ]));
     });
 });

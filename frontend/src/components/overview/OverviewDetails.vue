@@ -1,12 +1,12 @@
 <template>
   <v-dialog v-model="show">
-    <template v-slot:activator="{ on }">
-      <v-btn icon v-on="on">
-        <v-icon small>fa-file-alt</v-icon>
+    <template v-slot:activator="{ props }">
+      <v-btn icon variant="text" v-bind="props">
+        <v-icon size="small">fa-file-lines</v-icon>
       </v-btn>
     </template>
     <v-card v-if="detail">
-      <v-card-title class="healine">Details vom {{ detail.yearMonth | displayLongMonth }}</v-card-title>
+      <v-card-title class="healine">Details vom {{ displayMonth(detail.yearMonth, false) }}</v-card-title>
       <v-skeleton-loader
         :loading="!loaded"
         transition="scale-transition"
@@ -16,36 +16,32 @@
         <v-card-text>
           <div v-if="specialCosts && specialCosts.length > 0">
             <h3>Sonderkosten:</h3>
-            <v-simple-table>
-              <template v-slot:default>
-                <tbody>
-                  <tr :key="index" v-for="(cost, index) in specialCosts">
-                    <td>{{ cost.name }}</td>
-                    <td>{{ cost.amount | currency }}</td>
-                    <td align="right">
-                      <special-cost-form :cost="cost" />
-                      <delete-button :name="cost.name" @confirm="deleteSpecialCost(cost.id)" />
-                    </td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
+            <v-table>
+              <tbody>
+                <tr :key="index" v-for="(cost, index) in specialCosts">
+                  <td>{{ cost.name }}</td>
+                  <td>{{ toCurrency(cost.amount) }}</td>
+                  <td align="right">
+                    <special-cost-form :cost="cost" />
+                    <delete-button :name="cost.name" @confirm="deleteSpecialCost(cost.id)" />
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
           </div>
 
           <p></p>
           <div v-if="specialCosts && fixedCosts.length > 0">
             <h3>Fixkosten:</h3>
-            <v-simple-table fixed-header>
-              <template v-slot:default>
-                <tbody>
-                  <tr :key="index" v-for="(cost, index) in fixedCosts">
-                    <td>{{ cost.name }}</td>
-                    <td>{{ cost.amount | currency }}</td>
-                    <td>{{ cost.displayType }}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
+            <v-table fixed-header>
+              <tbody>
+                <tr :key="index" v-for="(cost, index) in fixedCosts">
+                  <td>{{ cost.name }}</td>
+                  <td>{{ toCurrency(cost.amount) }}</td>
+                  <td>{{ cost.displayType }}</td>
+                </tr>
+              </tbody>
+            </v-table>
           </div>
         </v-card-text>
       </v-skeleton-loader>
@@ -55,8 +51,10 @@
 
 <script>
 import LoadablePage from "../LoadablePage";
-import DeleteButton from "../DeleteButton";
-import SpecialCostForm from "../editform/SpecialCostForm";
+import DeleteButton from "../DeleteButton.vue";
+import SpecialCostForm from "../editform/SpecialCostForm.vue";
+import { displayMonth, toCurrency } from "../Utils";
+
 export default {
   mixins: [LoadablePage],
   components: { DeleteButton, SpecialCostForm },
@@ -76,6 +74,8 @@ export default {
     }
   },
   methods: {
+    displayMonth,
+    toCurrency,
     loadData: async function(index) {
       const result = await this.fetchData(
         "/api/overview/detail?index=" + index
