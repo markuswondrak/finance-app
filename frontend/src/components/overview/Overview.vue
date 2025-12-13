@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mx-auto" variant="outlined">
+        <v-card class="mx-auto" variant="flat">
           <v-card-text>
             <v-skeleton-loader v-if="!loaded" type="image" class="mx-auto" />
             <overview-chart v-else :entries="entries" />
