@@ -19,7 +19,7 @@
 
     <v-app-bar app clipped-left>
       <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer" icon="fa-bars" />
       </template>
       <v-app-bar-title>Finanz-App</v-app-bar-title>
     </v-app-bar>

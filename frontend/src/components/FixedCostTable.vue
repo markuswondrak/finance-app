@@ -16,8 +16,10 @@
 
         <!-- Slot for action buttons (edit and delete) -->
         <template v-slot:item.actions="{ item }">
-          <component :is="formComponent" :cost="item" />
-          <delete-button :name="item.name" @confirm="$emit('delete-clicked', item)"/>
+          <div class="d-flex align-center">
+            <component :is="formComponent" :cost="item" />
+            <delete-button :name="item.name" @confirm="$emit('delete-clicked', item)"/>
+          </div>
         </template>
 
       </v-data-table>
