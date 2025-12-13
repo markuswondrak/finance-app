@@ -6,10 +6,6 @@ module.exports = {
     proxy: {
       "/api": {
         target: 'http://localhost:8082'
-      },
-      "/doLogin": {
-        target: 'http://localhost:8080',
-        hostRewrite: 'localhost:8081'
       }
     }
   }, 
@@ -21,6 +17,5 @@ module.exports = {
       title: 'Index Page',
       chunks: ['chunk-vendors', 'chunk-common', 'index']
     },
-    login: 'src/login/login.js'
   }
 }
