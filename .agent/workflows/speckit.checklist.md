@@ -7,10 +7,10 @@ description: Generate a custom checklist for the current feature based on user r
 Generate domain-specific checklists that validate **requirements quality**, not implementation. Checklists are "Unit Tests for English" - they test if requirements are well-written, complete, and unambiguous.
 
 **Supporting Documentation**:
-- Core Concept: `.specify/docs/checklist/core-concept.md`
-- Quality Dimensions: `.specify/docs/checklist/quality-dimensions.md`
-- Domain Examples: `.specify/docs/checklist/domain-examples.md`
-- Clarification Algorithm: `.specify/docs/checklist/clarification-algorithm.md`
+- Core Concept: `.agent/docs/checklist/checklist/core-concept.md`
+- Quality Dimensions: `.agent/docs/checklist/quality-dimensions.md`
+- Domain Examples: `.agent/docs/checklist/domain-examples.md`
+- Clarification Algorithm: `.agent/docs/checklist/clarification-algorithm.md`
 
 ## User Input
 

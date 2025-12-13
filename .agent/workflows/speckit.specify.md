@@ -23,9 +23,9 @@ You **MUST** consider the user input before proceeding (if not empty).
 This workflow creates a feature specification from a natural language description. The specification focuses on **WHAT** users need and **WHY**, avoiding implementation details.
 
 **Supporting Documentation**:
-- Guidelines: `.specify/docs/specification-guidelines.md`
-- Success Criteria: `.specify/docs/success-criteria-guidelines.md`
-- Validation: `.specify/docs/validation-process.md`
+- Guidelines: `.agent/docs/specify/specification-guidelines.md`
+- Success Criteria: `.agent/docs/specify/success-criteria-guidelines.md`
+- Validation: `.agent/docs/specify/validation-process.md`
 
 ## Execution Steps
 
