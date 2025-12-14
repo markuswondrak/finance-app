@@ -20,26 +20,15 @@
                       <v-divider></v-divider>
                   
                       <v-list nav density="compact">
-                        <template v-for="(section, i) in navigationSections" :key="i">
-                          <v-list-subheader 
-                            v-if="!rail && section.title" 
-                            class="text-uppercase text-caption font-weight-bold mt-2"
-                            style="font-size: 0.75rem; letter-spacing: 0.5px;"
-                          >
-                            {{ section.title }}
-                          </v-list-subheader>
-                          <v-divider v-else-if="rail && i > 0" class="mx-2 my-2"></v-divider>
-                          
                           <v-list-item
-                            v-for="(item, j) in section.items"
-                            :key="j"
+                            v-for="(item, i) in navigationItems"
+                            :key="i"
                             :to="item.to"
                             :prepend-icon="item.icon"
                             :title="item.title"
                             active-class="nav-item-active"
                             color="transparent"
                           ></v-list-item>
-                        </template>
                       </v-list>
                     </v-navigation-drawer>
                   </template>
@@ -63,20 +52,10 @@
               
               defineEmits(['update:modelValue'])
               
-              const navigationSections = ref([
-                {
-                  title: 'Hauptmenü',
-                  items: [
-                    { title: 'Überblick', to: '/', icon: 'fa-chart-line' },
-                    { title: 'Fixkosten', to: '/fixedcosts', icon: 'fa-money-check-dollar' }
-                  ]
-                },
-                {
-                  title: 'Sonstiges',
-                  items: [
-                    { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' }
-                  ]
-                }
+              const navigationItems = ref([
+                { title: 'Überblick', to: '/', icon: 'fa-chart-line' },
+                { title: 'Fixkosten', to: '/fixedcosts', icon: 'fa-money-check-dollar' },
+                { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' }
               ])
               </script>
               

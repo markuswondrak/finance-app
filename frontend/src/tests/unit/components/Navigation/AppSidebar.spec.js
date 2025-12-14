@@ -97,11 +97,10 @@ describe('AppSidebar.vue', () => {
     expect(sidebar.props('rail')).toBe(true)
   })
 
-  it('renders section headers and hides them in rail mode', async () => {
+  it('renders all navigation items as flat list', () => {
     const wrapper = mount({
-      template: '<v-layout><AppSidebar :model-value="true" :rail="rail" /></v-layout>',
-      components: { AppSidebar },
-      data: () => ({ rail: false })
+      template: '<v-layout><AppSidebar :model-value="true" :rail="false" /></v-layout>',
+      components: { AppSidebar }
     }, {
       global: {
         plugins: [vuetify],
@@ -113,15 +112,13 @@ describe('AppSidebar.vue', () => {
       }
     })
 
-    // Check for "SONSTIGES" section header
-    expect(wrapper.text()).toContain('Sonstiges')
-    
-    // Switch to rail mode
-    await wrapper.setData({ rail: true })
-    
-    // In rail mode, the header text should be hidden (or replaced by divider logic which implies text is gone)
-    // The spec says: "transform into a simple visual divider in Rail mode"
-    // So the text "SONSTIGES" should not be visible.
-    expect(wrapper.text()).not.toContain('Sonstiges')
+    // Check all 3 navigation items are rendered
+    expect(wrapper.text()).toContain('Überblick')
+    expect(wrapper.text()).toContain('Fixkosten')
+    expect(wrapper.text()).toContain('Sonderkosten')
+
+    // Verify we have exactly 3 list items
+    const items = wrapper.findAllComponents({ name: 'v-list-item' })
+    expect(items.length).toBe(3)
   })
 })
