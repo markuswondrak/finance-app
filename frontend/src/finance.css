@@ -70,11 +70,6 @@ td.action-cell {
   box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
 }
 
-/* Navigation active state enhancement */
-.v-list-item--active {
-  border-left: 3px solid #00B8D4;
-}
-
 /* Footer link styling */
 .v-footer a {
   color: #00B8D4;

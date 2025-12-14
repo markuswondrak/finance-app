@@ -110,25 +110,25 @@ Backend validation and database constraints ensure data integrity. All financial
 
 ### Frontend Stack
 
-- **Framework**: Vue.js 2.6+
-- **UI Library**: Vuetify 2.1+
-- **Routing**: Vue Router 3.1+
-- **Build Tool**: Vue CLI 4.1+
-- **Charts**: Chart.js 2.9+ via vue-chartjs
-- **Testing**: Jest + Vue Test Utils (when coverage requirement added)
+- **Framework**: Vue.js 3.3+
+- **UI Library**: Vuetify 3.3+
+- **Routing**: Vue Router 4.2+
+- **Build Tool**: Vite 4.4+
+- **Charts**: Chart.js 4.4+ via vue-chartjs
+- **Testing**: Vitest + Vue Test Utils
 
 ### Infrastructure
 
 - **Database**: PostgreSQL 15 via Docker Compose
 - **Container Orchestration**: Docker Compose
 - **Backend Port**: 8082
-- **Frontend Dev Port**: 8081
+- **Frontend Dev Port**: 8080
 - **Database Port**: 5432
 
 ### Coding Standards
 
 - **Go**: Follow standard Go conventions, use gofmt
-- **JavaScript**: ESLint with Vue plugin, babel-eslint parser
+- **JavaScript**: ESLint with Vue plugin
 - **Console Logging**: Allowed (no-console rule disabled in frontend)
 - **Documentation**: Code comments for complex business logic
 

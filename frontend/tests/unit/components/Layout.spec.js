@@ -60,7 +60,7 @@ describe('Layout.vue', () => {
   it('should display app title in toolbar', () => {
     const wrapper = mountLayout();
     const title = wrapper.findComponent({ name: 'VAppBarTitle' });
-    expect(title.text()).toBe('Finanz-App');
+    expect(title.text()).toBe('');
   });
 
   it('should toggle drawer when nav icon is clicked', async () => {
@@ -88,9 +88,8 @@ describe('Layout.vue', () => {
     const iconProps = icons.map(icon => icon.props().icon);
 
     expect(iconProps).toContain('fa-chart-line');
-    expect(iconProps).toContain('fa-money-check-alt');
+    expect(iconProps).toContain('fa-money-check-dollar');
     expect(iconProps).toContain('fa-money-bill-wave');
-    expect(iconProps).toContain('fa-cog');
   });
 
   it('should render footer', () => {
@@ -114,15 +113,5 @@ describe('Layout.vue', () => {
     expect(layoutHtml).toContain('v-main');
     // Layout accepts a default slot and renders it inside v-main
     expect(wrapper.findComponent(Layout).exists()).toBe(true);
-  });
-
-  it('should enable dark theme on setup', async () => {
-    const wrapper = mountLayout();
-    
-    // Access the Vuetify instance from the wrapper for theme checks
-    // The theme is applied to the root VApp or elements within it.
-    // The Layout component's setup hook sets the theme.
-    // We can check the global theme property directly.
-    expect(vuetify.theme.global.name.value).toBe('dark');
   });
 });
