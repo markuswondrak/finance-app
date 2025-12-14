@@ -124,10 +124,10 @@
 - [X] T037 [P] Run full test suite and ensure 60% coverage is maintained with pnpm test:coverage
 - [X] T038 [P] Verify WCAG AA contrast compliance for all color combinations (4.5:1 normal text, 3:1 large text)
 - [X] T039 [P] Update any existing snapshot tests that fail due to theme changes
-- [ ] T040 Manual visual QA: verify all screens display dark theme consistently per SC-001
-- [ ] T041 Manual visual QA: verify positive/negative color identification within 2 seconds per SC-002
-- [ ] T042 Manual visual QA: verify typography hierarchy guides eye to important figures per SC-003
-- [ ] T043 Run quickstart.md validation steps to confirm implementation
+- [X] T040 Manual visual QA: verify all screens display dark theme consistently per SC-001
+- [X] T041 Manual visual QA: verify positive/negative color identification within 2 seconds per SC-002
+- [X] T042 Manual visual QA: verify typography hierarchy guides eye to important figures per SC-003
+- [X] T043 Run quickstart.md validation steps to confirm implementation
 
 ---
 
