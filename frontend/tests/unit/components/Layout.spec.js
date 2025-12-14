@@ -83,13 +83,17 @@ describe('Layout.vue', () => {
   it('should have correct icons for navigation items', () => {
     const wrapper = mountLayout();
     const icons = wrapper.findAllComponents({ name: 'VIcon' });
-    
+
     // In Vuetify 3, icons are often passed as props, not text content
     const iconProps = icons.map(icon => icon.props().icon);
 
     expect(iconProps).toContain('fa-chart-line');
     expect(iconProps).toContain('fa-money-check-dollar');
     expect(iconProps).toContain('fa-money-bill-wave');
+<<<<<<< HEAD
+=======
+    expect(iconProps).toContain('fa-gear');
+>>>>>>> 001-fintech-dark-theme
   });
 
   it('should render footer', () => {
@@ -114,4 +118,34 @@ describe('Layout.vue', () => {
     // Layout accepts a default slot and renders it inside v-main
     expect(wrapper.findComponent(Layout).exists()).toBe(true);
   });
+<<<<<<< HEAD
+=======
+
+  it('should use dark theme from vuetify configuration', async () => {
+    // Create vuetify with dark theme configured (matching the real app config)
+    const darkVuetify = createVuetify({
+      components,
+      directives,
+      theme: {
+        defaultTheme: 'dark',
+        themes: {
+          dark: { dark: true }
+        }
+      }
+    });
+
+    const wrapper = mount(VApp, {
+      global: {
+        plugins: [darkVuetify],
+        stubs: { 'router-view': true, 'router-link': true },
+      },
+      slots: {
+        default: Layout,
+      },
+    });
+
+    // The theme should be dark as configured
+    expect(darkVuetify.theme.global.name.value).toBe('dark');
+  });
+>>>>>>> 001-fintech-dark-theme
 });

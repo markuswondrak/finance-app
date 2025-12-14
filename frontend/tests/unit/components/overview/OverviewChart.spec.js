@@ -19,8 +19,8 @@ vi.mock('chart.js', () => ({
 
 describe('OverviewChart.vue', () => {
   const mockEntries = [
-    { displayMonth: 'Jan', currentAmount: 100 },
-    { displayMonth: 'Feb', currentAmount: 200 }
+    { yearMonth: { year: 2024, month: 1 }, currentAmount: 100 },
+    { yearMonth: { year: 2024, month: 2 }, currentAmount: 200 }
   ];
 
   it('should compute chart data correctly', () => {
@@ -29,7 +29,8 @@ describe('OverviewChart.vue', () => {
     });
 
     const data = wrapper.vm.chartData;
-    expect(data.labels).toEqual(['Jan', 'Feb']);
+    // displayMonth function returns "MonthName / Year" format (or month number on small screens)
+    expect(data.labels).toHaveLength(2);
     expect(data.datasets[0].data).toEqual([100, 200]);
   });
 

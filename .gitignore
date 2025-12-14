@@ -11,3 +11,5 @@ application/.idea
 # Development script files
 .dev-logs/
 .dev-pids/
+
+CLAUDE.md

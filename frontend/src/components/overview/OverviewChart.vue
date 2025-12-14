@@ -28,6 +28,16 @@ ChartJS.register(
   Legend
 )
 
+// Theme-aligned chart colors (US2: Financial Trend Color Coding)
+const CHART_COLORS = {
+  positive: '#4ADE80',           // Mint green for positive trends
+  negative: '#F87171',           // Soft coral for negative trends
+  neutral: '#9CA3AF',            // Gray for neutral/zero values
+  fill: 'rgba(74, 222, 128, 0.2)', // Mint green fill at 20% opacity
+  gridLine: '#333333',           // Dark grid lines
+  text: '#FFFFFF'                // White axis labels
+};
+
 export default {
   components: {
     Line
@@ -49,14 +59,14 @@ export default {
         labels,
         datasets: [
           {
-            backgroundColor: "rgba(0, 184, 212, 0.2)",
-            borderColor: "#777777",
+            backgroundColor: CHART_COLORS.fill,
+            borderColor: CHART_COLORS.positive,
             borderWidth: 2,
             pointRadius: 4,
             pointHoverRadius: 6,
-            pointBackgroundColor: "#00B8D4",
-            pointBorderColor: "#00E676",
-            pointHoverBackgroundColor: "#00E676",
+            pointBackgroundColor: CHART_COLORS.positive,
+            pointBorderColor: CHART_COLORS.positive,
+            pointHoverBackgroundColor: CHART_COLORS.positive,
             fill: true,
             tension: 0.3,
             data
@@ -87,15 +97,21 @@ export default {
         scales: {
           y: {
              ticks: {
-               color: "white",
+               color: CHART_COLORS.text,
                callback: function(value) {
                  return toCurrency(value);
                }
+             },
+             grid: {
+               color: CHART_COLORS.gridLine
              }
           },
           x: {
              ticks: {
-               color: "white"
+               color: CHART_COLORS.text
+             },
+             grid: {
+               color: CHART_COLORS.gridLine
              }
           }
         }

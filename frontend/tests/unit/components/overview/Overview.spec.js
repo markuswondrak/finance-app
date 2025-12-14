@@ -251,13 +251,9 @@ describe('Overview.vue', () => {
             expect(wrapper.vm.loaded).toBe(false);
 
             // Verify skeleton loaders are present (through stubs)
+            // The component uses v-if="!loaded" to show skeleton loaders, not a loading prop
             const skeletonLoaders = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
             expect(skeletonLoaders.length).toBe(3);
-
-            // Verify each skeleton loader has loading=true prop
-            skeletonLoaders.forEach(loader => {
-                expect(loader.props('loading')).toBe(true);
-            });
 
             // Resolve the fetch
             resolvePromise({
@@ -268,6 +264,10 @@ describe('Overview.vue', () => {
 
             // After data loads, loaded should be true
             expect(wrapper.vm.loaded).toBe(true);
+
+            // After loading, skeleton loaders should not be present
+            const skeletonLoadersAfter = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
+            expect(skeletonLoadersAfter.length).toBe(0);
         });
 
         it('should display all three overview components in correct order', async () => {

@@ -1,16 +1,13 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: Initial → 1.0.0
-Created: 2025-12-10
-Rationale: Initial constitution creation for vue-frontend refactoring branch
+Version Change: 1.0.0 → 1.1.0
+Updated: 2025-12-14
+Rationale: Added Visual Design Language principle based on UI_REDESIGN.md
 
-Modified Principles: N/A (Initial creation)
+Modified Principles: N/A
 Added Sections:
-  - Core Principles (I-VI)
-  - Technology Standards
-  - Quality Assurance
-  - Governance
+  - VII. Visual Design Language (Fintech Dark Mode aesthetic)
 
 Removed Sections: N/A
 
@@ -96,6 +93,37 @@ Backend validation and database constraints ensure data integrity. All financial
 - Atomic transactions for multi-step operations
 
 **Rationale**: Financial applications require the highest standards of data accuracy and integrity. Users must trust the system with their financial planning.
+
+### VII. Visual Design Language
+
+The application follows a **Fintech Dark Mode** aesthetic designed for modern, engaging financial dashboards.
+
+**Theme & Color Palette**:
+- Deep dark background (`#121212`) with high-contrast elements
+- Surface/cards in elevated gray (`#1E1E1E`) for depth separation
+- **Mint Green** accent for positive financial trends
+- **Soft Red/Coral** alert color for negative trends or warnings
+
+**Visual Principles**:
+- Aggressive rounded corners (`rounded-xl`) for friendly, modern feel
+- High elevation shadows on main cards for visual hierarchy
+- Bold, large typography for key financial numbers (`text-h4`, `font-weight-bold`)
+- Muted, smaller text for labels (`text-overline`, `grey--text`)
+
+**Layout Architecture**:
+- **Sidebar**: Branded navigation with clear active state indicators
+- **Hero Section**: Large forecast chart as the visual anchor (top)
+- **KPI Cards**: Three highlight cards in a row beneath the chart
+  - Current Balance (editable via click-to-edit modal)
+  - Real Monthly Surplus with sparkline trend
+  - Lowest Projected Point (risk indicator)
+
+**Interaction Patterns**:
+- Click-to-edit pattern for key inputs (modal dialogs)
+- Immediate visual feedback on all interactions
+- Charts use gradient fills to anchor data visually
+
+**Rationale**: Financial apps require trust and clarity. The dark mode reduces eye strain, while the visual hierarchy guides users from forecast overview (chart) to actionable metrics (cards), answering key questions: "Will I stay solvent?" and "How much can I spend?"
 
 ## Technology Standards
 
@@ -202,4 +230,4 @@ Constitution follows semantic versioning (MAJOR.MINOR.PATCH):
 - Constitution applies ONLY to vue-frontend branch and future branches derived from it
 - Upon merge to master, this constitution supersedes all prior practices
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-10
+**Version**: 1.1.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-14

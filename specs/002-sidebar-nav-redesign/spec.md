@@ -5,6 +5,7 @@
 **Status**: Draft
 **Input**: Redesign the sidebar navigation with app branding (logo/icon at top), highlight the active page with a pill-shaped background or accent color, and visually separate the miscellaneous section using a subheader style (uppercase, small, muted text) rather than a floating list item. Navigation should clearly indicate current location.
 
+<<<<<<< HEAD
 ## Clarifications
 
 ### Session 2025-12-14
@@ -13,6 +14,8 @@
 - Q: Should the 'Miscellaneous' section remain a collapsible dropdown (accordion) or become a flat list separated by a static header? → A: **Flat List with Header**. The "Miscellaneous" section will be a static header with its items always visible below it.
 - Q: What is the specific visual style for the active navigation item? → A: **Vertical accent bar**. The active item has a colored vertical bar on one side.
 
+=======
+>>>>>>> 001-fintech-dark-theme
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Clear Navigation Location Indicator (Priority: P1)
@@ -25,7 +28,11 @@ As a user navigating through the application, I want to clearly see which page I
 
 **Acceptance Scenarios**:
 
+<<<<<<< HEAD
 1. **Given** I am on any page in the application, **When** I look at the sidebar navigation, **Then** my current page is highlighted with a distinctive vertical accent bar in Mint Green
+=======
+1. **Given** I am on any page in the application, **When** I look at the sidebar navigation, **Then** my current page is highlighted with a distinctive pill-shaped background or accent color
+>>>>>>> 001-fintech-dark-theme
 2. **Given** I click on a different navigation item, **When** the new page loads, **Then** the highlight moves to the newly selected item and removes from the previous one
 3. **Given** I navigate using browser back/forward buttons, **When** the page changes, **Then** the navigation highlight updates to reflect the current page
 
@@ -33,6 +40,7 @@ As a user navigating through the application, I want to clearly see which page I
 
 ### User Story 2 - App Branding in Navigation (Priority: P2)
 
+<<<<<<< HEAD
 As a user of the application, I want to see the app's branding (logo/icon and title) prominently displayed in a dedicated header at the top of the sidebar so that I have a consistent visual anchor and the application feels polished and professional.
 
 **Why this priority**: Branding reinforces product identity and creates a professional impression. It's important but secondary to functional navigation clarity.
@@ -43,6 +51,18 @@ As a user of the application, I want to see the app's branding (logo/icon and ti
 
 1. **Given** I view any page with the sidebar visible, **When** I look at the top of the sidebar, **Then** I see a dedicated header area containing the application logo/icon and title
 2. **Given** the sidebar is in its expanded state, **When** I measure the sidebar header height, **Then** it matches the height of the global top bar
+=======
+As a user of the application, I want to see the app's branding (logo/icon) prominently displayed in the sidebar so that I have a consistent visual anchor and the application feels polished and professional.
+
+**Why this priority**: Branding reinforces product identity and creates a professional impression. It's important but secondary to functional navigation clarity.
+
+**Independent Test**: Can be fully tested by viewing the sidebar and verifying the logo/icon is present, visible, and properly positioned at the top.
+
+**Acceptance Scenarios**:
+
+1. **Given** I view any page with the sidebar visible, **When** I look at the top of the sidebar, **Then** I see the application logo or icon displayed prominently
+2. **Given** the sidebar is in its collapsed or expanded state, **When** I view the branding area, **Then** the branding remains visible and appropriately scaled
+>>>>>>> 001-fintech-dark-theme
 3. **Given** I am a new user seeing the app for the first time, **When** I view the sidebar, **Then** the branding creates a professional and trustworthy impression
 
 ---
@@ -65,27 +85,43 @@ As a user browsing the navigation options, I want to see navigation items logica
 
 ### Edge Cases
 
+<<<<<<< HEAD
 - **Desktop Collapse**: Toggling the sidebar on Desktop switches to "Rail" mode (mini variant), showing only icons. Branding header adapts: App Title is hidden, Logo Icon centers horizontally.
 - **Mobile View**: On mobile/narrow screens, the sidebar is hidden by default and opens as an overlay (drawer). It does not use Rail mode.
 - **Long Labels**: Text should truncate with ellipsis; full text shown on hover or tooltip (especially in Rail mode).
+=======
+- What happens when the sidebar is collapsed (if applicable)? Branding should display as icon-only; section headers may be hidden or shown as dividers
+- What happens on narrow/mobile screens? Navigation should remain accessible via hamburger menu or overlay
+- What happens if a navigation item has a very long label? Text should truncate with ellipsis, with full text shown on hover
+>>>>>>> 001-fintech-dark-theme
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
+<<<<<<< HEAD
 - **FR-001**: Sidebar MUST display application branding (logo/icon and title) within a dedicated header area at the top position, using the logo asset at 'frontend/public/finapp_logo.png'.
 - **FR-002**: Navigation MUST visually highlight the currently active page with a distinctive vertical accent bar using the "Mint Green" color scheme.
 - **FR-003**: Active page indicator MUST update immediately when navigation changes
 - **FR-004**: Section headers MUST be visually distinct text in expanded mode, and transform into a simple visual divider in Rail mode.
+=======
+- **FR-001**: Sidebar MUST display application branding (logo/icon) at the top position
+- **FR-002**: Navigation MUST visually highlight the currently active page with a distinctive pill-shaped background or accent color
+- **FR-003**: Active page indicator MUST update immediately when navigation changes
+- **FR-004**: Navigation sections MUST be separated by section headers styled in uppercase, small, muted text
+>>>>>>> 001-fintech-dark-theme
 - **FR-005**: Section headers MUST be visually distinct from clickable navigation items
 - **FR-006**: Navigation items MUST be clickable and navigate to their respective pages
 - **FR-007**: Long navigation labels MUST truncate gracefully without breaking the layout
 - **FR-008**: Navigation MUST remain accessible on all supported screen sizes
+<<<<<<< HEAD
 - **FR-009**: Desktop Sidebar MUST support a "Rail" (mini) mode where only icons are visible
 - **FR-010**: Mobile Sidebar MUST behave as a temporary overlay (drawer) that hides completely when closed
 - **FR-011**: Top App Bar MUST display the Hamburger menu and Page Title, but NOT duplicate application branding.
 - **FR-012**: The Sidebar Header height MUST match the global Top Bar height.
 - **FR-013**: In "Rail" mode, the Sidebar Header MUST hide the App Title text and horizontally center the Logo Icon.
+=======
+>>>>>>> 001-fintech-dark-theme
 
 ### Key Entities
 
@@ -106,7 +142,14 @@ As a user browsing the navigation options, I want to see navigation items logica
 ## Assumptions
 
 - The application has an existing sidebar navigation that will be enhanced (not built from scratch)
+<<<<<<< HEAD
 - A logo/icon asset exists at 'frontend/public/finapp_logo.png' and must be used for branding
 - The navigation structure (pages and groupings) is already defined
 - The sidebar is persistent (always visible on desktop) rather than collapsible-only
 - Mobile navigation follows responsive patterns (hamburger menu or drawer)
+=======
+- A logo/icon asset exists or will be provided for branding
+- The navigation structure (pages and groupings) is already defined
+- The sidebar is persistent (always visible on desktop) rather than collapsible-only
+- Mobile navigation follows responsive patterns (hamburger menu or drawer)
+>>>>>>> 001-fintech-dark-theme

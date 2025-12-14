@@ -17,24 +17,34 @@ const fa6 = {
 const financeDark = {
   dark: true,
   colors: {
+    // Base dark colors
     background: '#121212',
     surface: '#1E1E1E',
     'surface-bright': '#2A2A2A',
     'surface-light': '#333333',
     'surface-variant': '#424242',
     'on-surface-variant': '#EEEEEE',
+
+    // Primary accents (unchanged)
     primary: '#00B8D4',        // Electric Blue - main accent
     'primary-darken-1': '#0097A7',
     secondary: '#7C4DFF',      // Deep Purple - secondary accent
     'secondary-darken-1': '#651FFF',
-    success: '#00C853',        // Green - income/positive
-    'success-darken-1': '#00A844',
     warning: '#FFB300',        // Amber - warnings
-    error: '#FF5252',          // Red - expense/negative
-    'error-darken-1': '#E53935',
     info: '#00B8D4',           // Electric Blue
-    'income': '#00E676',       // Bright green for income
-    'expense': '#FF5252',      // Red for expenses
+
+    // Financial indicator colors (new - WCAG AA compliant)
+    positive: '#4ADE80',       // Mint green for income/surplus
+    negative: '#F87171',       // Soft coral for expense/deficit
+    neutral: '#9CA3AF',        // Gray for zero values
+
+    // Semantic colors (mapped to financial indicators)
+    success: '#4ADE80',        // Mint green - alias to positive
+    error: '#F87171',          // Soft coral - alias to negative
+
+    // Legacy aliases (for backward compatibility)
+    income: '#4ADE80',         // Mint green - alias to positive
+    expense: '#F87171',        // Soft coral - alias to negative
   },
 }
 

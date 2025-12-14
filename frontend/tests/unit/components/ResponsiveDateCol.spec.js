@@ -92,8 +92,8 @@ describe('ResponsiveDateCol.vue', () => {
 
     const icon = wrapper.findComponent({ name: 'VIcon' });
     expect(icon.exists()).toBe(true);
-    // In Vuetify 3, the icon name is in the class attribute
-    expect(icon.classes()).toContain('fa-calendar-alt');
+    // Font Awesome 6 uses fa-calendar-days instead of fa-calendar-alt
+    expect(icon.classes()).toContain('fa-calendar-days');
   });
 
   it('should display entry name in dialog title', async () => {
