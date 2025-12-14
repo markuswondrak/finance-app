@@ -8,7 +8,7 @@
           transition="scale-transition"
           class="mx-auto"
         >
-          <v-card>
+          <v-card rounded="xl" elevation="4">
             <v-card-text>
               <v-data-table
                 :headers="headers"
@@ -17,7 +17,7 @@
                 :no-data-text="'Keine Einträge bisher'"
               >
                 <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
-                  <td :key="header.name">
+                  <td :key="header.name" :class="header.styleClass">
                     {{ transform(header.transformer, item[header.name]) }}
                   </td>
                 </template>
@@ -50,9 +50,9 @@ import SpecialCostForm from './editform/SpecialCostForm.vue';
 import DeleteButton from './DeleteButton.vue';
 
 const cols = [
-  { name: "name", label: "Bezeichnung" },
-  { name: "amount", label: "Betrag", transformer: toCurrency },
-  { name: "dueDate", label: "Fällig am", transformer: displayMonth }
+  { name: "name", label: "Bezeichnung", styleClass: "text-body-2" },
+  { name: "amount", label: "Betrag", transformer: toCurrency, styleClass: "text-body-1 font-weight-bold" },
+  { name: "dueDate", label: "Fällig am", transformer: displayMonth, styleClass: "text-body-2" }
 ];
 
 const costToForm = cost => {

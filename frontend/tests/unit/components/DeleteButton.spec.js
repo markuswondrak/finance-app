@@ -87,8 +87,8 @@ describe('DeleteButton.vue', () => {
 
     const icon = wrapper.findComponent({ name: 'VIcon' });
     expect(icon.exists()).toBe(true);
-    // In Vuetify 3, the icon name is in the class attribute
-    expect(icon.classes()).toContain('fa-trash-alt');
+    // Font Awesome 6 uses fa-trash-can instead of fa-trash-alt
+    expect(icon.classes()).toContain('fa-trash-can');
   });
 
   it('should emit confirm event when delete button is clicked', async () => {

@@ -7,7 +7,7 @@
           <span v-if="!!btnText">{{ btnText }}</span>
         </v-btn>
       </template>
-      <v-card v-if="dialog">
+      <v-card v-if="dialog" rounded="lg">
         <v-card-title>
           <span>{{ title }}</span>
         </v-card-title>

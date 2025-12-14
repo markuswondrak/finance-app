@@ -9,14 +9,22 @@ td.action-cell {
 
 /* Amount styling */
 .amount { font-weight: bold; }
-.negative-amount { color: #FF5252 !important; }
-.positive-amount { color: #00E676 !important; }
+.negative-amount { color: #F87171 !important; }
+.positive-amount { color: #4ADE80 !important; }
 
-/* Income/Expense colors */
-.text-income { color: #00E676 !important; }
-.text-expense { color: #FF5252 !important; }
-.bg-income { background-color: #00E676 !important; }
-.bg-expense { background-color: #FF5252 !important; }
+/* Financial indicator colors (Theme-aligned: US2) */
+.text-positive { color: #4ADE80 !important; }
+.text-negative { color: #F87171 !important; }
+.text-neutral { color: #9CA3AF !important; }
+.bg-positive { background-color: #4ADE80 !important; }
+.bg-negative { background-color: #F87171 !important; }
+.bg-neutral { background-color: #9CA3AF !important; }
+
+/* Legacy Income/Expense colors (backward compatibility) */
+.text-income { color: #4ADE80 !important; }
+.text-expense { color: #F87171 !important; }
+.bg-income { background-color: #4ADE80 !important; }
+.bg-expense { background-color: #F87171 !important; }
 
 /* Gradient backgrounds */
 .gradient-primary {
@@ -24,11 +32,11 @@ td.action-cell {
 }
 
 .gradient-success {
-  background: linear-gradient(135deg, #00E676 0%, #00C853 100%) !important;
+  background: linear-gradient(135deg, #4ADE80 0%, #22C55E 100%) !important;
 }
 
 .gradient-error {
-  background: linear-gradient(135deg, #FF5252 0%, #E53935 100%) !important;
+  background: linear-gradient(135deg, #F87171 0%, #EF4444 100%) !important;
 }
 
 .gradient-secondary {
@@ -54,11 +62,11 @@ td.action-cell {
 }
 
 .card-accent-success {
-  border-left-color: #00E676 !important;
+  border-left-color: #4ADE80 !important;
 }
 
 .card-accent-error {
-  border-left-color: #FF5252 !important;
+  border-left-color: #F87171 !important;
 }
 
 /* Glow effects for buttons */
@@ -67,7 +75,7 @@ td.action-cell {
 }
 
 .btn-glow-success:hover {
-  box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
 }
 
 /* Navigation active state enhancement */
@@ -82,5 +90,5 @@ td.action-cell {
 }
 
 .v-footer a:hover {
-  color: #00E676;
+  color: #4ADE80;
 }

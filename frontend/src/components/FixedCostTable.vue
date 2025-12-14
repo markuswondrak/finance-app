@@ -1,5 +1,5 @@
 <template>
-  <v-card class="card-accent-primary">
+  <v-card class="card-accent-primary" rounded="xl" elevation="4">
     <v-card-text>
       <v-data-table
         :headers="transformedHeaders"

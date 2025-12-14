@@ -5,6 +5,14 @@
 **Status**: Draft
 **Input**: Transform the UI into a modern Fintech Dashboard with deep dark background, high-contrast elements, mint green accents for positive financial trends, soft red/coral for negative trends, rounded corners on all cards, and bold typography for key numbers.
 
+## Clarifications
+
+### Session 2025-12-13
+
+- Q: Should specific hex color values be locked into the spec, or defer to Vuetify theme defaults? → A: Defer to Vuetify theme defaults within mint green/coral families
+- Q: Fallback approach if chart library has color customization limitations? → A: Accept limited coloring if library doesn't support per-segment colors
+- Q: How should "large radius" for rounded corners be defined? → A: Use Vuetify's standard large border-radius preset (xl or lg)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Modern Dark Visual Foundation (Priority: P1)
@@ -67,7 +75,7 @@ As a user scanning my dashboard, I want key financial numbers to be prominently 
 
 - **FR-001**: Application MUST display a deep dark background color across all screens and views
 - **FR-002**: Application MUST display card surfaces with a slightly lighter shade than the background to create visual depth
-- **FR-003**: All cards and containers MUST display with rounded corners (large radius) for a modern, friendly appearance
+- **FR-003**: All cards and containers MUST display with rounded corners using Vuetify's standard large border-radius preset (xl or lg) for a modern, friendly appearance
 - **FR-004**: Main cards MUST display with elevated shadows to separate them from the background
 - **FR-005**: Positive financial values MUST display in a mint green accent color
 - **FR-006**: Negative financial values and alerts MUST display in a soft red/coral color
@@ -79,7 +87,7 @@ As a user scanning my dashboard, I want key financial numbers to be prominently 
 ### Key Entities
 
 - **Theme Configuration**: The collection of color values, typography settings, and shape parameters that define the visual appearance
-- **Color Palette**: The set of colors including background, surface, primary accent (mint green), alert color (soft red), and text colors
+- **Color Palette**: The set of colors including background, surface, primary accent (mint green family), alert color (soft red/coral family), and text colors. Specific hex values will be selected from Vuetify's theme system to ensure accessibility compliance and visual harmony.
 - **Typography Scale**: The hierarchy of font sizes and weights for headings, values, labels, and body text
 
 ## Success Criteria *(mandatory)*
@@ -97,4 +105,4 @@ As a user scanning my dashboard, I want key financial numbers to be prominently 
 - The application already uses a component library (Vuetify) that supports theme customization
 - Dark mode is the only theme (no toggle between light/dark mode required for this feature)
 - Font families remain unchanged; only sizes and weights are adjusted
-- The existing chart library supports color customization for positive/negative values
+- The existing chart library supports color customization for positive/negative values. If per-segment coloring is not supported, limited coloring capabilities are acceptable for this feature scope.

@@ -9,10 +9,12 @@
           class="mx-auto"
         >
           <v-banner sticky icon="fa-wallet" elevation="4">
-            Aktuelle Bilanz (pro Monat):
-            <strong
-              :class="{ red : currentBalance < 0 }"
-            >{{ currentBalanceDisplay }}</strong>
+            <template v-slot:text>
+              <span class="text-body-2 text-medium-emphasis mr-2">Aktuelle Bilanz (pro Monat):</span>
+              <strong
+                :class="[currentBalance < 0 ? 'text-error' : 'text-success', 'text-h4', 'font-weight-bold']"
+              >{{ currentBalanceDisplay }}</strong>
+            </template>
           </v-banner>
         </v-skeleton-loader>
       </v-col>
@@ -25,7 +27,7 @@
           transition="scale-transition"
           class="mx-auto"
         >
-          <v-card no-body>
+          <v-card no-body rounded="xl" elevation="4">
             <v-tabs v-model="tab" grow>
               <v-tab
                 v-for="config in tabsConfig"
@@ -68,15 +70,16 @@ import {
 } from "./Utils";
 
 const defaultCols = [
-  { name: "name", label: "Bezeichnung" },
-  { name: "amount", label: "Betrag", transformer: toCurrency },
+  { name: "name", label: "Bezeichnung", styleClass: "text-body-2" },
+  { name: "amount", label: "Betrag", transformer: toCurrency, styleClass: "text-body-1 font-weight-bold" },
   {
     name: "from",
     label: "Gültig ab",
     transformer: displayMonth,
-    hide: true
+    hide: true,
+    styleClass: "text-caption"
   },
-  { name: "to", label: "Gültig bis", transformer: displayMonth, hide: true }
+  { name: "to", label: "Gültig bis", transformer: displayMonth, hide: true, styleClass: "text-caption" }
 ];
 
 function cols(additionalCols = false) {
@@ -89,15 +92,15 @@ function cols(additionalCols = false) {
 }
 
 const quaterlyCols = cols([
-  { name: "dueMonth", label: "Fällig in", transformer: toQuaterlyDueDate }
+  { name: "dueMonth", label: "Fällig in", transformer: toQuaterlyDueDate, styleClass: "text-body-2" }
 ]);
 
 const halfyearlyCols = cols([
-  { name: "dueMonth", label: "Fällig in", transformer: toHalfyearlyDueDate }
+  { name: "dueMonth", label: "Fällig in", transformer: toHalfyearlyDueDate, styleClass: "text-body-2" }
 ]);
 
 const yearlyCols = cols([
-  { name: "dueMonth", label: "Fällig im", transformer: toMonth }
+  { name: "dueMonth", label: "Fällig im", transformer: toMonth, styleClass: "text-body-2" }
 ]);
 
 export default {

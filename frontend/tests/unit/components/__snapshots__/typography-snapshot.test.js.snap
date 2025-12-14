@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`User Story 3: Typography Hierarchy Snapshots > CurrentAmount match snapshot 1`] = `
+"<div class="v-banner v-banner--stacked v-banner--sticky v-theme--light v-banner--density-default v-banner--mobile elevation-4" role="banner">
+  <div class="v-banner__prepend">
+    <div class="v-avatar v-theme--light bg-surface-bright v-avatar--density-default v-avatar--size-default v-avatar--variant-flat"><i class="fa-piggy-bank mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true"></i>
+      <!----><span class="v-avatar__underlay"></span>
+    </div>
+  </div>
+  <div class="v-banner__content">
+    <div class="v-banner-text"><span class="text-body-2 text-medium-emphasis mr-2">Aktueller Betrag:</span><strong class="text-success text-h4 font-weight-bold">1.234.56 €</strong></div>
+    <!---->
+    <!---->
+  </div>
+  <div class="v-banner-actions"><button type="button" class="v-btn v-btn--slim v-theme--light text-primary v-btn--density-default v-btn--size-default v-btn--variant-text"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
+      <!----><span class="v-btn__content" data-no-activator="">Ändern</span>
+      <!---->
+      <!---->
+    </button></div>
+</div>"
+`;
+
+exports[`User Story 3: Typography Hierarchy Snapshots > OverviewDetails match snapshot 1`] = `
+"<button type="button" class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text" aria-haspopup="dialog"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
+  <!----><span class="v-btn__content" data-no-activator=""><i class="fa-file-lines mdi v-icon notranslate v-theme--light v-icon--size-small" aria-hidden="true"></i></span>
+  <!---->
+  <!---->
+</button>
+<!--teleport start-->
+<!--teleport end-->"
+`;

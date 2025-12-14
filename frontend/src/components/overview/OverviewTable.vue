@@ -1,5 +1,5 @@
 <template>
-  <v-card class="card-accent-primary" elevation="2">
+  <v-card class="card-accent-primary" rounded="xl" elevation="4">
     <v-table fixed-header :class="{ 'tight-table': xs }" hover>
       <thead>
         <tr>
@@ -12,12 +12,12 @@
       </thead>
       <tbody>
         <tr :key="index" v-for="(entry, index) in entries">
-          <td>{{ formatMonth(entry) }}</td>
-          <td>{{ formatResponsive(toCurrency(entry.sumFixedCosts)) }}</td>
-          <td>{{ formatResponsive(toCurrency(entry.sumSpecialCosts)) }}</td>
+          <td class="text-body-2">{{ formatMonth(entry) }}</td>
+          <td class="text-body-1">{{ formatResponsive(toCurrency(entry.sumFixedCosts)) }}</td>
+          <td class="text-body-1">{{ formatResponsive(toCurrency(entry.sumSpecialCosts)) }}</td>
           <td
-            class="amount"
-            :class="entry.currentAmount >= 0 ? 'positive-amount' : 'negative-amount'"
+            class="amount text-h6"
+            :class="getAmountColorClass(entry.currentAmount)"
           >{{ formatResponsive(toCurrency(entry.currentAmount)) }}</td>
           <td align="right" class="action-cell">
             <overview-details v-if="!entry.empty" :detail="{...entry, index}" />
@@ -53,6 +53,11 @@ export default {
     toCurrency,
     formatMonth({ yearMonth }) {
        return displayMonth(yearMonth);
+    },
+    getAmountColorClass(amount) {
+      if (amount > 0) return 'positive-amount';
+      if (amount < 0) return 'negative-amount';
+      return 'text-neutral';
     },
     formatResponsive(value) {
       if (value.length > 5 && window.innerWidth < 768) {

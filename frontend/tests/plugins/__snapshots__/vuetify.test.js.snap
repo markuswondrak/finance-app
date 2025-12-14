@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Vuetify Theme Configuration > Theme Snapshot > should match theme configuration snapshot 1`] = `
+{
+  "background": "#121212",
+  "error": "#F87171",
+  "expense": "#F87171",
+  "income": "#4ADE80",
+  "info": "#00B8D4",
+  "negative": "#F87171",
+  "neutral": "#9CA3AF",
+  "on-surface-variant": "#EEEEEE",
+  "positive": "#4ADE80",
+  "primary": "#00B8D4",
+  "primary-darken-1": "#0097A7",
+  "secondary": "#7C4DFF",
+  "secondary-darken-1": "#651FFF",
+  "success": "#4ADE80",
+  "surface": "#1E1E1E",
+  "surface-bright": "#2A2A2A",
+  "surface-light": "#333333",
+  "surface-variant": "#424242",
+  "warning": "#FFB300",
+}
+`;

@@ -5,7 +5,7 @@
         <v-icon size="small">fa-file-lines</v-icon>
       </v-btn>
     </template>
-    <v-card v-if="detail">
+    <v-card v-if="detail" rounded="xl" elevation="4">
       <v-card-title class="healine">Details vom {{ displayMonth(detail.yearMonth, false) }}</v-card-title>
       <v-skeleton-loader
         :loading="!loaded"
@@ -19,8 +19,8 @@
             <v-table>
               <tbody>
                 <tr :key="index" v-for="(cost, index) in specialCosts">
-                  <td>{{ cost.name }}</td>
-                  <td>{{ toCurrency(cost.amount) }}</td>
+                  <td class="text-body-2">{{ cost.name }}</td>
+                  <td :class="[getAmountColorClass(cost.amount), 'text-h5']">{{ toCurrency(cost.amount) }}</td>
                   <td align="right">
                     <special-cost-form :cost="cost" />
                     <delete-button :name="cost.name" @confirm="deleteSpecialCost(cost.id)" />
@@ -36,8 +36,8 @@
             <v-table fixed-header>
               <tbody>
                 <tr :key="index" v-for="(cost, index) in fixedCosts">
-                  <td>{{ cost.name }}</td>
-                  <td>{{ toCurrency(cost.amount) }}</td>
+                  <td class="text-body-2">{{ cost.name }}</td>
+                  <td :class="[getAmountColorClass(cost.amount), 'text-h5']">{{ toCurrency(cost.amount) }}</td>
                   <td>{{ cost.displayType }}</td>
                 </tr>
               </tbody>
@@ -76,6 +76,12 @@ export default {
   methods: {
     displayMonth,
     toCurrency,
+    getAmountColorClass(amount) {
+      // Costs are typically negative expenses
+      if (amount > 0) return 'text-positive';
+      if (amount < 0) return 'text-negative';
+      return 'text-neutral';
+    },
     loadData: async function(index) {
       const result = await this.fetchData(
         "/api/overview/detail?index=" + index
