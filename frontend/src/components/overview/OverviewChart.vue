@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 30em">
+  <div class="overview-chart-wrapper">
     <Line :data="chartData" :options="chartOptions" />
   </div>
 </template>
@@ -120,3 +120,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.overview-chart-wrapper {
+  height: 100%;
+  width: 100%;
+}
+</style>

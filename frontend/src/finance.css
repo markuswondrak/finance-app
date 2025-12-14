@@ -87,3 +87,44 @@ td.action-cell {
 .v-footer a:hover {
   color: #4ADE80;
 }
+
+/* Glassmorphism utility classes */
+.glass {
+  background-color: rgba(30, 30, 30, 0.6) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-button {
+  background-color: rgba(30, 30, 30, 0.7) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.2s ease;
+}
+
+.glass-button:hover {
+  background-color: rgba(50, 50, 50, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.glass-button:focus-visible {
+  outline: 2px solid #00B8D4 !important;
+  outline-offset: 2px;
+}
+
+/* Floating navigation toggle positioning */
+.nav-toggle-desktop {
+  position: fixed !important;
+  bottom: 16px;
+  left: 16px;
+  z-index: 1006;
+}
+
+.nav-toggle-mobile {
+  position: fixed !important;
+  top: 16px;
+  left: 16px;
+  z-index: 1006;
+}

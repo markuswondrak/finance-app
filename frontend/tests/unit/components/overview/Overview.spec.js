@@ -46,7 +46,7 @@ describe('Overview.vue', () => {
 
     it('should fetch data on created', async () => {
         const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>' };
-        const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>' };
+        const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
         const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>' };
 
         const wrapper = mount(Overview, {
@@ -54,7 +54,7 @@ describe('Overview.vue', () => {
                 plugins: [vuetify],
                 stubs: {
                     OverviewChart: OverviewChartStub,
-                    CurrentAmount: CurrentAmountStub,
+                    KPISection: KPISectionStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
                 }
@@ -71,7 +71,7 @@ describe('Overview.vue', () => {
 
     it('should render child components', async () => {
         const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>' };
-        const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>' };
+        const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
         const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>' };
 
         const wrapper = mount(Overview, {
@@ -79,7 +79,7 @@ describe('Overview.vue', () => {
                 plugins: [vuetify],
                 stubs: {
                     OverviewChart: OverviewChartStub,
-                    CurrentAmount: CurrentAmountStub,
+                    KPISection: KPISectionStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
                 }
@@ -89,7 +89,7 @@ describe('Overview.vue', () => {
         await new Promise(resolve => setTimeout(resolve, 0));
 
         expect(wrapper.findComponent({ name: 'OverviewChart' }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: 'CurrentAmount' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'KPISection' }).exists()).toBe(true);
         expect(wrapper.findComponent({ name: 'OverviewTable' }).exists()).toBe(true);
     });
 
@@ -134,7 +134,7 @@ describe('Overview.vue', () => {
                 template: '<div class="chart-stub"></div>',
                 props: ['entries']
             };
-            const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>', props: ['currentAmount'] };
+            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
             const wrapper = mount(Overview, {
@@ -142,7 +142,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -163,7 +163,7 @@ describe('Overview.vue', () => {
             });
 
             const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
-            const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>', props: ['currentAmount'] };
+            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = {
                 name: 'OverviewTable',
                 template: '<div class="table-stub"></div>',
@@ -175,7 +175,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -190,16 +190,16 @@ describe('Overview.vue', () => {
             expect(table.props('entries')).toHaveLength(3);
         });
 
-        it('should pass currentAmount to CurrentAmount component', async () => {
+        it('should pass metrics to KPISection component', async () => {
             global.fetch = vi.fn().mockResolvedValue({
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
             const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
-            const CurrentAmountStub = {
-                name: 'CurrentAmount',
-                template: '<div class="amount-stub"></div>',
-                props: ['currentAmount']
+            const KPISectionStub = {
+                name: 'KPISection',
+                template: '<div class="kpi-stub"></div>',
+                props: ['metrics', 'loading']
             };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
@@ -208,7 +208,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -217,9 +217,10 @@ describe('Overview.vue', () => {
 
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            const currentAmount = wrapper.findComponent({ name: 'CurrentAmount' });
-            expect(currentAmount.exists()).toBe(true);
-            expect(currentAmount.props('currentAmount')).toBe(1500);
+            const kpiSection = wrapper.findComponent({ name: 'KPISection' });
+            expect(kpiSection.exists()).toBe(true);
+            expect(kpiSection.props('metrics')).toHaveLength(3);
+            expect(kpiSection.props('loading')).toBe(false);
         });
 
         it('should show skeleton loaders while loading', async () => {
@@ -232,7 +233,7 @@ describe('Overview.vue', () => {
             global.fetch = vi.fn().mockReturnValue(pendingPromise);
 
             const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
-            const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>', props: ['currentAmount'] };
+            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
             const wrapper = mount(Overview, {
@@ -240,7 +241,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -250,10 +251,10 @@ describe('Overview.vue', () => {
             // Before data loads, loaded should be false
             expect(wrapper.vm.loaded).toBe(false);
 
-            // Verify skeleton loaders are present (through stubs)
-            // The component uses v-if="!loaded" to show skeleton loaders, not a loading prop
+            // Verify skeleton loaders are present (chart and table have v-if skeleton loaders)
+            // KPISection handles its own loading state via props
             const skeletonLoaders = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
-            expect(skeletonLoaders.length).toBe(3);
+            expect(skeletonLoaders.length).toBe(2); // Chart and Table skeletons
 
             // Resolve the fetch
             resolvePromise({
@@ -276,7 +277,7 @@ describe('Overview.vue', () => {
             });
 
             const OverviewChartStub = { name: 'OverviewChart', template: '<div data-testid="chart"></div>', props: ['entries'] };
-            const CurrentAmountStub = { name: 'CurrentAmount', template: '<div data-testid="amount"></div>', props: ['currentAmount'] };
+            const KPISectionStub = { name: 'KPISection', template: '<div data-testid="kpi"></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div data-testid="table"></div>', props: ['entries'] };
 
             const wrapper = mount(Overview, {
@@ -284,7 +285,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -295,10 +296,10 @@ describe('Overview.vue', () => {
 
             // All components should be rendered
             expect(wrapper.find('[data-testid="chart"]').exists()).toBe(true);
-            expect(wrapper.find('[data-testid="amount"]').exists()).toBe(true);
+            expect(wrapper.find('[data-testid="kpi"]').exists()).toBe(true);
             expect(wrapper.find('[data-testid="table"]').exists()).toBe(true);
 
-            // Check container structure - 3 rows for chart, amount, table
+            // Check container structure - 3 rows for chart, kpi, table
             const rows = wrapper.findAllComponents({ name: 'VRow' });
             expect(rows.length).toBe(3);
         });
@@ -314,7 +315,7 @@ describe('Overview.vue', () => {
             });
 
             const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
-            const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>', props: ['currentAmount'] };
+            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
             const wrapper = mount(Overview, {
@@ -322,7 +323,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -337,16 +338,18 @@ describe('Overview.vue', () => {
 
             const chart = wrapper.findComponent({ name: 'OverviewChart' });
             const table = wrapper.findComponent({ name: 'OverviewTable' });
+            const kpiSection = wrapper.findComponent({ name: 'KPISection' });
 
             expect(chart.props('entries')).toEqual([]);
             expect(table.props('entries')).toEqual([]);
+            expect(kpiSection.props('metrics')).toEqual([]);
         });
 
         it('should handle API error gracefully', async () => {
             global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
             const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
-            const CurrentAmountStub = { name: 'CurrentAmount', template: '<div></div>', props: ['currentAmount'] };
+            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
             // Capture errors thrown from the created hook (LoadablePage re-throws after setting loaded='error')
@@ -358,7 +361,7 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         OverviewChart: OverviewChartStub,
-                        CurrentAmount: CurrentAmountStub,
+                        KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     },

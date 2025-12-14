@@ -1,14 +1,14 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.0.0 → 1.1.0
+Version Change: 1.1.0 → 1.2.0
 Updated: 2025-12-14
-Rationale: Added Visual Design Language principle based on UI_REDESIGN.md
+Rationale: Updated Layout Architecture to define floating navigation toggle behavior (overlay vs push)
 
-Modified Principles: N/A
-Added Sections:
-  - VII. Visual Design Language (Fintech Dark Mode aesthetic)
+Modified Principles:
+  - VII. Visual Design Language - Layout Architecture subsection expanded
 
+Added Sections: N/A
 Removed Sections: N/A
 
 Templates Status:
@@ -111,8 +111,13 @@ The application follows a **Fintech Dark Mode** aesthetic designed for modern, e
 - Muted, smaller text for labels (`text-overline`, `grey--text`)
 
 **Layout Architecture**:
-- **Sidebar**: Branded navigation with clear active state indicators
-- **Hero Section**: Large forecast chart as the visual anchor (top)
+- **Navigation Toggle**: Floating button with glassmorphism effect (semi-transparent + blur)
+  - Positioned bottom-left on desktop, top-left on mobile
+  - Overlays content without displacing it
+- **Navigation Drawer**:
+  - Mobile: Slide-in overlay that covers content
+  - Desktop: Persistent side panel that pushes/resizes main content
+- **Hero Section**: Large forecast chart as the visual anchor (top of main content)
 - **KPI Cards**: Three highlight cards in a row beneath the chart
   - Current Balance (editable via click-to-edit modal)
   - Real Monthly Surplus with sparkline trend
@@ -230,4 +235,4 @@ Constitution follows semantic versioning (MAJOR.MINOR.PATCH):
 - Constitution applies ONLY to vue-frontend branch and future branches derived from it
 - Upon merge to master, this constitution supersedes all prior practices
 
-**Version**: 1.1.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-14
+**Version**: 1.2.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-14

@@ -1,8 +1,10 @@
 <template>
   <v-navigation-drawer
+    id="app-navigation"
     :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
             :rail="rail"
+            :temporary="temporary"
             app
             color="surface"
                     >
@@ -50,6 +52,10 @@
                   default: null
                 },
                 rail: {
+                  type: Boolean,
+                  default: false
+                },
+                temporary: {
                   type: Boolean,
                   default: false
                 }

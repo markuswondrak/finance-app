@@ -1,13 +1,22 @@
 <template>
   <v-app id="inspire">
-    <AppSidebar v-model="drawer" :rail="rail" />
+    <AppSidebar
+      v-model="drawer"
+      :rail="rail"
+      :temporary="mobile"
+    />
 
-    <v-app-bar app clipped-left color="surface-bright" elevation="2">
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="toggleDrawer" :icon="navIcon" color="income" />
-      </template>
-      <v-app-bar-title></v-app-bar-title>
-    </v-app-bar>
+    <!-- Floating Navigation Toggle Button -->
+    <v-btn
+      :class="[mobile ? 'nav-toggle-mobile' : 'nav-toggle-desktop', 'glass-button']"
+      :icon="navIcon"
+      color="income"
+      size="large"
+      :aria-label="mobile ? (drawer ? 'Navigation schließen' : 'Navigation öffnen') : (rail ? 'Navigation erweitern' : 'Navigation minimieren')"
+      :aria-expanded="mobile ? drawer : !rail"
+      aria-controls="app-navigation"
+      @click="toggleDrawer"
+    />
 
     <v-main>
       <RouterView />
@@ -23,17 +32,31 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { RouterView } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/Navigation/AppSidebar.vue'
 
 const { mobile } = useDisplay()
-const drawer = ref(null)
+
+// Navigation state
+const drawer = ref(!mobile.value) // Start open on desktop, closed on mobile
 const rail = ref(false)
 
+// Update drawer state when switching between mobile/desktop
+watch(mobile, (isMobile) => {
+  if (isMobile) {
+    drawer.value = false
+    rail.value = false
+  } else {
+    drawer.value = true
+  }
+})
+
 const navIcon = computed(() => {
-  if (mobile.value) return 'fa-bars'
+  if (mobile.value) {
+    return drawer.value ? 'fa-xmark' : 'fa-bars'
+  }
   return rail.value ? 'fa-chevron-right' : 'fa-chevron-left'
 })
 
