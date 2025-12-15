@@ -10,7 +10,7 @@
         >
           <v-banner sticky icon="fa-wallet" elevation="4">
             <template v-slot:text>
-              <span class="text-body-2 text-medium-emphasis mr-2">Aktuelle Bilanz (pro Monat):</span>
+              <span class="text-body-2 text-medium-emphasis mr-2">Monatliche Summe:</span>
               <strong
                 :class="[currentBalance < 0 ? 'text-error' : 'text-success', 'text-h4', 'font-weight-bold']"
               >{{ currentBalanceDisplay }}</strong>

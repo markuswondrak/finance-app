@@ -78,6 +78,11 @@ As a user viewing the lowest point warning, I want to know when this lowest poin
 - **FR-010**: Card MUST update when forecast data changes (e.g., when current balance is modified)
 - **FR-011**: When lowest point is exactly zero, card MUST display in neutral styling (not alert)
 
+### Non-Functional Requirements
+
+- **NFR-001**: The card MUST have rounded corners (e.g., `rounded="xl"` in Vuetify).
+- **NFR-002**: The card MUST adhere to the application's color schema, specifically using `positive` for positive values and `negative` for negative values.
+
 ### Key Entities
 
 - **Forecast Array**: The calculated projection of balance values for the next 12 months

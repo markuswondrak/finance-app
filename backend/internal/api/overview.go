@@ -113,7 +113,11 @@ func determineDisplayType(dueMonth []int) string {
 func (s *Server) createOverview() Overview {
 	// TODO retrieve current amount
 
-	currentAmount := 3000
+	currentAmount := 0
+	if user, err := s.Repo.GetUser(); err == nil {
+		currentAmount = user.CurrentAmount
+	}
+
 	entries := make([]OverviewEntry, MAX_ENTRIES)
 
 	relevantFixedCostsMap := s.createRelevantMap()

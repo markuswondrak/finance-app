@@ -227,6 +227,6 @@ describe('FixedCosts.vue', () => {
 
     const banner = wrapper.findComponent({ name: 'VBanner' });
     expect(banner.exists()).toBe(true);
-    expect(banner.text()).toContain('Aktuelle Bilanz (pro Monat)');
+    expect(banner.text()).toContain('Monatliche Summe:');
   });
 });

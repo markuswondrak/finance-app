@@ -78,6 +78,11 @@ As a user who wants to understand my finances, I want the card to help me recogn
 - **FR-009**: Card MUST display a label identifying it as "Monthly Surplus" or similar
 - **FR-010**: Sparkline MUST handle partial data gracefully when less than 6 months of history exists
 
+### Non-Functional Requirements
+
+- **NFR-001**: The card MUST have rounded corners (e.g., `rounded="xl"` in Vuetify).
+- **NFR-002**: The card MUST adhere to the application's color schema, specifically using `positive` for positive values and `negative` for negative values.
+
 ### Key Entities
 
 - **Monthly Income**: The user's regular monthly inflow of money

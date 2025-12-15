@@ -6,6 +6,7 @@ import "wondee/finance-app-backend/internal/models"
 type MockRepository struct {
 	FixedCosts   []models.FixedCost
 	SpecialCosts []models.SpecialCost
+	User         models.User
 }
 
 func (m *MockRepository) LoadFixedCosts() *[]models.FixedCost {
@@ -62,4 +63,17 @@ func (m *MockRepository) DeleteSpecialCost(id int) {
 		}
 	}
 	m.SpecialCosts = newCosts
+}
+
+func (m *MockRepository) GetUser() (*models.User, error) {
+	// Imitate FirstOrCreate
+	if m.User.ID == 0 {
+		m.User.ID = 1 // Basic ID
+	}
+	return &m.User, nil
+}
+
+func (m *MockRepository) UpdateUserCurrentAmount(amount int) error {
+	m.User.CurrentAmount = amount
+	return nil
 }

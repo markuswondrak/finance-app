@@ -16,8 +16,33 @@
 
     <!-- KPI Cards Section -->
     <v-row class="mb-6">
-      <v-col cols="12">
-        <KPISection :metrics="kpiMetrics" :loading="!loaded" />
+      <v-col cols="12" sm="4">
+        <v-skeleton-loader v-if="!loaded" type="image" height="100%" />
+        <CurrentBalanceCard 
+          v-else 
+          :amount="currentAmount" 
+          @refresh="loadData" 
+        />
+      </v-col>
+      <v-col cols="12" sm="4">
+         <v-skeleton-loader v-if="!loaded" type="list-item-two-line" />
+         <KPICard 
+           v-else
+           :title="kpiMetrics[1]?.title || '—'"
+           :value="kpiMetrics[1]?.value || '—'"
+           :trend="kpiMetrics[1]?.trend"
+           :variant="kpiMetrics[1]?.variant || 'default'"
+         />
+      </v-col>
+      <v-col cols="12" sm="4">
+         <v-skeleton-loader v-if="!loaded" type="list-item-two-line" />
+         <KPICard 
+           v-else
+           :title="kpiMetrics[2]?.title || '—'"
+           :value="kpiMetrics[2]?.value || '—'"
+           :trend="kpiMetrics[2]?.trend"
+           :variant="kpiMetrics[2]?.variant || 'default'"
+         />
       </v-col>
     </v-row>
 
@@ -36,7 +61,8 @@
 import ForecastChart from "../dashboard/ForecastChart.vue";
 import LoadablePage from "../LoadablePage";
 import OverviewTable from "./OverviewTable.vue";
-import KPISection from "../dashboard/KPISection.vue";
+import CurrentBalanceCard from "../dashboard/CurrentBalanceCard.vue";
+import KPICard from "../dashboard/KPICard.vue";
 import { toCurrency, displayMonth } from "../Utils";
 
 export default {
@@ -44,7 +70,8 @@ export default {
   components: {
     ForecastChart,
     OverviewTable,
-    KPISection
+    CurrentBalanceCard,
+    KPICard
   },
   data() {
     return {
@@ -136,15 +163,17 @@ export default {
     }
   },
   created: async function() {
-    const result = await this.fetchData("/api/overview/all");
+    await this.loadData();
 
     var storageShowChart = localStorage.getItem("finance-config.showChart");
     this.config.showChart = storageShowChart == "true";
-
-    this.entries = result.entries;
-    this.currentAmount = result.currentAmount;
   },
   methods: {
+    async loadData() {
+        const result = await this.fetchData("/api/overview/all");
+        this.entries = result.entries;
+        this.currentAmount = result.currentAmount;
+    },
     showGraphic: function() {
       this.config.showChart = true;
       localStorage.setItem("finance-config.showChart", "true");

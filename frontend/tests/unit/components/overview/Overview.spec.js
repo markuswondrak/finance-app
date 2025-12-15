@@ -12,6 +12,12 @@ const VSkeletonLoaderStub = {
     props: ['type', 'loading', 'transition']
 };
 
+// Stub for child components
+const ForecastChartStub = { name: 'ForecastChart', template: '<div data-testid="chart"></div>', props: ['data'] };
+const CurrentBalanceCardStub = { name: 'CurrentBalanceCard', template: '<div data-testid="balance"></div>', props: ['amount'] };
+const KPICardStub = { name: 'KPICard', template: '<div data-testid="kpi"></div>', props: ['title', 'value', 'trend', 'variant'] };
+const OverviewTableStub = { name: 'OverviewTable', template: '<div data-testid="table"></div>', props: ['entries'] };
+
 describe('Overview.vue', () => {
     let vuetify;
 
@@ -45,16 +51,13 @@ describe('Overview.vue', () => {
     });
 
     it('should fetch data on created', async () => {
-        const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-        const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-        const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>' };
-
         const wrapper = mount(Overview, {
             global: {
                 plugins: [vuetify],
                 stubs: {
                     ForecastChart: ForecastChartStub,
-                    KPISection: KPISectionStub,
+                    CurrentBalanceCard: CurrentBalanceCardStub,
+                    KPICard: KPICardStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
                 }
@@ -70,16 +73,13 @@ describe('Overview.vue', () => {
     });
 
     it('should render child components', async () => {
-        const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-        const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-        const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>' };
-
         const wrapper = mount(Overview, {
             global: {
                 plugins: [vuetify],
                 stubs: {
                     ForecastChart: ForecastChartStub,
-                    KPISection: KPISectionStub,
+                    CurrentBalanceCard: CurrentBalanceCardStub,
+                    KPICard: KPICardStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
                 }
@@ -89,7 +89,8 @@ describe('Overview.vue', () => {
         await new Promise(resolve => setTimeout(resolve, 0));
 
         expect(wrapper.findComponent({ name: 'ForecastChart' }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: 'KPISection' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'CurrentBalanceCard' }).exists()).toBe(true);
+        expect(wrapper.findAllComponents({ name: 'KPICard' }).length).toBe(2);
         expect(wrapper.findComponent({ name: 'OverviewTable' }).exists()).toBe(true);
     });
 
@@ -129,20 +130,13 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const ForecastChartStub = {
-                name: 'ForecastChart',
-                template: '<div class="chart-stub"></div>',
-                props: ['data']
-            };
-            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-            const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
-
             const wrapper = mount(Overview, {
                 global: {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -155,9 +149,8 @@ describe('Overview.vue', () => {
             expect(chart.exists()).toBe(true);
             const chartData = chart.props('data');
             expect(chartData).toBeDefined();
-            // Check if data transformation is correct
             expect(chartData.labels).toHaveLength(3);
-            expect(chartData.labels[0]).toContain('Januar'); // displayMonth might format differently based on logic but should contain month
+            expect(chartData.labels[0]).toContain('Januar');
             expect(chartData.datasets[0].data).toEqual([1500, 800, 300]);
         });
 
@@ -166,20 +159,13 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-            const OverviewTableStub = {
-                name: 'OverviewTable',
-                template: '<div class="table-stub"></div>',
-                props: ['entries']
-            };
-
             const wrapper = mount(Overview, {
                 global: {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -194,41 +180,39 @@ describe('Overview.vue', () => {
             expect(table.props('entries')).toHaveLength(3);
         });
 
-        it('should pass metrics to KPISection component', async () => {
-            global.fetch = vi.fn().mockResolvedValue({
-                json: vi.fn().mockResolvedValue(detailedMockApiResult)
-            });
-
-            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-            const KPISectionStub = {
-                name: 'KPISection',
-                template: '<div class="kpi-stub"></div>',
-                props: ['metrics', 'loading']
-            };
-            const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
-
+        it('should pass metrics to KPI cards', async () => {
             const wrapper = mount(Overview, {
                 global: {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
-                        VSkeletonLoader: VSkeletonLoaderStub
+                        VSkeletonLoader: VSkeletonLoaderStub,
+                        VContainer: { template: '<div><slot></slot></div>' },
+                        VRow: { template: '<div><slot></slot></div>' },
+                        VCol: { template: '<div><slot></slot></div>' },
+                        VCard: { template: '<div><slot></slot></div>' },
+                        VCardText: { template: '<div><slot></slot></div>' },
                     }
                 }
             });
 
+            // Wait for fetch
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            const kpiSection = wrapper.findComponent({ name: 'KPISection' });
-            expect(kpiSection.exists()).toBe(true);
-            expect(kpiSection.props('metrics')).toHaveLength(3);
-            expect(kpiSection.props('loading')).toBe(false);
+            const kpiCards = wrapper.findAllComponents({ name: 'KPICard' });
+            expect(kpiCards).toHaveLength(2);
+            
+            // Check second metric (Monthly Change) -> First KPICard
+            expect(kpiCards[0].props('title')).toBe('Monatliche Änderung');
+            
+            // Check third metric (Average) -> Second KPICard
+            expect(kpiCards[1].props('title')).toBe('Durchschnitt');
         });
 
         it('should show skeleton loaders while loading', async () => {
-            // Create a promise that won't resolve immediately
             let resolvePromise;
             const pendingPromise = new Promise(resolve => {
                 resolvePromise = resolve;
@@ -236,41 +220,33 @@ describe('Overview.vue', () => {
 
             global.fetch = vi.fn().mockReturnValue(pendingPromise);
 
-            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-            const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
-
             const wrapper = mount(Overview, {
                 global: {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
                 }
             });
 
-            // Before data loads, loaded should be false
             expect(wrapper.vm.loaded).toBe(false);
 
-            // Verify skeleton loaders are present (chart and table have v-if skeleton loaders)
-            // KPISection handles its own loading state via props
+            // Chart (1) + CurrentBalanceCard (1) + KPICards (2) + Table (1) = 5
             const skeletonLoaders = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
-            expect(skeletonLoaders.length).toBe(2); // Chart and Table skeletons
+            expect(skeletonLoaders.length).toBe(5); 
 
-            // Resolve the fetch
             resolvePromise({
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            // After data loads, loaded should be true
             expect(wrapper.vm.loaded).toBe(true);
 
-            // After loading, skeleton loaders should not be present
             const skeletonLoadersAfter = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
             expect(skeletonLoadersAfter.length).toBe(0);
         });
@@ -280,16 +256,13 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const ForecastChartStub = { name: 'ForecastChart', template: '<div data-testid="chart"></div>', props: ['data'] };
-            const KPISectionStub = { name: 'KPISection', template: '<div data-testid="kpi"></div>', props: ['metrics', 'loading'] };
-            const OverviewTableStub = { name: 'OverviewTable', template: '<div data-testid="table"></div>', props: ['entries'] };
-
             const wrapper = mount(Overview, {
                 global: {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -298,14 +271,10 @@ describe('Overview.vue', () => {
 
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            // All components should be rendered
             expect(wrapper.find('[data-testid="chart"]').exists()).toBe(true);
-            expect(wrapper.find('[data-testid="kpi"]').exists()).toBe(true);
             expect(wrapper.find('[data-testid="table"]').exists()).toBe(true);
-
-            // Check container structure - 3 rows for chart, kpi, table
-            const rows = wrapper.findAllComponents({ name: 'VRow' });
-            expect(rows.length).toBe(3);
+            expect(wrapper.find('[data-testid="balance"]').exists()).toBe(true);
+            expect(wrapper.findAll('[data-testid="kpi"]').length).toBe(2);
         });
 
         it('should handle empty entries gracefully', async () => {
@@ -318,16 +287,13 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(emptyMockResult)
             });
 
-            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-            const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
-
             const wrapper = mount(Overview, {
                 global: {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -342,22 +308,15 @@ describe('Overview.vue', () => {
 
             const chart = wrapper.findComponent({ name: 'ForecastChart' });
             const table = wrapper.findComponent({ name: 'OverviewTable' });
-            const kpiSection = wrapper.findComponent({ name: 'KPISection' });
 
-            // ForecastChart receives null when data is empty
             expect(chart.props('data')).toBeNull();
             expect(table.props('entries')).toEqual([]);
-            expect(kpiSection.props('metrics')).toEqual([]);
+            expect(wrapper.findAllComponents({ name: 'KPICard' }).length).toBe(2);
         });
 
         it('should handle API error gracefully', async () => {
             global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
-            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
-            const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
-            const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
-
-            // Capture errors thrown from the created hook (LoadablePage re-throws after setting loaded='error')
             const caughtErrors = [];
             const errorHandler = (err) => caughtErrors.push(err);
 
@@ -366,7 +325,8 @@ describe('Overview.vue', () => {
                     plugins: [vuetify],
                     stubs: {
                         ForecastChart: ForecastChartStub,
-                        KPISection: KPISectionStub,
+                        CurrentBalanceCard: CurrentBalanceCardStub,
+                        KPICard: KPICardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     },
@@ -376,12 +336,10 @@ describe('Overview.vue', () => {
                 }
             });
 
-            // Wait for the created hook to complete
             await vi.waitFor(() => {
                 expect(wrapper.vm.loaded).toBe('error');
             });
 
-            // Verify the error was caught by Vue's error handler
             expect(caughtErrors.length).toBe(1);
             expect(caughtErrors[0].message).toBe('Network error');
         });

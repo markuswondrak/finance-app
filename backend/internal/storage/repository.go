@@ -7,6 +7,7 @@ import (
 
 // Repository defines the interface for data access
 type Repository interface {
+	UserRepository
 	LoadFixedCosts() *[]models.FixedCost
 	SaveFixedObject(cost *models.FixedCost)
 	DeleteFixedCost(id int)

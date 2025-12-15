@@ -38,7 +38,7 @@ func ConnectDataBase() *gorm.DB {
 		panic("Failed to connect to database!")
 	}
 
-	err = database.AutoMigrate(&models.FixedCost{}, &models.SpecialCost{})
+	err = database.AutoMigrate(&models.FixedCost{}, &models.SpecialCost{}, &models.User{})
 
 	if err != nil {
 		panic(err)
@@ -75,6 +75,8 @@ func main() {
 	router.GET("/api/specialcosts", server.GetSpecialCosts)
 	router.POST("/api/specialcosts", server.SaveSpecialCosts)
 	router.DELETE("/api/specialcosts/:id", server.DeleteSpecialCosts)
+
+	router.PUT("/api/user/current-amount", server.UpdateCurrentAmount)
 
 	router.Run("localhost:8082")
 
