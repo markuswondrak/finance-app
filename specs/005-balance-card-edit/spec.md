@@ -5,6 +5,19 @@
 **Status**: Draft
 **Input**: Create a highlight card displaying the current balance (starting capital) in large bold text with an edit/pencil icon. Implement click-to-edit pattern where clicking anywhere on the card opens a modal dialog with an input field to update the current balance value. Upon saving, the entire forecast graph should recalculate with the new starting point.
 
+<<<<<<< Updated upstream
+=======
+## Clarifications
+
+### Session 2025-12-15
+
+- Q: Persistence Strategy? → A: Backend Persistence (User clarified: "There is already a column in the backend called 'CurrentAmount' that should be used").
+- Q: How should the balance be stored in the database? → A: Create a 'User' model/table with a 'CurrentAmount' column.
+- Q: What API endpoint should be used to update the CurrentAmount? → A: New dedicated PUT /user/current-amount endpoint.
+- Q: How should the frontend trigger the forecast recalculation? → A: Re-fetch GET /api/overview.
+- Q: How to clarify the ambiguous term "Current Balance"? → A: Rename the existing "Current Balance" (Fixed Costs Sum) in FixedCosts.vue.
+
+>>>>>>> Stashed changes
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Update Current Balance via Card Click (Priority: P1)
@@ -73,15 +86,20 @@ As a user who opened the edit modal by mistake, I want to be able to cancel with
 - **FR-004**: Edit modal MUST contain an input field pre-populated with the current balance value
 - **FR-005**: Edit modal MUST have a Save button to confirm changes
 - **FR-006**: Edit modal MUST have a Cancel button or close option to discard changes
-- **FR-007**: Upon saving, the new balance value MUST be persisted and displayed on the card
+- **FR-007**: Upon saving, the new balance value MUST be persisted in the 'User' entity's 'CurrentAmount' field and displayed on the card
 - **FR-008**: Upon saving, the forecast chart MUST recalculate using the new balance as the starting point
+- **FR-009**: A `PUT /user/current-amount` API endpoint MUST be implemented to update the authenticated User's `CurrentAmount` in the backend.
+- **FR-010**: After successfully updating the balance, the frontend MUST re-fetch data from `GET /api/overview` to update the forecast chart.
+- **FR-011**: The existing "Current Balance" display in `FixedCosts.vue` (representing sum of monthly costs) MUST be renamed to avoid confusion with the new Starting Capital.
 - **FR-009**: Balance input MUST validate for numeric values only
 - **FR-010**: Balance MUST be displayed with proper currency formatting (thousands separators, currency symbol)
 - **FR-011**: Edit modal MUST close when clicking outside the modal or pressing Escape key
 - **FR-012**: Card MUST appear clickable through visual affordances (cursor change, hover state)
+- **FR-013**: The Current Balance card and the edit modal MUST have rounded corners, consistent with other cards on the overview page.
 
 ### Key Entities
 
+- **User**: The entity holding the `CurrentAmount` (starting capital) for forecast calculations.
 - **Current Balance**: The user's starting capital amount, serving as the anchor point for all forecast calculations; can be positive (assets) or negative (debt)
 - **Edit Modal**: A dialog overlay containing the input field and action buttons for updating the balance
 - **Forecast**: The calculated projection of future balances that depends on the current balance as its starting point
@@ -99,7 +117,7 @@ As a user who opened the edit modal by mistake, I want to be able to cancel with
 ## Assumptions
 
 - Currency is Euro (€) based on the existing application context
-- The current balance is stored locally and persists across sessions
+- The current balance is stored in the backend (using 'CurrentAmount') and persists across sessions
 - The forecast calculation logic already exists; this feature only provides a new input mechanism
 - Only one user edits the balance at a time (no concurrent editing scenarios)
 - The modal follows the application's dark theme styling (Feature 001)
