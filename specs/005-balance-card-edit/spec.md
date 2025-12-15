@@ -79,6 +79,7 @@ As a user who opened the edit modal by mistake, I want to be able to cancel with
 - **FR-010**: Balance MUST be displayed with proper currency formatting (thousands separators, currency symbol)
 - **FR-011**: Edit modal MUST close when clicking outside the modal or pressing Escape key
 - **FR-012**: Card MUST appear clickable through visual affordances (cursor change, hover state)
+- **FR-013**: The Current Balance card and the edit modal MUST have rounded corners, consistent with other cards on the overview page.
 
 ### Key Entities
 

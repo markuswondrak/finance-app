@@ -77,6 +77,7 @@ As a user viewing the lowest point warning, I want to know when this lowest poin
 - **FR-009**: Card MUST display a label identifying it as "Lowest Point" or similar risk metric
 - **FR-010**: Card MUST update when forecast data changes (e.g., when current balance is modified)
 - **FR-011**: When lowest point is exactly zero, card MUST display in neutral styling (not alert)
+- **FR-012**: The Lowest Projected Point card MUST have rounded corners, consistent with other cards on the overview page.
 
 ### Key Entities
 
