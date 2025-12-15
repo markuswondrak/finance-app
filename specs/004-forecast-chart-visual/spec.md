@@ -5,6 +5,14 @@
 **Status**: Draft
 **Input**: Enhance the forecast chart visualization with gradient fill under the line (fading from line color to transparent at bottom), using positive color palette for values above zero and negative color palette for values below zero. Minimize or remove grid lines to reduce visual noise. Use substantial line thickness (approximately 3px) with standard data point dots.
 
+## Clarifications
+
+### Session 2025-12-14
+
+- Q: Should the chart include an additional visual indicator beyond color to distinguish positive from negative values (for accessibility)? → A: Show zero line as a subtle reference (e.g., dashed line)
+- Q: How should the gradient fill behave when the forecast line crosses from positive to negative (or vice versa)? → A: Split gradient at zero line (positive gradient above, negative below)
+- Q: Should the gradient fade toward the zero line or the chart canvas bottom? → A: Fade toward zero line (gradient ends at zero reference)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Color-Coded Financial Health Visualization (Priority: P1)
@@ -55,33 +63,57 @@ As a user analyzing the forecast, I want to see a clean chart with minimal grid 
 
 ---
 
+### User Story 4 - Unified Dashboard Chart Experience (Priority: P0)
+
+As a user of the finance dashboard, I want the new enhanced forecast chart to be the primary chart displayed in the overview section so that I have a consistent, modern visualization experience without duplicate or legacy chart components.
+
+**Why this priority**: This is a critical architectural requirement. The ForecastChart is designed to replace, not supplement, the existing OverviewChart. Keeping both would create confusion and maintenance burden.
+
+**Independent Test**: Can be verified by checking that the OverviewChart component no longer exists in the codebase and the ForecastChart is rendered in its place.
+
+**Acceptance Scenarios**:
+
+1. **Given** the ForecastChart is fully implemented, **When** I view the dashboard overview, **Then** I see the ForecastChart (not the OverviewChart) as the main chart
+2. **Given** the feature is complete, **When** I search the codebase for OverviewChart usage, **Then** no active references to OverviewChart exist (component is removed)
+3. **Given** the ForecastChart replaces OverviewChart, **When** I interact with the chart, **Then** all existing functionality (if any) is preserved or improved
+
+---
+
 ### Edge Cases
 
 - What happens when all values are positive? Entire chart displays in positive color with positive gradient
 - What happens when all values are negative? Entire chart displays in negative color with negative gradient
 - What happens when values are exactly zero? Zero line should be neutral; chart may show minimal positive/negative styling
+- What happens when the line crosses zero? Gradient splits at the zero line with positive gradient (mint green) above and negative gradient (soft red/coral) below
 - What happens when chart has very few data points? Line and dots should still render clearly with appropriate spacing
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
+#### Critical / Architectural
+
+- **FR-000**: ⚠️ **CRITICAL** - The new ForecastChart component MUST completely replace the existing OverviewChart component in the dashboard; the OverviewChart component MUST be removed from the codebase after ForecastChart is fully implemented and validated
+
+#### Visual Styling
+
 - **FR-001**: Chart MUST display positive values (above zero) in the positive accent color (mint green)
 - **FR-002**: Chart MUST display negative values (below zero) in the negative alert color (soft red/coral)
-- **FR-003**: Chart MUST apply a gradient fill beneath the data line, fading from line color to transparent
-- **FR-004**: Gradient fill MUST use the appropriate color based on whether the area represents positive or negative values
+- **FR-003**: Chart MUST apply a gradient fill between the data line and the zero line, fading from line color (at the data line) to transparent (at the zero line)
+- **FR-004**: Gradient fill MUST use the appropriate color based on whether the area represents positive or negative values; at zero-crossing points, the gradient MUST split at the zero line with positive gradient above and negative gradient below
 - **FR-005**: Chart MUST minimize or remove grid lines to reduce visual noise
 - **FR-006**: Data line MUST display with substantial thickness (visually prominent)
 - **FR-007**: Data points MUST be marked with dots along the line
 - **FR-008**: Color transition MUST occur at the zero crossing point when data moves between positive and negative
 - **FR-009**: Chart MUST maintain readability when displaying extreme values (very high or very low)
+- **FR-010**: Chart MUST display a subtle zero reference line (dashed style) to provide a non-color visual anchor for accessibility
 
 ### Key Entities
 
 - **Forecast Data Point**: A single point in time with a projected balance value (positive, negative, or zero)
 - **Data Line**: The visual line connecting forecast data points, styled with appropriate color and thickness
-- **Gradient Fill Area**: The filled region between the data line and the chart baseline, styled with color fade
-- **Zero Line**: The horizontal reference line at zero value, serving as the boundary for positive/negative coloring
+- **Gradient Fill Area**: The filled region between the data line and the zero line, with gradient fading from line color to transparent at zero
+- **Zero Line**: The horizontal reference line at zero value, serving as the boundary for positive/negative coloring; styled as a subtle dashed line for accessibility
 
 ## Success Criteria *(mandatory)*
 

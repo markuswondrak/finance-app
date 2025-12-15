@@ -45,7 +45,7 @@ describe('Overview.vue', () => {
     });
 
     it('should fetch data on created', async () => {
-        const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>' };
+        const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
         const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
         const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>' };
 
@@ -53,7 +53,7 @@ describe('Overview.vue', () => {
             global: {
                 plugins: [vuetify],
                 stubs: {
-                    OverviewChart: OverviewChartStub,
+                    ForecastChart: ForecastChartStub,
                     KPISection: KPISectionStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
@@ -70,7 +70,7 @@ describe('Overview.vue', () => {
     });
 
     it('should render child components', async () => {
-        const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>' };
+        const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
         const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
         const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>' };
 
@@ -78,7 +78,7 @@ describe('Overview.vue', () => {
             global: {
                 plugins: [vuetify],
                 stubs: {
-                    OverviewChart: OverviewChartStub,
+                    ForecastChart: ForecastChartStub,
                     KPISection: KPISectionStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
@@ -88,7 +88,7 @@ describe('Overview.vue', () => {
 
         await new Promise(resolve => setTimeout(resolve, 0));
 
-        expect(wrapper.findComponent({ name: 'OverviewChart' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'ForecastChart' }).exists()).toBe(true);
         expect(wrapper.findComponent({ name: 'KPISection' }).exists()).toBe(true);
         expect(wrapper.findComponent({ name: 'OverviewTable' }).exists()).toBe(true);
     });
@@ -124,15 +124,15 @@ describe('Overview.vue', () => {
             currentAmount: 1500
         };
 
-        it('should pass entries to OverviewChart for graph rendering', async () => {
+        it('should pass data to ForecastChart for graph rendering', async () => {
             global.fetch = vi.fn().mockResolvedValue({
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const OverviewChartStub = {
-                name: 'OverviewChart',
+            const ForecastChartStub = {
+                name: 'ForecastChart',
                 template: '<div class="chart-stub"></div>',
-                props: ['entries']
+                props: ['data']
             };
             const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
@@ -141,7 +141,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
@@ -151,10 +151,14 @@ describe('Overview.vue', () => {
 
             await new Promise(resolve => setTimeout(resolve, 0));
 
-            const chart = wrapper.findComponent({ name: 'OverviewChart' });
+            const chart = wrapper.findComponent({ name: 'ForecastChart' });
             expect(chart.exists()).toBe(true);
-            expect(chart.props('entries')).toEqual(detailedMockApiResult.entries);
-            expect(chart.props('entries')).toHaveLength(3);
+            const chartData = chart.props('data');
+            expect(chartData).toBeDefined();
+            // Check if data transformation is correct
+            expect(chartData.labels).toHaveLength(3);
+            expect(chartData.labels[0]).toContain('Januar'); // displayMonth might format differently based on logic but should contain month
+            expect(chartData.datasets[0].data).toEqual([1500, 800, 300]);
         });
 
         it('should pass entries to OverviewTable for table rendering', async () => {
@@ -162,7 +166,7 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
+            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
             const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = {
                 name: 'OverviewTable',
@@ -174,7 +178,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
@@ -195,7 +199,7 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
+            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
             const KPISectionStub = {
                 name: 'KPISection',
                 template: '<div class="kpi-stub"></div>',
@@ -207,7 +211,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
@@ -232,7 +236,7 @@ describe('Overview.vue', () => {
 
             global.fetch = vi.fn().mockReturnValue(pendingPromise);
 
-            const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
+            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
             const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
@@ -240,7 +244,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
@@ -276,7 +280,7 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
             });
 
-            const OverviewChartStub = { name: 'OverviewChart', template: '<div data-testid="chart"></div>', props: ['entries'] };
+            const ForecastChartStub = { name: 'ForecastChart', template: '<div data-testid="chart"></div>', props: ['data'] };
             const KPISectionStub = { name: 'KPISection', template: '<div data-testid="kpi"></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div data-testid="table"></div>', props: ['entries'] };
 
@@ -284,7 +288,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
@@ -314,7 +318,7 @@ describe('Overview.vue', () => {
                 json: vi.fn().mockResolvedValue(emptyMockResult)
             });
 
-            const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
+            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
             const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
@@ -322,7 +326,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
@@ -336,11 +340,12 @@ describe('Overview.vue', () => {
             expect(wrapper.vm.entries).toEqual([]);
             expect(wrapper.vm.currentAmount).toBe(0);
 
-            const chart = wrapper.findComponent({ name: 'OverviewChart' });
+            const chart = wrapper.findComponent({ name: 'ForecastChart' });
             const table = wrapper.findComponent({ name: 'OverviewTable' });
             const kpiSection = wrapper.findComponent({ name: 'KPISection' });
 
-            expect(chart.props('entries')).toEqual([]);
+            // ForecastChart receives null when data is empty
+            expect(chart.props('data')).toBeNull();
             expect(table.props('entries')).toEqual([]);
             expect(kpiSection.props('metrics')).toEqual([]);
         });
@@ -348,7 +353,7 @@ describe('Overview.vue', () => {
         it('should handle API error gracefully', async () => {
             global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
-            const OverviewChartStub = { name: 'OverviewChart', template: '<div></div>', props: ['entries'] };
+            const ForecastChartStub = { name: 'ForecastChart', template: '<div></div>', props: ['data'] };
             const KPISectionStub = { name: 'KPISection', template: '<div></div>', props: ['metrics', 'loading'] };
             const OverviewTableStub = { name: 'OverviewTable', template: '<div></div>', props: ['entries'] };
 
@@ -360,7 +365,7 @@ describe('Overview.vue', () => {
                 global: {
                     plugins: [vuetify],
                     stubs: {
-                        OverviewChart: OverviewChartStub,
+                        ForecastChart: ForecastChartStub,
                         KPISection: KPISectionStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub

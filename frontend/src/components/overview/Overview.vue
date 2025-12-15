@@ -7,7 +7,7 @@
           <v-card-text class="pa-0">
             <div class="chart-container">
               <v-skeleton-loader v-if="!loaded" type="image" class="chart-skeleton" />
-              <overview-chart v-else :entries="entries" />
+              <ForecastChart v-else :data="chartData" />
             </div>
           </v-card-text>
         </v-card>
@@ -33,16 +33,16 @@
 
 
 <script>
-import OverviewChart from "./OverviewChart.vue";
+import ForecastChart from "../dashboard/ForecastChart.vue";
 import LoadablePage from "../LoadablePage";
 import OverviewTable from "./OverviewTable.vue";
 import KPISection from "../dashboard/KPISection.vue";
-import { toCurrency } from "../Utils";
+import { toCurrency, displayMonth } from "../Utils";
 
 export default {
   mixins: [LoadablePage],
   components: {
-    OverviewChart,
+    ForecastChart,
     OverviewTable,
     KPISection
   },
@@ -56,6 +56,25 @@ export default {
   computed: {
     showChart() {
       return this.loaded && this.config.showChart;
+    },
+    chartData() {
+      if (!this.entries || this.entries.length === 0) return null;
+
+      const labels = this.entries.map(entry => displayMonth(entry.yearMonth));
+      const data = this.entries.map(entry => entry.currentAmount);
+
+      return {
+        labels,
+        datasets: [
+          {
+            label: 'Kontostand',
+            data,
+            // Minimal configuration, ForecastChart handles the rest
+            borderColor: '#4ADE80',
+            backgroundColor: '#4ADE80',
+          }
+        ]
+      };
     },
     kpiMetrics() {
       if (!this.entries || this.entries.length === 0) {
