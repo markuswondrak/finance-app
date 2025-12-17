@@ -7,17 +7,16 @@
     rounded="xl"
   >
     <v-card-text class="d-flex flex-column align-center justify-center fill-height">
+      <v-icon
+        class="edit-icon"
+        size="small"
+        color="grey-lighten-1"
+        icon="fa-pencil"
+      />
       <div class="text-subtitle-1 mb-2">Aktueller Kontostand</div>
       <div class="text-h3 font-weight-bold text-success">
         {{ formattedAmount }}
       </div>
-      <v-icon
-        color="grey-lighten-1"
-        class="mt-2 edit-icon"
-        size="small"
-      >
-        mdi-pencil
-      </v-icon>
     </v-card-text>
 
     <BalanceEditModal
@@ -69,6 +68,7 @@ export default {
 .current-balance-card {
   cursor: pointer;
   transition: transform 0.2s;
+  position: relative; /* Added for absolute positioning of icon */
 }
 
 .current-balance-card:hover {
@@ -76,11 +76,10 @@ export default {
 }
 
 .edit-icon {
-  opacity: 0;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 1; /* Made always visible */
   transition: opacity 0.2s;
-}
-
-.current-balance-card:hover .edit-icon {
-  opacity: 1;
 }
 </style>

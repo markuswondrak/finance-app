@@ -67,7 +67,7 @@ As a user who wants to understand my finances, I want the card to help me recogn
 
 ### Functional Requirements
 
-- **FR-001**: Card MUST calculate Real Monthly Surplus using the formula: Monthly Income - (Monthly Fixed + Quarterly Fixed / 3 + Yearly Fixed / 12)
+- **FR-001**: Card MUST calculate Real Monthly Surplus using the formula: (Sum of `FixedCost` entries with `Amount > 0`) - (Sum of `FixedCost` entries with `Amount < 0` prorated: Monthly Fixed + Quarterly Fixed / 3 + Yearly Fixed / 12)
 - **FR-002**: Card MUST display the calculated surplus value in large, bold typography
 - **FR-003**: Positive surplus values MUST display with positive indicator (e.g., "+ 450 €") in positive color
 - **FR-004**: Negative surplus values MUST display with negative indicator (e.g., "- 150 €") in alert color
@@ -85,12 +85,21 @@ As a user who wants to understand my finances, I want the card to help me recogn
 
 ### Key Entities
 
-- **Monthly Income**: The user's regular monthly inflow of money
-- **Monthly Fixed Costs**: Recurring expenses paid every month
-- **Quarterly Fixed Costs**: Recurring expenses paid every 3 months (prorated monthly as cost / 3)
-- **Yearly Fixed Costs**: Recurring expenses paid annually (prorated monthly as cost / 12)
+- **Monthly Income**: The sum of all `FixedCost` entries with `Amount > 0` for the current month. (Derived from `FixedCost` entity)
+- **Monthly Fixed Costs**: Recurring expenses paid every month (Derived from `FixedCost` entries with `Amount < 0`)
+- **Quarterly Fixed Costs**: Recurring expenses paid every 3 months (prorated monthly as cost / 3) (Derived from `FixedCost` entries with `Amount < 0`)
+- **Yearly Fixed Costs**: Recurring expenses paid annually (prorated monthly as cost / 12) (Derived from `FixedCost` entries with `Amount < 0`)
 - **Real Monthly Surplus**: The calculated disposable income after accounting for all prorated recurring costs
-- **Surplus History**: Historical surplus values used to generate the sparkline trend
+- **Surplus History**: Historical surplus values for the past 6 months, calculated dynamically from existing historical `FixedCost` data to generate the sparkline trend
+
+## Clarifications
+
+### Session 2025-12-15
+
+- Q: Where does "Monthly Income" come from? → A: Sum of Positive Fixed Costs
+- Q: How is "Surplus History" derived for the sparkline? → A: Calculate Dynamically
+- Q: Which library should be used to render the sparkline chart? → A: Chart.js
+
 
 ## Success Criteria *(mandatory)*
 
@@ -106,7 +115,7 @@ As a user who wants to understand my finances, I want the card to help me recogn
 
 - Monthly income, monthly fixed costs, quarterly fixed costs, and yearly fixed costs are already configured in the application
 - Historical surplus data is calculated retroactively or stored when values change
-- The sparkline library or component is available within the application framework
+- The sparkline is implemented using `Chart.js` (reusing existing project dependency).
 - Currency is Euro (€) based on the existing application context
 - The card follows the application's dark theme styling (Feature 001)
 - All cost values are provided as totals (e.g., total quarterly costs, not individual items)

@@ -78,6 +78,8 @@ func main() {
 
 	router.PUT("/api/user/current-amount", server.UpdateCurrentAmount)
 
+	router.GET("/api/statistics/surplus", server.GetSurplusStatistics)
+
 	router.Run("localhost:8082")
 
 }

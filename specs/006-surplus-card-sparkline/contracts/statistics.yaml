@@ -1,0 +1,50 @@
+openapi: 3.0.0
+info:
+  title: Statistics API
+  version: 1.0.0
+paths:
+  /api/statistics/surplus:
+    get:
+      summary: Get monthly surplus statistics
+      operationId: getSurplusStatistics
+      description: Returns the current monthly surplus and a 6-month historical trend.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurplusStatistics'
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    SurplusStatistics:
+      type: object
+      properties:
+        currentSurplus:
+          type: integer
+          description: The calculated surplus for the current month in Euros.
+        history:
+          type: array
+          description: Historical surplus values for the last 6 months.
+          items:
+            $ref: '#/components/schemas/SurplusPoint'
+      required:
+        - currentSurplus
+        - history
+
+    SurplusPoint:
+      type: object
+      properties:
+        yearMonth:
+          type: string
+          description: The month identifier (YYYY-MM).
+          example: "2025-01"
+        surplus:
+          type: integer
+          description: The calculated surplus for this month in Euros.
+      required:
+        - yearMonth
+        - surplus

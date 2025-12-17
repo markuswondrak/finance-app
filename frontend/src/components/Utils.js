@@ -1,5 +1,12 @@
-export const toCurrency = (number) =>
-  number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €";
+export const toCurrency = (number) => {
+  return new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number);
+};
+
 
 
 export const monthMap = [

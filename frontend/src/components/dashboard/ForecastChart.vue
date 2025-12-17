@@ -185,6 +185,14 @@ const enhancedChartData = computed(() => {
 const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
+  layout: {
+    padding: 20
+  },
+  plugins: {
+    legend: {
+      display: false
+    }
+  },
   scales: {
     // T005: X-axis configuration
     x: {
