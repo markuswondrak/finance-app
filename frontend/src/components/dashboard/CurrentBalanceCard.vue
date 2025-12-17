@@ -1,21 +1,26 @@
 <template>
   <v-card
     class="current-balance-card fill-height"
-    elevation="2"
+    :elevation="4"
     @click="openModal"
     v-ripple
     rounded="xl"
+    :class="accentClass"
   >
-    <v-card-text class="d-flex flex-column align-center justify-center fill-height">
-      <v-icon
-        class="edit-icon"
-        size="small"
-        color="grey-lighten-1"
-        icon="fa-pencil"
-      />
-      <div class="text-subtitle-1 mb-2">Aktueller Kontostand</div>
-      <div class="text-h3 font-weight-bold text-success">
-        {{ formattedAmount }}
+    <v-card-text class="d-flex align-center fill-height">
+      <div>
+        <div class="d-flex align-center mb-1">
+          <div class="text-overline">Aktueller Kontostand</div>
+          <v-icon
+            class="ml-2"
+            size="x-small"
+            color="grey-lighten-1"
+            icon="fa-pencil"
+          />
+        </div>
+        <div class="text-h4 font-weight-bold" :class="amountClass">
+          {{ formattedAmount }}
+        </div>
       </div>
     </v-card-text>
 
@@ -55,6 +60,12 @@ export default {
         maximumFractionDigits: 0,
       }).format(this.amount);
     },
+    amountClass() {
+      return this.amount >= 0 ? 'text-positive' : 'text-negative';
+    },
+    accentClass() {
+      return this.amount >= 0 ? 'card-accent-success' : 'card-accent-error';
+    },
   },
   methods: {
     openModal() {
@@ -68,18 +79,9 @@ export default {
 .current-balance-card {
   cursor: pointer;
   transition: transform 0.2s;
-  position: relative; /* Added for absolute positioning of icon */
 }
 
 .current-balance-card:hover {
   transform: translateY(-2px);
-}
-
-.edit-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  opacity: 1; /* Made always visible */
-  transition: opacity 0.2s;
 }
 </style>

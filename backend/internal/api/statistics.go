@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"wondee/finance-app-backend/internal/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *Server) GetSurplusStatistics(c *gin.Context) {
@@ -19,24 +20,24 @@ func (s *Server) CalculateSurplusStatistics(current *models.YearMonth) models.Su
 
 	// 1. Calculate History (Past 6 months including current)
 	history := make([]models.SurplusPoint, 0, 6)
-	
+
 	// Start 5 months before current
 	start := *current
 	for i := 0; i < 5; i++ {
 		start = getPreviousMonth(start)
 	}
-	
+
 	iter := start
 	for i := 0; i < 6; i++ {
 		surplus := s.calculateMonthlySurplus(costs, &iter)
-		
+
 		point := models.SurplusPoint{
 			Month:     fmt.Sprintf("%04d-%02d", iter.Year, iter.Month),
 			Surplus:   surplus,
-			Projected: false, 
+			Projected: false,
 		}
 		history = append(history, point)
-		
+
 		iter = getNextMonth(iter)
 	}
 
