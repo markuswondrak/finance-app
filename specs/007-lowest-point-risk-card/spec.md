@@ -5,6 +5,14 @@
 **Status**: Draft
 **Input**: Create a highlight card that warns users of future liquidity crunches. The card scans the calculated forecast array for the next 12 months and finds the minimum value. Display this value prominently with conditional styling: green/neutral color if value is greater than zero, red/warning color with an alert icon if value is less than zero. This answers the question "Will I go broke when I buy that kitchen in August?"
 
+## Clarifications
+
+### Session 2025-12-17
+
+- Q: To calculate the minimum balance, should we pass the existing forecast `entries` array (already fetched by `Overview.vue`) to the new `LowestPointCard` component, or calculate the single `lowestPoint` value in the parent and pass it down? → A: Pass `entries` array (Encapsulated)
+- Q: How should the timing of the lowest point be displayed to the user? → A: Month + Year (e.g. "im August 2025")
+- Q: Should the card scan exactly 12 months or all available entries provided by the API? → A: Scan all available entries (Current API limit)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - View Lowest Projected Balance (Priority: P1)
@@ -66,22 +74,24 @@ As a user viewing the lowest point warning, I want to know when this lowest poin
 
 ### Functional Requirements
 
-- **FR-001**: Card MUST scan the forecast data for the next 12 months and identify the minimum balance value
+- **FR-001**: Card MUST scan all available forecast data entries and identify the minimum balance value
 - **FR-002**: Card MUST display the lowest projected balance value in large, bold typography
 - **FR-003**: Card MUST display in green/neutral color when the lowest point is greater than zero
 - **FR-004**: Card MUST display in red/warning color when the lowest point is less than zero
 - **FR-005**: Card MUST display an alert icon when the lowest point is less than zero
 - **FR-006**: Card MUST NOT display an alert icon when the lowest point is greater than or equal to zero
-- **FR-007**: Card MUST indicate when (which month) the lowest point occurs
+- **FR-007**: Card MUST indicate when the lowest point occurs using Month + Year format (e.g., "im August 2025")
 - **FR-008**: Lowest point value MUST be formatted as currency with appropriate separators
 - **FR-009**: Card MUST display a label identifying it as "Lowest Point" or similar risk metric
 - **FR-010**: Card MUST update when forecast data changes (e.g., when current balance is modified)
 - **FR-011**: When lowest point is exactly zero, card MUST display in neutral styling (not alert)
+- **FR-012**: Card MUST accept the full forecast `entries` array as a prop and perform internal calculation of the minimum value and its corresponding month
 
 ### Non-Functional Requirements
 
 - **NFR-001**: The card MUST have rounded corners (e.g., `rounded="xl"` in Vuetify).
 - **NFR-002**: The card MUST adhere to the application's color schema, specifically using `positive` for positive values and `negative` for negative values.
+- **NFR-003**: The card MUST match the layout and visual styling of the other two highlight cards (e.g., "Current Balance" and "Monthly Surplus") to ensure UI consistency.
 
 ### Key Entities
 

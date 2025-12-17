@@ -16,6 +16,8 @@ const VSkeletonLoaderStub = {
 const ForecastChartStub = { name: 'ForecastChart', template: '<div data-testid="chart"></div>', props: ['data'] };
 const CurrentBalanceCardStub = { name: 'CurrentBalanceCard', template: '<div data-testid="balance"></div>', props: ['amount'] };
 const KPICardStub = { name: 'KPICard', template: '<div data-testid="kpi"></div>', props: ['title', 'value', 'trend', 'variant'] };
+const MonthlySurplusCardStub = { name: 'MonthlySurplusCard', template: '<div data-testid="surplus"></div>' };
+const LowestPointCardStub = { name: 'LowestPointCard', template: '<div data-testid="lowest-point"></div>', props: ['loading', 'entries'] };
 const OverviewTableStub = { name: 'OverviewTable', template: '<div data-testid="table"></div>', props: ['entries'] };
 
 describe('Overview.vue', () => {
@@ -49,6 +51,37 @@ describe('Overview.vue', () => {
     afterEach(() => {
         vi.restoreAllMocks();
     });
+    
+    it('renders with new KPI card layout: Balance -> Surplus -> LowestPoint', async () => {
+        const wrapper = mount(Overview, {
+            global: {
+                plugins: [vuetify],
+                stubs: {
+                    ForecastChart: ForecastChartStub,
+                    CurrentBalanceCard: CurrentBalanceCardStub,
+                    KPICard: KPICardStub,
+                    MonthlySurplusCard: MonthlySurplusCardStub,
+                    LowestPointCard: LowestPointCardStub,
+                    OverviewTable: OverviewTableStub,
+                    VSkeletonLoader: VSkeletonLoaderStub
+                }
+            }
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        // Check for 3 main cards in correct order (implicitly by checking existence)
+        expect(wrapper.findComponent({ name: 'CurrentBalanceCard' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'MonthlySurplusCard' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'LowestPointCard' }).exists()).toBe(true);
+        
+        // Check that Generic KPICard is NOT present
+        expect(wrapper.findComponent({ name: 'KPICard' }).exists()).toBe(false);
+
+        // Check that LowestPointCard receives entries
+        const lowestPointCard = wrapper.findComponent({ name: 'LowestPointCard' });
+        expect(lowestPointCard.props('entries')).toEqual(mockApiResult.entries);
+    });
 
     it('should fetch data on created', async () => {
         const wrapper = mount(Overview, {
@@ -58,6 +91,8 @@ describe('Overview.vue', () => {
                     ForecastChart: ForecastChartStub,
                     CurrentBalanceCard: CurrentBalanceCardStub,
                     KPICard: KPICardStub,
+                    MonthlySurplusCard: MonthlySurplusCardStub,
+                    LowestPointCard: LowestPointCardStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
                 }
@@ -80,6 +115,8 @@ describe('Overview.vue', () => {
                     ForecastChart: ForecastChartStub,
                     CurrentBalanceCard: CurrentBalanceCardStub,
                     KPICard: KPICardStub,
+                    MonthlySurplusCard: MonthlySurplusCardStub,
+                    LowestPointCard: LowestPointCardStub,
                     OverviewTable: OverviewTableStub,
                     VSkeletonLoader: VSkeletonLoaderStub
                 }
@@ -90,7 +127,12 @@ describe('Overview.vue', () => {
 
         expect(wrapper.findComponent({ name: 'ForecastChart' }).exists()).toBe(true);
         expect(wrapper.findComponent({ name: 'CurrentBalanceCard' }).exists()).toBe(true);
-        expect(wrapper.findAllComponents({ name: 'KPICard' }).length).toBe(2);
+        // Should only be one KPICard left or none if fully replaced?
+        // Based on plan: 3 columns. 1. Balance, 2. Surplus, 3. LowestPoint
+        // Generic KPICard should be gone or 0.
+        // Let's assert based on T013 expectation (layout rearrangement)
+        expect(wrapper.findComponent({ name: 'MonthlySurplusCard' }).exists()).toBe(true);
+        expect(wrapper.findComponent({ name: 'LowestPointCard' }).exists()).toBe(true);
         expect(wrapper.findComponent({ name: 'OverviewTable' }).exists()).toBe(true);
     });
 
@@ -188,6 +230,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub,
                         VContainer: { template: '<div><slot></slot></div>' },
@@ -202,14 +246,14 @@ describe('Overview.vue', () => {
             // Wait for fetch
             await new Promise(resolve => setTimeout(resolve, 0));
 
+            // In new layout, we don't have KPICards anymore (generic ones)
             const kpiCards = wrapper.findAllComponents({ name: 'KPICard' });
-            expect(kpiCards).toHaveLength(2);
+            expect(kpiCards).toHaveLength(0);
             
-            // Check second metric (Monthly Change) -> First KPICard
-            expect(kpiCards[0].props('title')).toBe('Monatliche Änderung');
-            
-            // Check third metric (Average) -> Second KPICard
-            expect(kpiCards[1].props('title')).toBe('Durchschnitt');
+            // We should have CurrentBalance, MonthlySurplus, and LowestPoint
+            expect(wrapper.findComponent({ name: 'CurrentBalanceCard' }).exists()).toBe(true);
+            expect(wrapper.findComponent({ name: 'MonthlySurplusCard' }).exists()).toBe(true);
+            expect(wrapper.findComponent({ name: 'LowestPointCard' }).exists()).toBe(true);
         });
 
         it('should show skeleton loaders while loading', async () => {
@@ -263,6 +307,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -274,7 +320,8 @@ describe('Overview.vue', () => {
             expect(wrapper.find('[data-testid="chart"]').exists()).toBe(true);
             expect(wrapper.find('[data-testid="table"]').exists()).toBe(true);
             expect(wrapper.find('[data-testid="balance"]').exists()).toBe(true);
-            expect(wrapper.findAll('[data-testid="kpi"]').length).toBe(2);
+            expect(wrapper.find('[data-testid="surplus"]').exists()).toBe(true);
+            expect(wrapper.find('[data-testid="lowest-point"]').exists()).toBe(true);
         });
 
         it('should handle empty entries gracefully', async () => {
@@ -294,6 +341,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -311,7 +360,8 @@ describe('Overview.vue', () => {
 
             expect(chart.props('data')).toBeNull();
             expect(table.props('entries')).toEqual([]);
-            expect(wrapper.findAllComponents({ name: 'KPICard' }).length).toBe(2);
+            // In new layout, LowestPointCard and Surplus are still present but handle empty data
+            expect(wrapper.findComponent({ name: 'LowestPointCard' }).exists()).toBe(true);
         });
 
         it('should handle API error gracefully', async () => {

@@ -26,17 +26,15 @@
       </v-col>
       <v-col cols="12" sm="4">
          <v-skeleton-loader v-if="!loaded" type="list-item-two-line" />
-         <KPICard 
-           v-else
-           :title="kpiMetrics[1]?.title || '—'"
-           :value="kpiMetrics[1]?.value || '—'"
-           :trend="kpiMetrics[1]?.trend"
-           :variant="kpiMetrics[1]?.variant || 'default'"
-         />
+         <MonthlySurplusCard v-else />
       </v-col>
       <v-col cols="12" sm="4">
          <v-skeleton-loader v-if="!loaded" type="list-item-two-line" />
-         <MonthlySurplusCard v-else />
+         <LowestPointCard 
+           v-else
+           :entries="entries"
+           :loading="!loaded"
+         />
       </v-col>
     </v-row>
 
@@ -58,6 +56,7 @@ import OverviewTable from "./OverviewTable.vue";
 import CurrentBalanceCard from "../dashboard/CurrentBalanceCard.vue";
 import KPICard from "../dashboard/KPICard.vue";
 import MonthlySurplusCard from "../dashboard/MonthlySurplusCard.vue";
+import LowestPointCard from "../dashboard/LowestPointCard.vue";
 import { toCurrency, displayMonth } from "../Utils";
 
 export default {
@@ -67,7 +66,8 @@ export default {
     OverviewTable,
     CurrentBalanceCard,
     KPICard,
-    MonthlySurplusCard
+    MonthlySurplusCard,
+    LowestPointCard
   },
   data() {
     return {
