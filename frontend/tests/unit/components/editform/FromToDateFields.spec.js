@@ -1,14 +1,15 @@
 import { mount } from '@vue/test-utils';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import FromToDateFields from '@/components/editform/FromToDateFields.vue';
+import MonthYearDatepicker from '@/components/common/MonthYearDatepicker.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
-// Mock MonthDatePicker to avoid deep rendering issues and focus on props
-const MonthDatePickerStub = {
+// Mock MonthYearDatepicker to avoid deep rendering issues and focus on props
+const MonthYearDatepickerStub = {
   template: '<div></div>',
-  props: ['label', 'modelValue', 'rules', 'min', 'max']
+  props: ['label', 'modelValue', 'min', 'max', 'errorMessages']
 };
 
 describe('FromToDateFields.vue', () => {
@@ -21,18 +22,18 @@ describe('FromToDateFields.vue', () => {
         });
     });
 
-    it('should render two month date pickers', () => {
+    it('should render two month year date pickers', () => {
         const wrapper = mount(FromToDateFields, {
             global: { 
                 plugins: [vuetify],
-                stubs: { MonthDatePicker: MonthDatePickerStub }
+                stubs: { MonthYearDatepicker: MonthYearDatepickerStub }
             },
             props: {
-                modelValue: { from: [2023, 1], to: [2023, 12] }
+                modelValue: { from: { year: 2023, month: 1 }, to: { year: 2023, month: 12 } }
             }
         });
 
-        const pickers = wrapper.findAllComponents(MonthDatePickerStub);
+        const pickers = wrapper.findAllComponents(MonthYearDatepickerStub);
         expect(pickers).toHaveLength(2);
     });
 
@@ -40,69 +41,61 @@ describe('FromToDateFields.vue', () => {
         const wrapper = mount(FromToDateFields, {
             global: { 
                 plugins: [vuetify],
-                stubs: { MonthDatePicker: MonthDatePickerStub }
+                stubs: { MonthYearDatepicker: MonthYearDatepickerStub }
             },
             props: {
-                modelValue: { from: [2023, 1], to: [2023, 12] }
+                modelValue: { from: { year: 2023, month: 1 }, to: { year: 2023, month: 12 } }
             }
         });
 
-        const pickers = wrapper.findAllComponents(MonthDatePickerStub);
+        const pickers = wrapper.findAllComponents(MonthYearDatepickerStub);
         expect(pickers.at(0).props().label).toBe('Gültig ab');
         expect(pickers.at(1).props().label).toBe('Gültig bis');
     });
 
-    it('should pass modelValue props to pickers', () => {
+    it('should pass Date objects to pickers based on YearMonth objects', () => {
         const wrapper = mount(FromToDateFields, {
             global: { 
                 plugins: [vuetify],
-                stubs: { MonthDatePicker: MonthDatePickerStub }
+                stubs: { MonthYearDatepicker: MonthYearDatepickerStub }
             },
             props: {
-                modelValue: { from: [2023, 1], to: [2023, 12] }
+                modelValue: { from: { year: 2023, month: 1 }, to: { year: 2023, month: 12 } }
             }
         });
 
-        const pickers = wrapper.findAllComponents(MonthDatePickerStub);
-        expect(pickers.at(0).props().modelValue).toEqual([2023, 1]);
-        expect(pickers.at(1).props().modelValue).toEqual([2023, 12]);
+        const pickers = wrapper.findAllComponents(MonthYearDatepickerStub);
+        
+        const fromDate = pickers.at(0).props().modelValue;
+        expect(fromDate).toBeInstanceOf(Date);
+        expect(fromDate.getFullYear()).toBe(2023);
+        expect(fromDate.getMonth()).toBe(0); // Jan
+
+        const toDate = pickers.at(1).props().modelValue;
+        expect(toDate).toBeInstanceOf(Date);
+        expect(toDate.getFullYear()).toBe(2023);
+        expect(toDate.getMonth()).toBe(11); // Dec
     });
 
-    it('should have validation rule for to-date', () => {
+    it('should calculate validation errors for to-date', async () => {
         const wrapper = mount(FromToDateFields, {
             global: { 
                 plugins: [vuetify],
-                stubs: { MonthDatePicker: MonthDatePickerStub }
+                stubs: { MonthYearDatepicker: MonthYearDatepickerStub }
             },
             props: {
-                modelValue: { from: [2023, 1], to: [2023, 12] }
+                modelValue: { from: { year: 2023, month: 5 }, to: { year: 2023, month: 1 } }
             }
         });
 
-        const toPicker = wrapper.findAllComponents(MonthDatePickerStub).at(1);
-        expect(toPicker.props().rules).toBeDefined();
-        expect(toPicker.props().rules.length).toBeGreaterThan(0);
-    });
-
-    it('should validate to-date greater than from-date', () => {
-        // Validation logic expects from to be [y, m]
-        const wrapper = mount(FromToDateFields, {
-            global: { 
-                plugins: [vuetify],
-                stubs: { MonthDatePicker: MonthDatePickerStub }
-            },
-            props: {
-                modelValue: { from: [2023, 5], to: null }
-            }
+        const toPicker = wrapper.findAllComponents(MonthYearDatepickerStub).at(1);
+        expect(toPicker.props().errorMessages).toContain("'Gültig bis' darf nicht kleiner als 'Gültig ab' sein");
+        
+        // Update to valid date
+        await wrapper.setProps({
+            modelValue: { from: { year: 2023, month: 5 }, to: { year: 2023, month: 6 } }
         });
-
-        // Access the rule function directly from vm data
-        const rule = wrapper.vm.toDateRules[0];
-
-        // Valid case: d is YYYY-MM string (as passed from MonthDatePicker)
-        expect(rule('2023-06')).toBe(true);
-
-        // Invalid case (to < from)
-        expect(rule('2023-04')).toBe("'Gültig bis' darf nicht kleiner als 'Gültig ab' sein");
+        
+        expect(wrapper.findAllComponents(MonthYearDatepickerStub).at(1).props().errorMessages).toHaveLength(0);
     });
 });

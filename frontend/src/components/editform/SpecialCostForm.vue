@@ -53,14 +53,18 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <month-date-picker v-model="form.dueDate" label="Fällig am" />
+        <month-year-datepicker
+          v-model="dueDateObject"
+          label="Fällig am"
+        />
       </v-col>
     </v-row>
   </cost-edit-form>
 </template>
 <script>
 import CostEditForm from "./CostEditForm.vue";
-import MonthDatePicker from "./MonthDatePicker.vue";
+import MonthYearDatepicker from "@/components/common/MonthYearDatepicker.vue";
+import { dateToYearMonth, yearMonthToDate } from "@/services/dateAdapter";
 import { monthlyCostToForm, CommonForm, baseFormToCost } from "../Utils";
 import { saveSpecialCost } from "../../services/specialcosts";
 
@@ -86,7 +90,7 @@ export default {
   mixins: [CommonForm(costToForm, formToCost, '/api/specialcosts')],
   components: {
     CostEditForm,
-    MonthDatePicker
+    MonthYearDatepicker
   },
   props: ["btnText", "icon"],
   computed: {
@@ -96,6 +100,14 @@ export default {
     },
     backendAmount() {
       return this.form.amount === 0 ? 0 : this.form.amount * (this.form.incoming ? 1 : -1);
+    },
+    dueDateObject: {
+      get() {
+        return yearMonthToDate(this.form.dueDate);
+      },
+      set(date) {
+        this.form.dueDate = dateToYearMonth(date);
+      }
     }
   },
   methods: {

@@ -20,7 +20,7 @@ describe('MonthDatePicker.vue', () => {
             global: { plugins: [vuetify] },
             props: {
                 label: 'Test Label',
-                modelValue: [2023, 1]
+                modelValue: { year: 2023, month: 1 }
             }
         });
 
@@ -32,10 +32,11 @@ describe('MonthDatePicker.vue', () => {
         const wrapper = mount(MonthDatePicker, {
             global: { plugins: [vuetify] },
             props: {
-                modelValue: [2023, 1]
+                modelValue: { year: 2023, month: 1 }
             }
         });
 
+        // displayMonth utility output
         expect(wrapper.vm.displayDate).toBe('Januar / 2023');
     });
 
@@ -43,18 +44,17 @@ describe('MonthDatePicker.vue', () => {
         const wrapper = mount(MonthDatePicker, {
             global: { plugins: [vuetify] },
             props: {
-                modelValue: [2023, 1]
+                modelValue: { year: 2023, month: 1 }
             }
         });
 
         // Simulate input from VDatePicker (passes Date object or ISO string)
-        // VDatePicker usually passes Date object.
         const date = new Date(2023, 1, 15); // Feb 2023
         wrapper.vm.input(date);
         
         expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-        // input converts date to [Year, Month] (1-based)
-        expect(wrapper.emitted('update:modelValue')[0]).toEqual([[2023, 2]]);
+        // input converts date to {year, month} (1-based)
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual([{ year: 2023, month: 2 }]);
     });
 
     it('should handle null input', () => {
@@ -74,7 +74,7 @@ describe('MonthDatePicker.vue', () => {
         const wrapper = mount(MonthDatePicker, {
             global: { plugins: [vuetify] },
             props: {
-                modelValue: [2023, 1],
+                modelValue: { year: 2023, month: 1 },
                 rules: [rule]
             }
         });
@@ -91,7 +91,7 @@ describe('MonthDatePicker.vue', () => {
         const wrapper = mount(MonthDatePicker, {
             global: { plugins: [vuetify] },
             props: {
-                modelValue: [2023, 1],
+                modelValue: { year: 2023, month: 1 },
                 rules: [rule]
             }
         });
@@ -105,8 +105,8 @@ describe('MonthDatePicker.vue', () => {
         const wrapper = mount(MonthDatePicker, {
             global: { plugins: [vuetify] },
             props: {
-                modelValue: [2023, 1],
-                min: [2022, 1]
+                modelValue: { year: 2023, month: 1 },
+                min: { year: 2022, month: 1 }
             }
         });
 
@@ -120,7 +120,7 @@ describe('MonthDatePicker.vue', () => {
         const wrapper = mount(MonthDatePicker, {
             global: { plugins: [vuetify] },
             props: {
-                modelValue: [2023, 1]
+                modelValue: { year: 2023, month: 1 }
             }
         });
 

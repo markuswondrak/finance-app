@@ -1,15 +1,19 @@
-application/target/
+# Node/Vue
+node_modules/
+dist/
+coverage/
+.env*
+*.log
 
-application/.classpath
-application/.factorypath
-application/.project
-application/.settings
-application/.springBeans
-application/.sts4-cache
-application/.idea
+# Go
+backend/bin/
+backend/vendor/
+*.exe
+*.test
+*.out
 
-# Development script files
-.dev-logs/
-.dev-pids/
-
-CLAUDE.md
+# Editors
+.vscode/
+.idea/
+*.swp
+*.DS_Store
