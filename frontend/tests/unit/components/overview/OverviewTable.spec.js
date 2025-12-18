@@ -56,11 +56,11 @@ describe('OverviewTable.vue', () => {
         // Month
         expect(firstRowCells[0].text()).toContain('Januar / 2023');
         // Fixed Costs
-        expect(firstRowCells[1].text()).toContain('100 €');
+        expect(firstRowCells[1].text()).toContain('100,00');
         // Special Costs
-        expect(firstRowCells[2].text()).toContain('50 €');
+        expect(firstRowCells[2].text()).toContain('50,00');
         // Balance
-        expect(firstRowCells[3].text()).toContain('850 €');
+        expect(firstRowCells[3].text()).toContain('850,00');
     });
 
     it('should apply negative-amount class for negative balance', () => {

@@ -12,7 +12,7 @@
         :model-value="displayDate"
         :label="label"
         readonly
-        append-inner-icon="mdi-calendar"
+        append-inner-icon="fa-calendar"
         variant="outlined"
         hide-details
         class="month-year-picker-input"
@@ -24,11 +24,11 @@
     <v-card class="month-year-picker-card">
       <v-card-title class="d-flex justify-space-between align-center py-2 px-4">
         <v-btn icon variant="text" density="comfortable" @click="changeYear(-1)">
-          <v-icon>mdi-chevron-left</v-icon>
+          <v-icon>fa-chevron-left</v-icon>
         </v-btn>
         <span class="text-h6 font-weight-bold">{{ currentViewYear }}</span>
         <v-btn icon variant="text" density="comfortable" @click="changeYear(1)">
-          <v-icon>mdi-chevron-right</v-icon>
+          <v-icon>fa-chevron-right</v-icon>
         </v-btn>
       </v-card-title>
 

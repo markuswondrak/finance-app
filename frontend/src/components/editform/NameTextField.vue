@@ -6,6 +6,8 @@
     :counter="20"
     label="Bezeichnung"
     :required="required"
+    variant="outlined"
+    density="comfortable"
   />
 </template>
 <script>

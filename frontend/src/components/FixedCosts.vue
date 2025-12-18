@@ -47,6 +47,7 @@
                   :cols="config.cols"
                   :formComponent="config.formComponent"
                   @delete-clicked="deleteCost"
+                  @saved="handleSaved"
                 />
               </v-window-item>
             </v-window>
@@ -54,6 +55,14 @@
         </v-skeleton-loader>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="snackbar.show"
+      :color="snackbar.color"
+      :timeout="3000"
+      location="bottom"
+    >
+      {{ snackbar.text }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -111,6 +120,11 @@ export default {
   data() {
     return {
       tab: null,
+      snackbar: {
+        show: false,
+        text: '',
+        color: 'success'
+      },
 
       monthly: [],
       quaterly: [],
@@ -159,24 +173,29 @@ export default {
     }
   },
   created: async function() {
-    const data = await this.fetchData("/api/costs");
-    this.monthly = data.monthly;
-    this.quaterly = data.quaterly;
-    this.halfyearly = data.halfyearly;
-    this.yearly = data.yearly;
-
-    this.currentBalance = data.currentBalance;
+    await this.loadData();
   },
   methods: {
-    async deleteCost(cost) {
-      await fetch(`/api/costs/${cost.id}`, { method: 'DELETE' });
+    async loadData() {
       const data = await this.fetchData("/api/costs");
       this.monthly = data.monthly;
       this.quaterly = data.quaterly;
       this.halfyearly = data.halfyearly;
       this.yearly = data.yearly;
-
       this.currentBalance = data.currentBalance;
+    },
+    async deleteCost(cost) {
+      await fetch(`/api/costs/${cost.id}`, { method: 'DELETE' });
+      await this.loadData();
+    },
+    async handleSaved(message = "Kosten erfolgreich gespeichert") {
+      await this.loadData();
+      this.showSnackbar(message);
+    },
+    showSnackbar(text, color = 'success') {
+      this.snackbar.text = text;
+      this.snackbar.color = color;
+      this.snackbar.show = true;
     }
   }
 };

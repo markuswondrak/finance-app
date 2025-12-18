@@ -18,20 +18,20 @@ import {
 describe('Utils.js', () => {
   describe('toCurrency', () => {
     it('should format number with thousands separator and euro symbol', () => {
-      expect(toCurrency(1000)).toBe('1.000 €');
-      expect(toCurrency(1000000)).toBe('1.000.000 €');
-      expect(toCurrency(500)).toBe('500 €');
-      expect(toCurrency(0)).toBe('0 €');
+      expect(toCurrency(1000)).toBe('1.000,00 €');
+      expect(toCurrency(1000000)).toBe('1.000.000,00 €');
+      expect(toCurrency(500)).toBe('500,00 €');
+      expect(toCurrency(0)).toBe('0,00 €');
     });
 
     it('should handle negative numbers', () => {
-      expect(toCurrency(-1000)).toBe('-1.000 €');
-      expect(toCurrency(-500)).toBe('-500 €');
+      expect(toCurrency(-1000)).toBe('-1.000,00 €');
+      expect(toCurrency(-500)).toBe('-500,00 €');
     });
 
     it('should handle decimal numbers', () => {
-      expect(toCurrency(1000.50)).toBe('1.000.5 €');
-      expect(toCurrency(999.99)).toBe('999.99 €');
+      expect(toCurrency(1000.50)).toBe('1.000,50 €');
+      expect(toCurrency(999.99)).toBe('999,99 €');
     });
   });
 
@@ -399,7 +399,8 @@ describe('Utils.js', () => {
             editform: {
               success: vi.fn()
             }
-          }
+          },
+          $emit: vi.fn()
         };
 
         await mixin.methods.saveCost.call(component);
@@ -416,6 +417,7 @@ describe('Utils.js', () => {
           }
         );
         expect(component.$refs.editform.success).toHaveBeenCalled();
+        expect(component.$emit).toHaveBeenCalledWith('saved');
       });
     });
 

@@ -50,7 +50,7 @@ export const toQuaterlyDueDate = dueDate => quaterlyStrings[dueDate - 1];
 export const toHalfyearlyDueDate = dueDate => healfyearlyStrings[dueDate - 1];
 export const toMonth = month => monthMap[month - 1];
 
-export const toSelectItems = (list) => list.map((text, value) => ({ text, value }))
+export const toSelectItems = (list) => list.map((title, value) => ({ title, value }))
 
 // works only for "flat" objects (no arrays or objects as properties)
 export const equals = (o1, o2) => {
@@ -131,6 +131,7 @@ export const CommonForm = (costToForm, formToCost, endpoint) => ({
       })
 
       this.$refs.editform.success();
+      this.$emit('saved');
     }
 
   }

@@ -23,7 +23,8 @@ describe('CurrentAmount.vue', () => {
             }
         });
 
-        expect(wrapper.text()).toContain('1.234.56 €');
+        // Check for the number part to avoid non-breaking space issues
+        expect(wrapper.text()).toContain('1.234,56');
     });
 
     it('should render dialog hidden by default', () => {

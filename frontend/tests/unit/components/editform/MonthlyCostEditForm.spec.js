@@ -144,5 +144,6 @@ describe('MonthlyCostEditForm.vue', () => {
         await wrapper.vm.saveCost();
 
         expect(successSpy).toHaveBeenCalled();
+        expect(wrapper.emitted('saved')).toBeTruthy();
     });
 });

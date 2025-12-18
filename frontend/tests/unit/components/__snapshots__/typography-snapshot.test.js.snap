@@ -8,7 +8,7 @@ exports[`User Story 3: Typography Hierarchy Snapshots > CurrentAmount match snap
     </div>
   </div>
   <div class="v-banner__content">
-    <div class="v-banner-text"><span class="text-body-2 text-medium-emphasis mr-2">Aktueller Betrag:</span><strong class="text-success text-h4 font-weight-bold">1.234.56 €</strong></div>
+    <div class="v-banner-text"><span class="text-body-2 text-medium-emphasis mr-2">Aktueller Betrag:</span><strong class="text-success text-h4 font-weight-bold">1.234,56&nbsp;€</strong></div>
     <!---->
     <!---->
   </div>

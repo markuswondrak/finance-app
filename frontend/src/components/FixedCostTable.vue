@@ -18,7 +18,7 @@
         <!-- Slot for action buttons (edit and delete) -->
         <template v-slot:item.actions="{ item }">
           <div class="d-flex align-center">
-            <component :is="formComponent" :cost="item" />
+            <component :is="formComponent" :cost="item" @saved="$emit('saved')" />
             <delete-button :name="item.name" @confirm="$emit('delete-clicked', item)"/>
           </div>
         </template>
@@ -27,7 +27,7 @@
     </v-card-text>
 
     <v-card-actions>
-      <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" btn-color="primary" />
+      <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" btn-color="primary" @saved="$emit('saved')" />
     </v-card-actions>
   </v-card>
 </template>

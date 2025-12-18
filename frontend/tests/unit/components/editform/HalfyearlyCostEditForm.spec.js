@@ -49,6 +49,7 @@ describe('HalfyearlyCostEditForm.vue', () => {
         await wrapper.vm.saveCost();
 
         expect(successSpy).toHaveBeenCalled();
+        expect(wrapper.emitted('saved')).toBeTruthy();
     });
 
     it('should initialize logic correctly', () => {

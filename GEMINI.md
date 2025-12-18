@@ -28,7 +28,6 @@ Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 ## Recent Changes
 - 009-month-year-datepicker: Added Backend: Go 1.17+, Frontend: Vue.js 3.3+ + Backend: Gin, GORM. Frontend: Vuetify 3.3+, Chart.js 4.4+ (vue-chartjs), Vue Router 4.2+
 - 009-month-year-datepicker: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
-- 008-special-costs-page: Added Go 1.17+ (Backend), Vue.js 3.3+ (Frontend) + Gin (Go), GORM (Go), Vuetify 3.3+ (Vue)
 
 
 <!-- MANUAL ADDITIONS START -->

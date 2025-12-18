@@ -6,6 +6,8 @@
     @focus="focus = true"
     :required="required"
     :label="label"
+    variant="outlined"
+    density="comfortable"
   />
 </template>
 <script>

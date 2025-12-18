@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import IncomingSelect from '@/components/editform/IncomingSelect.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
@@ -26,7 +26,7 @@ describe('IncomingSelect.vue', () => {
     expect(wrapper.props().modelValue).toBe(true);
   });
 
-  it('should emit update:modelValue event when checkbox is toggled', async () => {
+  it('should emit update:modelValue event when toggle is changed', async () => {
     const wrapper = mount(IncomingSelect, {
       global: { plugins: [vuetify] },
       props: {
@@ -34,15 +34,15 @@ describe('IncomingSelect.vue', () => {
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    checkbox.vm.$emit('update:modelValue', true);
+    const toggle = wrapper.findComponent({ name: 'VBtnToggle' });
+    toggle.vm.$emit('update:modelValue', true);
     await wrapper.vm.$nextTick();
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     expect(wrapper.emitted('update:modelValue')[0]).toEqual([true]);
   });
 
-  it('should pass modelValue as model-value to v-checkbox', () => {
+  it('should pass modelValue to v-btn-toggle', () => {
     const wrapper = mount(IncomingSelect, {
       global: { plugins: [vuetify] },
       props: {
@@ -50,11 +50,11 @@ describe('IncomingSelect.vue', () => {
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().modelValue).toBe(true);
+    const toggle = wrapper.findComponent({ name: 'VBtnToggle' });
+    expect(toggle.props().modelValue).toBe(true);
   });
 
-  it('should have correct label', () => {
+  it('should have correct styling props', () => {
     const wrapper = mount(IncomingSelect, {
       global: { plugins: [vuetify] },
       props: {
@@ -62,11 +62,14 @@ describe('IncomingSelect.vue', () => {
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().label).toBe('Eingehend');
+    const toggle = wrapper.findComponent({ name: 'VBtnToggle' });
+    expect(toggle.props().color).toBe('primary');
+    expect(toggle.props().variant).toBe('outlined');
+    expect(toggle.props().density).toBe('comfortable');
+    expect(toggle.props().mandatory).toBe(true);
   });
 
-  it('should have persistent hint', () => {
+  it('should have two buttons with correct labels', () => {
     const wrapper = mount(IncomingSelect, {
       global: { plugins: [vuetify] },
       props: {
@@ -74,55 +77,9 @@ describe('IncomingSelect.vue', () => {
       }
     });
 
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().persistentHint).toBe(true);
-  });
-
-  it('should have descriptive hint text', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: false
-      }
-    });
-
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().hint).toBe('Anhacken, wenn es sich bei dem Betrag um einen eingehenden (z.B. Gehalt) handelt.');
-  });
-
-  it('should have primary color', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: false
-      }
-    });
-
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().color).toBe('primary');
-  });
-
-  it('should handle false value', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: false
-      }
-    });
-
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().modelValue).toBe(false);
-  });
-
-  it('should handle true value', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: true
-      }
-    });
-
-    const checkbox = wrapper.findComponent({ name: 'VCheckbox' });
-    expect(checkbox.props().modelValue).toBe(true);
+    const buttons = wrapper.findAllComponents({ name: 'VBtn' });
+    expect(buttons.length).toBe(2);
+    expect(buttons[0].text()).toContain('Ausgabe');
+    expect(buttons[1].text()).toContain('Einnahme');
   });
 });

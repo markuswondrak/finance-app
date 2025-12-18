@@ -43,7 +43,6 @@ describe('CurrencyInput.vue', () => {
 
     expect(wrapper.vm.focus).toBe(false);
     expect(wrapper.vm.displayValue).toBe(toCurrency(1500));
-    expect(wrapper.vm.displayValue).toBe('1.500 €');
   });
 
   it('should display raw value when focused', async () => {
@@ -211,6 +210,5 @@ describe('CurrencyInput.vue', () => {
     });
 
     expect(wrapper.vm.displayValue).toBe(toCurrency(0));
-    expect(wrapper.vm.displayValue).toBe('0 €');
   });
 });
