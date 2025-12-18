@@ -92,4 +92,30 @@ describe('OverviewTable.vue', () => {
             dueDate: yearMonth
         });
     });
+
+    it('should emit refresh event when SpecialCostForm emits refresh', async () => {
+        const SpecialCostFormStub = { 
+            name: 'SpecialCostForm', 
+            template: '<div class="special-cost-form-stub"></div>', 
+            emits: ['refresh'] 
+        };
+
+        const wrapper = mount(OverviewTable, {
+            global: {
+                plugins: [vuetify],
+                stubs: {
+                    SpecialCostForm: SpecialCostFormStub,
+                    OverviewDetails: true // Stub other children
+                }
+            },
+            props: {
+                entries: mockEntries
+            }
+        });
+
+        const specialCostForm = wrapper.findComponent(SpecialCostFormStub);
+        await specialCostForm.vm.$emit('refresh');
+
+        expect(wrapper.emitted('refresh')).toBeTruthy();
+    });
 });

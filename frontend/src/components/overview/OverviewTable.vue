@@ -21,7 +21,7 @@
           >{{ formatResponsive(toCurrency(entry.currentAmount)) }}</td>
           <td align="right" class="action-cell">
             <overview-details v-if="!entry.empty" :detail="{...entry, index}" />
-            <special-cost-form :cost="cost(index, entry.yearMonth)" icon="fa-square-plus"/>
+            <special-cost-form :cost="cost(index, entry.yearMonth)" icon="fa-square-plus" @refresh="$emit('refresh')"/>
           </td>
         </tr>
       </tbody>

@@ -42,7 +42,7 @@
     <v-row>
       <v-col cols="12">
         <v-skeleton-loader v-if="!loaded" type="table" class="mx-auto" />
-        <overview-table v-else :entries="entries" />
+        <overview-table v-else :entries="entries" @refresh="loadData" />
       </v-col>
     </v-row>
   </v-container>
