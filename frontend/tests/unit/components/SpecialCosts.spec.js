@@ -1,133 +1,70 @@
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import SpecialCosts from '@/components/SpecialCosts.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import * as specialCostsService from '@/services/specialcosts';
+
+const vuetify = createVuetify({
+  components,
+  directives,
+});
+
+// Mock service
+vi.mock('@/services/specialcosts', () => ({
+  getSpecialCosts: vi.fn(() => Promise.resolve([])),
+  deleteSpecialCost: vi.fn(() => Promise.resolve())
+}));
 
 describe('SpecialCosts.vue', () => {
-    let vuetify;
+  it('imports correctly', () => {
+    expect(SpecialCosts).toBeTruthy();
+  });
 
-    beforeEach(() => {
-        vuetify = createVuetify({
-            components,
-            directives,
-        });
-        global.fetch = vi.fn();
+  it('filters future costs correctly', () => {
+    const wrapper = mount(SpecialCosts, {
+      global: {
+        plugins: [vuetify],
+      },
     });
 
-    afterEach(() => {
-        vi.restoreAllMocks();
+    const today = new Date();
+    const pastDate = { year: today.getFullYear() - 1, month: 1 };
+    const futureDate = { year: today.getFullYear() + 1, month: 1 };
+    
+    // We need to access the method that does the filtering or check computed property if available
+    // Assuming 'items' data property and a computed property 'filteredItems' or similar method
+    // For now, let's mock the component's internal logic or wait for implementation details
+    // Since we are TDD-ing, let's assume a method `isFuture(yearMonth)` exists or test the outcome on rendered list if we mock data
+    
+    // Let's test the helper method directly if exposed, or via wrapper.vm
+    // Assuming `isFuture` method on component
+    expect(wrapper.vm.isFuture(pastDate)).toBe(false);
+    expect(wrapper.vm.isFuture(futureDate)).toBe(true);
+    
+    // Boundary case: Current month should be future (true)
+    const currentMonth = { year: today.getFullYear(), month: today.getMonth() + 1 };
+    expect(wrapper.vm.isFuture(currentMonth)).toBe(true);
+  });
+
+  it('formats amount and date correctly', () => {
+    const wrapper = mount(SpecialCosts, {
+      global: {
+        plugins: [vuetify],
+      },
     });
 
-    const mockApiData = [
-        { id: 1, name: 'Vacation', amount: 500, dueYearMonth: '2023-06' },
-        { id: 2, name: 'Christmas', amount: 300, dueYearMonth: '2023-12' }
-    ];
-
-    it('should render container', () => {
-        global.fetch.mockResolvedValue({
-            json: vi.fn(() => Promise.resolve(mockApiData))
-        });
-
-        const wrapper = mount(SpecialCosts, {
-            global: {
-                plugins: [vuetify],
-            }
-        });
-
-        const container = wrapper.findComponent({ name: 'VContainer' });
-        expect(container.exists()).toBe(true);
-    });
-
-    it('should fetch data on created', async () => {
-        global.fetch.mockResolvedValue({
-            json: vi.fn(() => Promise.resolve(mockApiData))
-        });
-
-        const wrapper = mount(SpecialCosts, {
-            global: {
-                plugins: [vuetify],
-            }
-        });
-
-        // Wait for created hook async
-        await new Promise(resolve => setTimeout(resolve, 0));
-        
-        expect(global.fetch).toHaveBeenCalledWith('/api/specialcosts');
-    });
-
-    it('should populate entries from API', async () => {
-        global.fetch.mockResolvedValue({
-            json: vi.fn(() => Promise.resolve(mockApiData))
-        });
-
-        const wrapper = mount(SpecialCosts, {
-            global: {
-                plugins: [vuetify],
-            }
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 0));
-
-        expect(wrapper.vm.entries).toEqual(mockApiData);
-    });
-
-    it('should render v-data-table with correct props', async () => {
-        global.fetch.mockResolvedValue({
-            json: vi.fn(() => Promise.resolve(mockApiData))
-        });
-
-        const wrapper = mount(SpecialCosts, {
-            global: {
-                plugins: [vuetify],
-            }
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 0));
-
-        const dataTable = wrapper.findComponent({ name: 'VDataTable' });
-        expect(dataTable.exists()).toBe(true);
-        expect(dataTable.props().items).toEqual(mockApiData);
-    });
-
-    it('should render SpecialCostForm in slots', async () => {
-        global.fetch.mockResolvedValue({
-            json: vi.fn(() => Promise.resolve(mockApiData))
-        });
-
-        const wrapper = mount(SpecialCosts, {
-            global: {
-                plugins: [vuetify],
-            }
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 0));
-
-        // Verify SpecialCostForm is registered as a component
-        expect(wrapper.vm.$options.components).toHaveProperty('SpecialCostForm');
-        // Verify DeleteButton is also registered
-        expect(wrapper.vm.$options.components).toHaveProperty('DeleteButton');
-    });
-
-    it('should have correct columns defined in headers', async () => {
-        global.fetch.mockResolvedValue({
-            json: vi.fn(() => Promise.resolve(mockApiData))
-        });
-
-        const wrapper = mount(SpecialCosts, {
-            global: {
-                plugins: [vuetify],
-            }
-        });
-        
-        await new Promise(resolve => setTimeout(resolve, 0));
-
-        const headers = wrapper.vm.headers;
-        expect(headers).toEqual(expect.arrayContaining([
-            expect.objectContaining({ title: 'Bezeichnung', key: 'name' }),
-            expect.objectContaining({ title: 'Betrag', key: 'amount' }),
-            expect.objectContaining({ title: 'Fällig am', key: 'dueDate' })
-        ]));
-    });
+    // Formatting checks rely on formatCurrency and formatDate methods (or similar)
+    // Testing specific formatting outcomes
+    
+    // Amount formatting
+    // Note: Intl.NumberFormat might use a non-breaking space (U+00A0) which looks like a space but isn't
+    expect(wrapper.vm.formatAmount(500)).toMatch(/\+ 500,00[\s\u00A0]€/);
+    expect(wrapper.vm.formatAmount(-500)).toMatch(/- 500,00[\s\u00A0]€/);
+    
+    // Date formatting (Month Year)
+    // Utils.displayMonth seems to output "Month / Year"
+    expect(wrapper.vm.formatDate({ year: 2025, month: 10 })).toBe('Oktober / 2025');
+  });
 });
