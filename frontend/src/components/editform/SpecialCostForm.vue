@@ -1,8 +1,8 @@
 <template>
   <cost-edit-form
     ref="editform"
-    :title="title('Sonderkosten Kosten')"
-    :successMsg="successMsg('Sonderkosten Kosten')"
+    :title="title('Sonderkosten')"
+    :successMsg="successMsg('Sonderkosten')"
     :changed="changed"
     :btn-text="btnText"
     :icon="icon"
@@ -10,22 +10,49 @@
     @save="saveCost"
   >
     <v-row>
-      <v-col>
-        <name-text-field v-model="form.name" />
+      <v-col cols="12">
+        <v-text-field
+          label="Bezeichnung"
+          v-model="form.name"
+          required
+          variant="outlined"
+          density="comfortable"
+        />
+      </v-col>
+    </v-row>
+    <v-row align="center">
+      <v-col cols="12" sm="6">
+        <v-text-field
+          label="Betrag"
+          v-model.number="form.amount"
+          type="number"
+          prefix="€"
+          required
+          variant="outlined"
+          density="comfortable"
+          hide-details
+        />
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-btn-toggle
+          v-model="form.incoming"
+          mandatory
+          color="primary"
+          variant="outlined"
+          density="comfortable"
+          class="w-100"
+        >
+          <v-btn :value="false" class="flex-grow-1" color="error">
+            Ausgabe
+          </v-btn>
+          <v-btn :value="true" class="flex-grow-1" color="success">
+            Einnahme
+          </v-btn>
+        </v-btn-toggle>
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
-        <currency-input label="Betrag" v-model="form.amount" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <incoming-select v-model="form.incoming" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
+      <v-col cols="12">
         <month-date-picker v-model="form.dueDate" label="Fällig am" />
       </v-col>
     </v-row>
@@ -33,18 +60,16 @@
 </template>
 <script>
 import CostEditForm from "./CostEditForm.vue";
-import NameTextField from "./NameTextField.vue";
-import CurrencyInput from "./CurrencyInput.vue";
-import IncomingSelect from "./IncomingSelect.vue";
 import MonthDatePicker from "./MonthDatePicker.vue";
 import { monthlyCostToForm, CommonForm, baseFormToCost } from "../Utils";
+import { saveSpecialCost } from "../../services/specialcosts";
 
 const costToForm = cost => {
   const form = monthlyCostToForm(cost);
   return !cost
     ? {
         ...form,
-        dueDate: null
+        dueDate: { year: new Date().getFullYear(), month: new Date().getMonth() + 1 }
       }
     : {
         ...form,
@@ -57,16 +82,39 @@ const formToCost = form => ({
   dueDate: form.dueDate
 })
 
-
 export default {
   mixins: [CommonForm(costToForm, formToCost, '/api/specialcosts')],
   components: {
     CostEditForm,
-    NameTextField,
-    CurrencyInput,
-    IncomingSelect,
     MonthDatePicker
   },
-  props: ["btnText", "icon"]
+  props: ["btnText", "icon"],
+  computed: {
+    // These computed properties are added for testing compatibility (T012)
+    type() {
+      return this.form.incoming ? 'income' : 'expense';
+    },
+    backendAmount() {
+      return this.form.amount === 0 ? 0 : this.form.amount * (this.form.incoming ? 1 : -1);
+    }
+  },
+  methods: {
+    async saveCost() {
+      const cost = formToCost(this.form);
+      try {
+        await saveSpecialCost(cost);
+        this.$refs.editform.success();
+        this.$emit('refresh');
+      } catch (error) {
+        console.error("Failed to save special cost:", error);
+        this.$refs.editform.error("Fehler beim Speichern der Sonderkosten.");
+      }
+    }
+  }
 };
 </script>
+<style scoped>
+.w-100 {
+  width: 100%;
+}
+</style>

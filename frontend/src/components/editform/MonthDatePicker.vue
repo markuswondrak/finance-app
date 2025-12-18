@@ -10,10 +10,11 @@
       <v-text-field
         :model-value="displayDate"
         :label="label"
-        prepend-icon="fa-calendar-week"
+        prepend-inner-icon="mdi-calendar-month"
+        variant="outlined"
+        density="comfortable"
         :error-messages="errorMessages"
         clearable
-        clear-icon="fa-xmark"
         readonly
         v-bind="props"
         @click:clear="input(null)"
@@ -22,10 +23,10 @@
     <v-date-picker
       :model-value="dateObject"
       @update:modelValue="input"
-      color="blue"
+      color="primary"
       :min="minDate"
       :max="max"
-      view-mode="year" 
+      hide-header
     />
   </v-menu>
 </template>
@@ -44,16 +45,15 @@ export default {
   },
   computed: {
     displayDate() {
-      const dateObj = this.modelValue ? { year: this.modelValue[0], month: this.modelValue[1] } : null;
-      return displayMonth(dateObj, false, null);
+      return displayMonth(this.modelValue, false, null);
     },
     dateObject() {
-      if (!this.modelValue) return null;
-      return new Date(this.modelValue[0], this.modelValue[1] - 1, 1);
+      if (!this.modelValue || !this.modelValue.year || !this.modelValue.month) return null;
+      return new Date(this.modelValue.year, this.modelValue.month - 1, 1);
     },
     minDate() {
-      if (this.min && Array.isArray(this.min)) {
-          return new Date(this.min[0], this.min[1] - 1, 1);
+      if (this.min && typeof this.min === 'object') {
+          return new Date(this.min.year, this.min.month - 1, 1);
       }
       return undefined;
     }
@@ -63,7 +63,7 @@ export default {
       let inputYearMonth = null;
       if (date) {
           const d = new Date(date);
-          inputYearMonth = [d.getFullYear(), d.getMonth() + 1];
+          inputYearMonth = { year: d.getFullYear(), month: d.getMonth() + 1 };
       }
       
       this.$emit("update:modelValue", inputYearMonth);
@@ -74,18 +74,7 @@ export default {
       if (!this.rules) return;
 
       this.rules.forEach(rule => {
-        // Validation rules might expect string or array?
-        // Original code: `rule(e)` where e was string `YYYY-MM`.
-        // Now e is array `[Y, M]`.
-        // The rules used in `FromToDateFields`:
-        // `d => !d || !this.value.from || new Date(d) >= new Date(this.value.from) ...`
-        // `d` was passed from `input(e)` where `e` was `YYYY-MM`.
-        // `new Date('YYYY-MM')` works.
-        // `new Date([Y, M])` matches `new Date(Y, M)`? No. `new Date([2023, 1])` is Invalid Date.
-        // So I should pass a Date object or ISO string to validation rules if they expect date.
-        
-        // I'll convert array to ISO string YYYY-MM for validation compatibility
-        let valForRule = inputYearMonth ? `${inputYearMonth[0]}-${String(inputYearMonth[1]).padStart(2, '0')}` : null;
+        let valForRule = inputYearMonth ? `${inputYearMonth.year}-${String(inputYearMonth.month).padStart(2, '0')}` : null;
         
         const result = rule(valForRule);
         if (typeof result === "string") {

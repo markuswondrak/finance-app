@@ -7,7 +7,7 @@
           <span v-if="!!btnText">{{ btnText }}</span>
         </v-btn>
       </template>
-      <v-card v-if="dialog" rounded="lg">
+      <v-card v-if="dialog" rounded="xl">
         <v-card-title>
           <span>{{ title }}</span>
         </v-card-title>
@@ -31,6 +31,7 @@
       </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" location="bottom" color="success" :timeout="7000">{{ successMsg(name) }}</v-snackbar>
+    <v-snackbar v-model="errorSnackbar" location="bottom" color="error" :timeout="7000">{{ errorMsg }}</v-snackbar>
   </span>
 </template>
 <script>
@@ -41,7 +42,9 @@ export default {
       valid: false,
       dialog: false,
       saving: false,
-      snackbar: false
+      snackbar: false,
+      errorSnackbar: false,
+      errorMsg: ""
     };
   },
   computed: {
@@ -54,6 +57,11 @@ export default {
       this.dialog = false;
       this.saving = false;
       this.snackbar = true;
+    },
+    error(msg) {
+      this.saving = false;
+      this.errorMsg = msg || "Ein Fehler ist aufgetreten.";
+      this.errorSnackbar = true;
     }
   }
 };

@@ -25,14 +25,14 @@ export const monthMap = [
 ]
 
 export const displayMonth = (yearMonth, responsive = true, empty = '-') => {
-  if (!yearMonth) return empty;
+  if (!yearMonth || !yearMonth.year || !yearMonth.month) return empty;
 
   const { year, month } = yearMonth;
 
-  const displayMonth = responsive && window.innerWidth < 768 ?
+  const displayMonthName = responsive && window.innerWidth < 768 ?
     month : monthMap[month - 1];
 
-  return `${displayMonth} / ${year}`;
+  return `${displayMonthName} / ${year}`;
 }
 
 const delimiter = (list) => list.length > 2 ? ', ' : ' und ';
