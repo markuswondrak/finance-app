@@ -3,7 +3,7 @@
     <v-container>
       <div class="text-center mb-12">
         <h2 class="text-h4 font-weight-bold mb-2">Ready to take control?</h2>
-        <p class="text-h5 text-primary mb-8 font-weight-bold">It’s 100% Free.</p>
+        <p class="text-h5 text-success mb-8 font-weight-bold">It’s 100% Free.</p>
         
         <div class="d-flex justify-center mb-12">
           <v-btn icon="fa-brands fa-google" variant="tonal" color="white" class="mx-2 glass-button" />

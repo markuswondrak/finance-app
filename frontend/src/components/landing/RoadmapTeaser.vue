@@ -7,7 +7,7 @@
       >
         <h2 class="text-h4 font-weight-bold mb-4">Your Wealth, Optimized.</h2>
         <div class="mb-8">
-          <v-chip color="primary" variant="outlined" size="small" class="text-uppercase font-weight-bold letter-spacing-1">
+          <v-chip color="success" variant="outlined" size="small" class="text-uppercase font-weight-bold letter-spacing-1">
             Coming Soon
           </v-chip>
         </div>
