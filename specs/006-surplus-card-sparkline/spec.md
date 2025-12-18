@@ -77,6 +77,7 @@ As a user who wants to understand my finances, I want the card to help me recogn
 - **FR-008**: Calculation MUST update when underlying income or cost values change
 - **FR-009**: Card MUST display a label identifying it as "Monthly Surplus" or similar
 - **FR-010**: Sparkline MUST handle partial data gracefully when less than 6 months of history exists
+- **FR-011**: The Monthly Surplus card MUST have rounded corners, consistent with other cards on the overview page.
 
 ### Non-Functional Requirements
 
