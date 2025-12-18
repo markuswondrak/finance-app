@@ -43,8 +43,7 @@
             <v-btn
               block
               variant="text"
-              :color="isSelected(index) ? 'primary' : ''"
-              :class="{ 'primary--text': isSelected(index) }"
+              :color="isSelected(index) ? 'success' : ''"
               @click="selectMonth(index)"
             >
               {{ month }}

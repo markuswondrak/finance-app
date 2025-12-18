@@ -1,28 +1,31 @@
 <template>
   <v-card 
     class="lowest-point-card" 
-    :class="`lowest-point-card--${variant}`"
+    :class="accentClass"
     rounded="xl" 
     elevation="4"
   >
-    <v-skeleton-loader v-if="loading" type="list-item-two-line" />
-    <v-card-text v-else>
-      <div class="text-caption text-grey">Lowest Point</div>
-      <div 
-        class="text-h5 font-weight-bold d-flex align-center"
-        :class="textColorClass"
-      >
-        <v-icon 
-          v-if="status === 'negative'" 
-          icon="mdi-alert-circle-outline" 
-          color="error"
-          class="mr-2"
-          size="small"
-        />
-        {{ formattedAmount }}
+    <v-card-text class="d-flex align-center fill-height">
+      <div v-if="loading" class="w-100">
+        <v-skeleton-loader type="list-item-two-line" />
       </div>
-      <div class="text-caption text-grey mt-1">
-        {{ lowestDate }}
+      <div v-else>
+        <div class="text-overline mb-1">Niedrigster Stand</div>
+        <div 
+          class="text-h4 font-weight-bold d-flex align-center"
+          :class="textColorClass"
+        >
+          <v-icon 
+            v-if="status === 'negative'" 
+            icon="mdi-alert-circle-outline" 
+            class="mr-2"
+            size="small"
+          />
+          {{ formattedAmount }}
+        </div>
+        <div class="text-caption text-grey mt-1">
+          {{ lowestDate }}
+        </div>
       </div>
     </v-card-text>
   </v-card>
@@ -71,45 +74,21 @@ const formattedAmount = computed(() => {
 })
 
 const status = computed(() => {
-  if (lowestAmount.value > 0) return 'positive'
-  if (lowestAmount.value < 0) return 'negative'
-  return 'neutral'
+  return lowestAmount.value >= 0 ? 'positive' : 'negative'
 })
 
-const variant = computed(() => {
-  switch (status.value) {
-    case 'positive': return 'success'
-    case 'negative': return 'risk'
-    default: return 'default'
-  }
+const accentClass = computed(() => {
+  return status.value === 'positive' ? 'card-accent-success' : 'card-accent-error'
 })
 
 const textColorClass = computed(() => {
-  switch (status.value) {
-    case 'positive': return 'text-success'
-    case 'negative': return 'text-error'
-    default: return 'text-white'
-  }
+  return status.value === 'positive' ? 'text-positive' : 'text-negative'
 })
 </script>
 
 <style scoped>
 .lowest-point-card {
   height: 100%;
-}
-
-.lowest-point-card--success {
-  border-left-color: #4ADE80 !important;
-  border-left-width: 4px;
-}
-
-.lowest-point-card--risk {
-  border-left-color: #F87171 !important;
-  border-left-width: 4px;
-}
-
-.lowest-point-card--default {
-  border-left-color: #00B8D4 !important;
-  border-left-width: 4px;
+  border-left: 4px solid transparent;
 }
 </style>
