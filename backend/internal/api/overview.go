@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"wondee/finance-app-backend/internal/models"
+
+	"github.com/gin-gonic/gin"
 )
 
-const MAX_ENTRIES = 10 // 50
+const MAX_ENTRIES = 30
 
 type Overview struct {
 	CurrentAmount int             `json:"currentAmount"`

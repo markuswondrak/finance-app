@@ -24,8 +24,8 @@
 
     <v-footer app color="surface" class="justify-center">
       <span class="text-grey">
-        &copy; 2019
-        <a href="https://wondee.info">wondee.info</a>
+        &copy; 2025
+        <a href="https://wondee.info" style="color: #4ADE80;">wondee.info</a>
       </span>
     </v-footer>
   </v-app>

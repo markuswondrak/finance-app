@@ -179,7 +179,7 @@ export default {
     async loadData() {
       const data = await this.fetchData("/api/costs");
       this.monthly = data.monthly;
-      this.quaterly = data.quaterly;
+      this.quaterly = data.quarterly;
       this.halfyearly = data.halfyearly;
       this.yearly = data.yearly;
       this.currentBalance = data.currentBalance;

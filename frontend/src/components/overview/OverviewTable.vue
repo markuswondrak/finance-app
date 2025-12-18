@@ -73,7 +73,7 @@ export default {
         index,
         name: "",
         amount: 0,
-        dueYearMonth
+        dueDate: dueYearMonth
       };
     }
   }

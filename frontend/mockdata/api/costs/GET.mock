@@ -10,7 +10,7 @@ Response-Delay: 500
     {"id": "1235", "name": "Test1", "from": [2021, 2], "to": [2026, 6], "amount": -400}, 
     {"id": "1235", "name": "Test2", "to": [2021, 7], "amount": -400} 
   ],
-  "quaterly": [
+  "quarterly": [
     {"id": "2", "name": "Gehalt", "dueMonth": 2,  "amount": -300},
     {"id": "2", "name": "Blabla", "dueMonth": 2, "from": [2021, 2], "amount": -300}
   ],

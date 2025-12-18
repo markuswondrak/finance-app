@@ -76,24 +76,20 @@ describe('OverviewTable.vue', () => {
         expect(cell.classes()).toContain('negative-amount');
     });
 
-    it('should render OverviewDetails and SpecialCostForm', () => {
-        const OverviewDetailsStub = { name: 'OverviewDetails', template: '<div class="overview-details-stub"></div>' };
-        const SpecialCostFormStub = { name: 'SpecialCostForm', template: '<div class="special-cost-form-stub"></div>' };
-
+    it('should create cost object with correct dueDate', () => {
         const wrapper = mount(OverviewTable, {
-            global: {
-                plugins: [vuetify],
-                stubs: {
-                    OverviewDetails: OverviewDetailsStub,
-                    SpecialCostForm: SpecialCostFormStub
-                }
-            },
-            props: {
-                entries: mockEntries
-            }
+            global: { plugins: [vuetify] },
+            props: { entries: [] }
         });
 
-        expect(wrapper.findComponent({ name: 'OverviewDetails' }).exists()).toBe(true);
-        expect(wrapper.findComponent({ name: 'SpecialCostForm' }).exists()).toBe(true);
+        const yearMonth = { year: 2023, month: 5 };
+        const cost = wrapper.vm.cost(1, yearMonth);
+
+        expect(cost).toEqual({
+            index: 1,
+            name: "",
+            amount: 0,
+            dueDate: yearMonth
+        });
     });
 });

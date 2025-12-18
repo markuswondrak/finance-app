@@ -39,7 +39,7 @@ describe('FixedCosts.vue', () => {
     monthly: [
       { id: 1, name: 'Rent', amount: 1000 }
     ],
-    quaterly: [
+    quarterly: [
       { id: 2, name: 'Insurance', amount: 300, dueMonth: 1 }
     ],
     halfyearly: [
@@ -116,6 +116,7 @@ describe('FixedCosts.vue', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(wrapper.vm.monthly).toEqual(mockApiData.monthly);
+    expect(wrapper.vm.quaterly).toEqual(mockApiData.quarterly);
     expect(wrapper.vm.currentBalance).toBe(500);
   });
 
