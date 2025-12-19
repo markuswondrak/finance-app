@@ -15,13 +15,23 @@ import (
 func TestUpdateCurrentAmount(t *testing.T) {
 	// Setup
 	mockRepo := &storage.MockRepository{
-		User: models.User{
-			CurrentAmount: 500,
+		Users: []models.User{
+			{
+				ID:            1,
+				CurrentAmount: 500,
+			},
 		},
 	}
 	server := NewServer(mockRepo)
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
+	
+	// Middleware to inject user_id for testing
+	r.Use(func(c *gin.Context) {
+		c.Set("user_id", uint(1))
+		c.Next()
+	})
+	
 	r.PUT("/user/current-amount", server.UpdateCurrentAmount)
 
 	// Execute
@@ -39,7 +49,8 @@ func TestUpdateCurrentAmount(t *testing.T) {
 	}
 
 	// Check if repo was updated
-	if mockRepo.User.CurrentAmount != 1000 {
-		t.Errorf("Expected repo to be updated to 1000, got %d", mockRepo.User.CurrentAmount)
+	user, _ := mockRepo.GetByID(1)
+	if user.CurrentAmount != 1000 {
+		t.Errorf("Expected repo to be updated to 1000, got %d", user.CurrentAmount)
 	}
 }

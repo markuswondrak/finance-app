@@ -6,8 +6,8 @@ import (
 
 type User struct {
 	ID            uint      `json:"id" gorm:"primaryKey"`
-	GoogleID      string    `json:"google_id" gorm:"unique;not null"`
-	Email         string    `json:"email" gorm:"unique;not null"`
+	GoogleID      string    `json:"google_id" gorm:"unique"`
+	Email         string    `json:"email" gorm:"unique"`
 	Name          string    `json:"name"`
 	AvatarURL     string    `json:"avatar_url"`
 	CurrentAmount int       `json:"current_amount"` // Legacy field for single-user mode, or reused

@@ -18,7 +18,7 @@
             variant="flat"
             prepend-icon="fa-brands fa-google"
             class="text-none mb-4 mb-sm-0 mr-sm-4"
-            href="http://localhost:8082/auth/google/login"
+            @click="login"
           >
             Sign up with Google
           </v-btn>
@@ -28,7 +28,7 @@
             variant="outlined"
             prepend-icon="fa-brands fa-google"
             class="text-none"
-            href="http://localhost:8082/auth/google/login"
+            @click="login"
           >
             Log in with Google
           </v-btn>
@@ -50,6 +50,7 @@
 <script setup>
 import { computed } from 'vue'
 import { Line } from 'vue-chartjs'
+import { AuthService } from '@/services/auth'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -72,6 +73,10 @@ ChartJS.register(
   Legend,
   Filler
 )
+
+const login = () => {
+  AuthService.login()
+}
 
 const chartData = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],

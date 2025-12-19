@@ -39,7 +39,8 @@ type OverviewDetail struct {
 }
 
 func (s *Server) GetOverview(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, s.createOverview())
+	userID := s.getUserID(c)
+	c.IndentedJSON(http.StatusOK, s.createOverview(userID))
 }
 
 func (s *Server) GetOverviewDetail(c *gin.Context) {
@@ -50,19 +51,20 @@ func (s *Server) GetOverviewDetail(c *gin.Context) {
 		return
 	}
 
+	userID := s.getUserID(c)
 	c.IndentedJSON(
 		http.StatusOK,
-		s.createOverviewDetail(n),
+		s.createOverviewDetail(n, userID),
 	)
 }
 
-func (s *Server) createOverviewDetail(n int) OverviewDetail {
+func (s *Server) createOverviewDetail(n int, userID uint) OverviewDetail {
 	if n > MAX_ENTRIES {
 		return OverviewDetail{}
 	}
 
-	relevantFixedCostsMap := s.createRelevantMap()
-	specialCostMap := s.createSpecialCostMap()
+	relevantFixedCostsMap := s.createRelevantMap(userID)
+	specialCostMap := s.createSpecialCostMap(userID)
 
 	yearMonth := models.AddMonths(models.CurrentYearMonth(), n)
 
@@ -111,18 +113,18 @@ func determineDisplayType(dueMonth []int) string {
 	}
 }
 
-func (s *Server) createOverview() Overview {
+func (s *Server) createOverview(userID uint) Overview {
 	// TODO retrieve current amount
 
 	currentAmount := 0
-	if user, err := s.Repo.GetUser(); err == nil {
+	if user, err := s.Repo.GetByID(userID); err == nil {
 		currentAmount = user.CurrentAmount
 	}
 
 	entries := make([]OverviewEntry, MAX_ENTRIES)
 
-	relevantFixedCostsMap := s.createRelevantMap()
-	specialCostMap := s.createSpecialCostMap()
+	relevantFixedCostsMap := s.createRelevantMap(userID)
+	specialCostMap := s.createSpecialCostMap(userID)
 
 	tmpAmount := currentAmount
 	tmpYearMonth := models.CurrentYearMonth()
@@ -160,9 +162,9 @@ func (s *Server) createOverview() Overview {
 
 }
 
-func (s *Server) createRelevantMap() map[int][]models.FixedCost {
+func (s *Server) createRelevantMap(userID uint) map[int][]models.FixedCost {
 	result := make(map[int][]models.FixedCost)
-	for _, cost := range *s.Repo.LoadFixedCosts() {
+	for _, cost := range *s.Repo.LoadFixedCosts(userID) {
 		for _, dueMonth := range cost.DueMonth {
 			if result[dueMonth] == nil {
 				result[dueMonth] = []models.FixedCost{cost}
@@ -176,9 +178,9 @@ func (s *Server) createRelevantMap() map[int][]models.FixedCost {
 	return result
 }
 
-func (s *Server) createSpecialCostMap() map[models.YearMonth][]models.SpecialCost {
+func (s *Server) createSpecialCostMap(userID uint) map[models.YearMonth][]models.SpecialCost {
 	result := make(map[models.YearMonth][]models.SpecialCost)
-	for _, cost := range *s.Repo.LoadSpecialCosts() {
+	for _, cost := range *s.Repo.LoadSpecialCosts(userID) {
 		if result[*cost.DueDate] == nil {
 			result[*cost.DueDate] = []models.SpecialCost{cost}
 		} else {

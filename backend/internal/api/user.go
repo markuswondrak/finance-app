@@ -18,7 +18,15 @@ func (s *Server) UpdateCurrentAmount(c *gin.Context) {
 		return
 	}
 
-	err := s.Repo.UpdateUserCurrentAmount(*req.Amount)
+	userID := s.getUserID(c)
+	user, err := s.Repo.GetByID(userID)
+	if err != nil {
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
+	user.CurrentAmount = *req.Amount
+	err = s.Repo.Update(user)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return

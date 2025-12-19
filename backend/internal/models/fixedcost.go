@@ -7,7 +7,8 @@ import (
 )
 
 type FixedCost struct {
-	ID       int `gorm:primary_key`
+	ID       int  `gorm:"primary_key"`
+	UserID   uint `json:"user_id"`
 	Name     string
 	Amount   int
 	From     *YearMonth

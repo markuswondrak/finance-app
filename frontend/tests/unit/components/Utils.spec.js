@@ -134,9 +134,9 @@ describe('Utils.js', () => {
       const result = toSelectItems(list);
 
       expect(result).toHaveLength(3);
-      expect(result[0]).toEqual({ text: 'Option 1', value: 0 });
-      expect(result[1]).toEqual({ text: 'Option 2', value: 1 });
-      expect(result[2]).toEqual({ text: 'Option 3', value: 2 });
+      expect(result[0]).toEqual({ title: 'Option 1', value: 0 });
+      expect(result[1]).toEqual({ title: 'Option 2', value: 1 });
+      expect(result[2]).toEqual({ title: 'Option 3', value: 2 });
     });
 
     it('should handle empty array', () => {

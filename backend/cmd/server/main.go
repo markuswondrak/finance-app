@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -18,7 +20,9 @@ import (
 )
 
 func ConnectDataBase() *gorm.DB {
-	// Load .env file if it exists
+	// Try loading .env from current dir or parent dir
+	_ = godotenv.Load(".env")
+	_ = godotenv.Load("../.env")
 	_ = godotenv.Load("../../.env")
 
 	// Get database configuration from environment variables
@@ -60,6 +64,16 @@ func getEnv(key, defaultValue string) string {
 func main() {
 	router := gin.Default()
 
+	// CORS Configuration
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8080", "http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	db := ConnectDataBase()
 	repo := &storage.GormRepository{DB: db}
 	server := api.NewServer(repo)
@@ -94,37 +108,6 @@ func main() {
 		apiGroup.GET("/statistics/surplus", server.GetSurplusStatistics)
 	}
 
-	router.Run("localhost:8082")
-}
-	db := ConnectDataBase()
-	repo := &storage.GormRepository{DB: db}
-	server := api.NewServer(repo)
-	authHandler := auth.NewAuthHandler(repo)
-
-	// Auth Routes
-	router.GET("/auth/google/login", authHandler.Login)
-	router.GET("/auth/google/callback", authHandler.Callback)
-	router.GET("/auth/me", authHandler.Me)
-	router.POST("/auth/logout", authHandler.Logout)
-
-	router.GET("/api/overview/all", server.GetOverview)
-	router.GET("/api/overview/detail", server.GetOverviewDetail)
-
-	router.GET("/api/costs", server.GetFixedCosts)
-	router.DELETE("/api/costs/:id", server.DeleteFixedCosts)
-	router.POST("/api/costs/monthly", server.SaveMonthlyFixedCosts)
-	router.POST("/api/costs/halfyearly", server.SaveHalfYearlyFixedCosts)
-	router.POST("/api/costs/yearly", server.SaveYearlyFixedCosts)
-	router.POST("/api/costs/quaterly", server.SaveQuaterlyFixedCosts)
-
-	router.GET("/api/specialcosts", server.GetSpecialCosts)
-	router.POST("/api/specialcosts", server.SaveSpecialCosts)
-	router.DELETE("/api/specialcosts/:id", server.DeleteSpecialCosts)
-
-	router.PUT("/api/user/current-amount", server.UpdateCurrentAmount)
-
-	router.GET("/api/statistics/surplus", server.GetSurplusStatistics)
-
-	router.Run("localhost:8082")
-
+	port := getEnv("PORT", "8082")
+	router.Run(":" + port)
 }

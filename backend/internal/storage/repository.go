@@ -8,13 +8,13 @@ import (
 // Repository defines the interface for data access
 type Repository interface {
 	UserRepository
-	LoadFixedCosts() *[]models.FixedCost
+	LoadFixedCosts(userID uint) *[]models.FixedCost
 	SaveFixedObject(cost *models.FixedCost)
-	DeleteFixedCost(id int)
+	DeleteFixedCost(id int, userID uint)
 
-	LoadSpecialCosts() *[]models.SpecialCost
+	LoadSpecialCosts(userID uint) *[]models.SpecialCost
 	SaveSpecialCost(cost *models.SpecialCost)
-	DeleteSpecialCost(id int)
+	DeleteSpecialCost(id int, userID uint)
 }
 
 // GormRepository implements Repository using GORM

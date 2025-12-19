@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -44,12 +43,12 @@ func (m *MockRepository) Update(user *models.User) error {
 }
 
 // Add other repository methods as needed for interface satisfaction (placeholders)
-func (m *MockRepository) LoadFixedCosts() *[]models.FixedCost { return nil }
+func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost { return nil }
 func (m *MockRepository) SaveFixedObject(cost *models.FixedCost) {}
-func (m *MockRepository) DeleteFixedCost(id int) {}
-func (m *MockRepository) LoadSpecialCosts() *[]models.SpecialCost { return nil }
+func (m *MockRepository) DeleteFixedCost(id int, userID uint) {}
+func (m *MockRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost { return nil }
 func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost) {}
-func (m *MockRepository) DeleteSpecialCost(id int) {}
+func (m *MockRepository) DeleteSpecialCost(id int, userID uint) {}
 func (m *MockRepository) GetUser() (*models.User, error) { return nil, nil }
 func (m *MockRepository) UpdateUserCurrentAmount(amount int) error { return nil }
 
@@ -62,6 +61,8 @@ func TestLogin(t *testing.T) {
 	
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
+	// Need a request for Redirect to work
+	c.Request, _ = http.NewRequest("GET", "/auth/google/login", nil)
 
 	// Execute
 	authHandler.Login(c)
@@ -80,6 +81,7 @@ func TestMe_Unauthorized(t *testing.T) {
 	
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
+	c.Request, _ = http.NewRequest("GET", "/auth/me", nil)
 	// No cookie set
 
 	// Execute

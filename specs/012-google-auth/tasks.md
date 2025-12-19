@@ -58,22 +58,22 @@ Goal: Ensure users only see their own data.
 
 **Independent Test**: User A cannot see User B's costs.
 
-- [ ] T026 [US4] Update FixedCost model (Add UserID) in `backend/internal/models/fixed_cost.go`
-- [ ] T027 [US4] Update SpecialCost model (Add UserID) in `backend/internal/models/special_cost.go`
-- [ ] T028 [US4] Run database migration to add `user_id` column to costs tables in `backend/db/migrations/`
-- [ ] T029 [US4] Create/Update unit tests for FixedCost repository (Filter by UserID) in `backend/internal/storage/fixed_cost_repository_test.go`
-- [ ] T030 [US4] Update FixedCost repository (Filter by UserID) in `backend/internal/storage/fixed_cost_repository.go`
-- [ ] T031 [US4] Create/Update unit tests for SpecialCost repository (Filter by UserID) in `backend/internal/storage/special_cost_repository_test.go`
-- [ ] T032 [US4] Update SpecialCost repository (Filter by UserID) in `backend/internal/storage/special_cost_repository.go`
-- [ ] T033 [US4] Update API handlers to inject UserID from context into repositories in `backend/internal/api/handlers.go`
+- [x] T026 [US4] Update FixedCost model (Add UserID) in `backend/internal/models/fixed_cost.go`
+- [x] T027 [US4] Update SpecialCost model (Add UserID) in `backend/internal/models/special_cost.go`
+- [x] T028 [US4] Run database migration to add `user_id` column to costs tables in `backend/db/migrations/`
+- [x] T029 [US4] Create/Update unit tests for FixedCost repository (Filter by UserID) in `backend/internal/storage/fixed_cost_repository_test.go`
+- [x] T030 [US4] Update FixedCost repository (Filter by UserID) in `backend/internal/storage/fixed_cost_repository.go`
+- [x] T031 [US4] Create/Update unit tests for SpecialCost repository (Filter by UserID) in `backend/internal/storage/special_cost_repository_test.go`
+- [x] T032 [US4] Update SpecialCost repository (Filter by UserID) in `backend/internal/storage/special_cost_repository.go`
+- [x] T033 [US4] Update API handlers to inject UserID from context into repositories in `backend/internal/api/handlers.go`
 
 ## Phase 6: Polish
 
 Goal: Refine UX and error handling.
 
-- [ ] T034 Implement graceful error handling for OAuth failures (Service Down, Revoked) in `backend/internal/api/auth/handlers.go`
-- [ ] T035 Add loading state to Login buttons in `frontend/src/pages/LandingPage.vue`
-- [ ] T036 Implement Logout handler (Clear cookie) in `backend/internal/api/auth/handlers.go`
+- [x] T034 Implement graceful error handling for OAuth failures (Service Down, Revoked) in `backend/internal/api/auth/handlers.go`
+- [x] T035 Add loading state to Login buttons in `frontend/src/pages/LandingPage.vue`
+- [x] T036 Implement Logout handler (Clear cookie) in `backend/internal/api/auth/handlers.go`
 
 ## Dependencies
 

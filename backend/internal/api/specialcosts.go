@@ -16,7 +16,8 @@ type JsonSpecialCost struct {
 }
 
 func (s *Server) GetSpecialCosts(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, s.createSpecialCosts())
+	userID := s.getUserID(c)
+	c.IndentedJSON(http.StatusOK, s.createSpecialCosts(userID))
 }
 
 func (s *Server) SaveSpecialCosts(c *gin.Context) {
@@ -30,6 +31,7 @@ func (s *Server) SaveSpecialCosts(c *gin.Context) {
 
 	dbObject := models.SpecialCost{
 		ID:      cost.ID,
+		UserID:  s.getUserID(c),
 		Name:    cost.Name,
 		Amount:  cost.Amount,
 		DueDate: cost.DueDate,
@@ -47,13 +49,14 @@ func (s *Server) DeleteSpecialCosts(c *gin.Context) {
 		return
 	}
 
-	s.Repo.DeleteSpecialCost(id)
+	userID := s.getUserID(c)
+	s.Repo.DeleteSpecialCost(id, userID)
 }
 
-func (s *Server) createSpecialCosts() (result []JsonSpecialCost) {
+func (s *Server) createSpecialCosts(userID uint) (result []JsonSpecialCost) {
 	result = make([]JsonSpecialCost, 0)
 
-	specialCosts := s.Repo.LoadSpecialCosts()
+	specialCosts := s.Repo.LoadSpecialCosts(userID)
 
 	for _, cost := range *specialCosts {
 		result = append(result, JsonSpecialCost{

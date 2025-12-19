@@ -25,16 +25,19 @@ func TestCalculateSurplusStatistics(t *testing.T) {
 	mockRepo := &storage.MockRepository{
 		FixedCosts: []models.FixedCost{
 			{
+				UserID:   1,
 				Name:     "Salary",
 				Amount:   3000,
 				DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 			},
 			{
+				UserID:   1,
 				Name:     "Rent",
 				Amount:   -1000,
 				DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 			},
 			{
+				UserID:   1,
 				Name:     "Insurance",
 				Amount:   -1200, // Yearly
 				DueMonth: []int{1},
@@ -44,7 +47,7 @@ func TestCalculateSurplusStatistics(t *testing.T) {
 
 	server := NewServer(mockRepo)
 	current := &models.YearMonth{Year: 2023, Month: 6}
-	stats := server.CalculateSurplusStatistics(current)
+	stats := server.CalculateSurplusStatistics(current, 1)
 
 	expectedIncome := 3000.0
 	// Rent (1000) + Insurance (1200/12 = 100) = 1100
@@ -65,6 +68,7 @@ func TestCalculateSurplusStatistics(t *testing.T) {
 func TestCalculateSurplusHistory(t *testing.T) {
 	// Rent changes from 1000 to 1200 in April
 	rentOld := models.FixedCost{
+		UserID:   1,
 		Name:     "Rent Old",
 		Amount:   -1000,
 		From:     &models.YearMonth{Year: 2023, Month: 1},
@@ -72,6 +76,7 @@ func TestCalculateSurplusHistory(t *testing.T) {
 		DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 	}
 	rentNew := models.FixedCost{
+		UserID:   1,
 		Name:     "Rent New",
 		Amount:   -1200,
 		From:     &models.YearMonth{Year: 2023, Month: 4},
@@ -79,6 +84,7 @@ func TestCalculateSurplusHistory(t *testing.T) {
 		DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 	}
 	salary := models.FixedCost{
+		UserID:   1,
 		Name:     "Salary",
 		Amount:   3000,
 		From:     nil,
@@ -92,7 +98,7 @@ func TestCalculateSurplusHistory(t *testing.T) {
 
 	server := NewServer(mockRepo)
 	current := &models.YearMonth{Year: 2023, Month: 6} // June
-	stats := server.CalculateSurplusStatistics(current)
+	stats := server.CalculateSurplusStatistics(current, 1)
 
 	if len(stats.History) != 6 {
 		t.Errorf("Expected 6 history points, got %d", len(stats.History))

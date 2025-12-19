@@ -4,9 +4,9 @@ import (
 	"wondee/finance-app-backend/internal/models"
 )
 
-func (r *GormRepository) LoadSpecialCosts() *[]models.SpecialCost {
+func (r *GormRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost {
 	var specialCosts []models.SpecialCost
-	r.DB.Find(&specialCosts)
+	r.DB.Where("user_id = ?", userID).Find(&specialCosts)
 	return &specialCosts
 }
 
@@ -18,6 +18,6 @@ func (r *GormRepository) SaveSpecialCost(cost *models.SpecialCost) {
 	}
 }
 
-func (r *GormRepository) DeleteSpecialCost(id int) {
-	r.DB.Delete(&models.SpecialCost{}, id)
+func (r *GormRepository) DeleteSpecialCost(id int, userID uint) {
+	r.DB.Where("user_id = ?", userID).Delete(&models.SpecialCost{}, id)
 }

@@ -4,9 +4,9 @@ import (
 	"wondee/finance-app-backend/internal/models"
 )
 
-func (r *GormRepository) LoadFixedCosts() *[]models.FixedCost {
+func (r *GormRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
 	var costs []models.FixedCost
-	r.DB.Find(&costs)
+	r.DB.Where("user_id = ?", userID).Find(&costs)
 	return &costs
 }
 
@@ -18,6 +18,6 @@ func (r *GormRepository) SaveFixedObject(cost *models.FixedCost) {
 	}
 }
 
-func (r *GormRepository) DeleteFixedCost(id int) {
-	r.DB.Delete(&models.FixedCost{}, id)
+func (r *GormRepository) DeleteFixedCost(id int, userID uint) {
+	r.DB.Where("user_id = ?", userID).Delete(&models.FixedCost{}, id)
 }

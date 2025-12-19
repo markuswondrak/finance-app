@@ -11,12 +11,13 @@ import (
 
 func (s *Server) GetSurplusStatistics(c *gin.Context) {
 	current := models.CurrentYearMonth()
-	stats := s.CalculateSurplusStatistics(current)
+	userID := s.getUserID(c)
+	stats := s.CalculateSurplusStatistics(current, userID)
 	c.JSON(http.StatusOK, stats)
 }
 
-func (s *Server) CalculateSurplusStatistics(current *models.YearMonth) models.SurplusStatistics {
-	costs := s.Repo.LoadFixedCosts()
+func (s *Server) CalculateSurplusStatistics(current *models.YearMonth, userID uint) models.SurplusStatistics {
+	costs := s.Repo.LoadFixedCosts(userID)
 
 	// 1. Calculate History (Past 6 months including current)
 	history := make([]models.SurplusPoint, 0, 6)
