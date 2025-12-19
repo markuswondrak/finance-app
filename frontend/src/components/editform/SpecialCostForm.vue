@@ -18,7 +18,6 @@
           required
           variant="outlined"
           density="comfortable"
-          autofocus
         />
       </v-col>
     </v-row>

@@ -1,5 +1,6 @@
 <template>
   <v-text-field
+    ref="input"
     :model-value="modelValue"
     @update:modelValue="$emit('update:modelValue', $event)"
     :rules="nameRules"
@@ -8,7 +9,6 @@
     :required="required"
     variant="outlined"
     density="comfortable"
-    autofocus
   />
 </template>
 <script>
@@ -22,6 +22,11 @@ export default {
         v => (v && v.length <= 20) || "Bezeichnung muss weniger als 20 Zeichen haben"
       ]
     };
+  },
+  methods: {
+    focus() {
+      this.$refs.input.focus();
+    }
   }
 };
 </script>
