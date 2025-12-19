@@ -8,6 +8,7 @@
     :required="required"
     variant="outlined"
     density="comfortable"
+    autofocus
   />
 </template>
 <script>

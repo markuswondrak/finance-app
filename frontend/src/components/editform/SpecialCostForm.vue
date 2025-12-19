@@ -8,6 +8,7 @@
     :icon="icon"
     :name="form.name"
     @save="saveCost"
+    @open="form = costToForm(cost)"
   >
     <v-row>
       <v-col cols="12">
@@ -17,6 +18,7 @@
           required
           variant="outlined"
           density="comfortable"
+          autofocus
         />
       </v-col>
     </v-row>

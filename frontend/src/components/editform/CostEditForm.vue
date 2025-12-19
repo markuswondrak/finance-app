@@ -8,26 +8,26 @@
         </v-btn>
       </template>
       <v-card v-if="dialog" rounded="xl">
-        <v-card-title>
-          <span>{{ title }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form v-model="valid">
+        <v-form v-model="valid" @submit.prevent="save">
+          <v-card-title>
+            <span>{{ title }}</span>
+          </v-card-title>
+          <v-card-text>
             <v-container>
               <slot />
             </v-container>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn variant="text" @click="dialog = false" :disabled="saving">Abbrechen</v-btn>
-          <v-btn
-            variant="text"
-            @click="$emit('save'); saving = true"
-            :disabled="!valid || !changed"
-            :loading="saving"
-          >Speichern</v-btn>
-        </v-card-actions>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="dialog = false" :disabled="saving">Abbrechen</v-btn>
+            <v-btn
+              variant="text"
+              type="submit"
+              :disabled="!valid || !changed"
+              :loading="saving"
+            >Speichern</v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" location="bottom" color="success" :timeout="7000">{{ successMsg(name) }}</v-snackbar>
@@ -47,12 +47,25 @@ export default {
       errorMsg: ""
     };
   },
+  watch: {
+    dialog(val) {
+      if (val) {
+        this.$emit('open');
+      }
+    }
+  },
   computed: {
     btnIcon() {
       return this.icon || "fa-edit";
     }
   },
   methods: {
+    save() {
+      if (this.valid && this.changed && !this.saving) {
+        this.$emit('save');
+        this.saving = true;
+      }
+    },
     success() {
       this.dialog = false;
       this.saving = false;

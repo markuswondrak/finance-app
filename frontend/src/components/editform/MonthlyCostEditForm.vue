@@ -6,6 +6,7 @@
     :btn-text="btnText"
     :name="form.name"
     @save="saveCost"
+    @open="form = costToForm(cost)"
     ref="editform"
   >
     <v-row>
@@ -45,6 +46,6 @@ export default {
     FromToDateFields,
     IncomingSelect
   },
-  props: ["btnText"]
+  props: ["btnText"],
 };
 </script>

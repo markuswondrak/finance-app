@@ -2,7 +2,8 @@
   <v-text-field
     :model-value="displayValue"
     :rules="valueRules"
-    @blur="inputChanged"
+    @input="inputChanged"
+    @blur="focus = false"
     @focus="focus = true"
     :required="required"
     :label="label"
@@ -36,7 +37,6 @@ export default {
       const newValue = Number(e.target.value);
       
       this.$emit("update:modelValue", isNaN(newValue) ? 0 : newValue);
-      this.focus = false;
     }
   }
 };
