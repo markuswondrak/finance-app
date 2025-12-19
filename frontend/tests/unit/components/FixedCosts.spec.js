@@ -134,7 +134,7 @@ describe('FixedCosts.vue', () => {
 
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(wrapper.vm.currentBalanceDisplay).toBe('500 €');
+    expect(wrapper.vm.currentBalanceDisplay).toBe('500,00\xa0€');
   });
 
   it('should have four tabs for different cost frequencies', async () => {

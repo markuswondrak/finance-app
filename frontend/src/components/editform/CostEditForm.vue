@@ -1,6 +1,6 @@
 <template>
   <span>
-    <v-dialog v-model="dialog" max-width="800" @after-enter="triggerFocus">
+    <v-dialog v-model="dialog" max-width="800" persistent @after-enter="triggerFocus">
       <template v-slot:activator="{ props }">
         <v-btn :icon="!btnText" :variant="!!btnText ? 'text' : undefined" small v-bind="props">
           <v-icon v-if="!btnText" size="small">{{ btnIcon }}</v-icon>

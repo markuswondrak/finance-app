@@ -141,7 +141,7 @@ export default {
   },
   computed: {
     currentBalanceDisplay() {
-      return `${this.currentBalance} €`;
+      return toCurrency(this.currentBalance);
     },
     tabsConfig() {
       return [

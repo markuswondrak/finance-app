@@ -53,7 +53,7 @@
               defineEmits(['update:modelValue'])
               
               const navigationItems = ref([
-                { title: 'Überblick', to: '/', icon: 'fa-chart-line' },
+                { title: 'Überblick', to: '/overview', icon: 'fa-chart-line' },
                 { title: 'Fixkosten', to: '/fixedcosts', icon: 'fa-money-check-dollar' },
                 { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' }
               ])

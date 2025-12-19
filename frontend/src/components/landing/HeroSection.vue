@@ -115,7 +115,7 @@ const chartOptions = {
     x: {
       type: 'number',
       easing: 'linear',
-      duration: 2000,
+      duration: 1000,
       from: NaN, // simpler progressive draw
       delay(ctx) {
         if (ctx.type !== 'data' || ctx.xStarted) {
