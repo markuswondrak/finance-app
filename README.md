@@ -1,5 +1,7 @@
 # Finance App
 
+[![backend build](https://github.com/markuswondrak/finance-app/actions/workflows/backend.yml/badge.svg)](https://github.com/markuswondrak/finance-app/actions/workflows/backend.yml) [![frontend build](https://github.com/markuswondrak/finance-app/actions/workflows/frontend.yml/badge.svg)](https://github.com/markuswondrak/finance-app/actions/workflows/frontend.yml)
+
 A modern personal finance tracking application built with Vue.js 3 and Go. It helps users manage fixed costs, track special expenses, and visualize financial forecasts with a fintech-inspired dark theme.
 
 ## Features
