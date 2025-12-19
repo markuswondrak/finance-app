@@ -18,7 +18,7 @@
             variant="flat"
             prepend-icon="fa-brands fa-google"
             class="text-none mb-4 mb-sm-0 mr-sm-4"
-            disabled
+            href="http://localhost:8082/auth/google/login"
           >
             Sign up with Google
           </v-btn>
@@ -26,11 +26,11 @@
             size="x-large"
             color="white"
             variant="outlined"
-            prepend-icon="fa-brands fa-github"
+            prepend-icon="fa-brands fa-google"
             class="text-none"
-            disabled
+            href="http://localhost:8082/auth/google/login"
           >
-            Sign up with GitHub
+            Log in with Google
           </v-btn>
         </div>
       </v-col>

@@ -11,6 +11,8 @@ import (
 	"gorm.io/gorm/logger"
 
 	"wondee/finance-app-backend/internal/api"
+	"wondee/finance-app-backend/internal/api/auth"
+	"wondee/finance-app-backend/internal/api/middleware"
 	"wondee/finance-app-backend/internal/models"
 	"wondee/finance-app-backend/internal/storage"
 )
@@ -61,6 +63,49 @@ func main() {
 	db := ConnectDataBase()
 	repo := &storage.GormRepository{DB: db}
 	server := api.NewServer(repo)
+	authHandler := auth.NewAuthHandler(repo)
+
+	// Auth Routes
+	router.GET("/auth/google/login", authHandler.Login)
+	router.GET("/auth/google/callback", authHandler.Callback)
+	router.GET("/auth/me", authHandler.Me)
+	router.POST("/auth/logout", authHandler.Logout)
+
+	// Protected API Routes
+	apiGroup := router.Group("/api")
+	apiGroup.Use(middleware.AuthMiddleware())
+	{
+		apiGroup.GET("/overview/all", server.GetOverview)
+		apiGroup.GET("/overview/detail", server.GetOverviewDetail)
+
+		apiGroup.GET("/costs", server.GetFixedCosts)
+		apiGroup.DELETE("/costs/:id", server.DeleteFixedCosts)
+		apiGroup.POST("/costs/monthly", server.SaveMonthlyFixedCosts)
+		apiGroup.POST("/costs/halfyearly", server.SaveHalfYearlyFixedCosts)
+		apiGroup.POST("/costs/yearly", server.SaveYearlyFixedCosts)
+		apiGroup.POST("/costs/quaterly", server.SaveQuaterlyFixedCosts)
+
+		apiGroup.GET("/specialcosts", server.GetSpecialCosts)
+		apiGroup.POST("/specialcosts", server.SaveSpecialCosts)
+		apiGroup.DELETE("/specialcosts/:id", server.DeleteSpecialCosts)
+
+		apiGroup.PUT("/user/current-amount", server.UpdateCurrentAmount)
+
+		apiGroup.GET("/statistics/surplus", server.GetSurplusStatistics)
+	}
+
+	router.Run("localhost:8082")
+}
+	db := ConnectDataBase()
+	repo := &storage.GormRepository{DB: db}
+	server := api.NewServer(repo)
+	authHandler := auth.NewAuthHandler(repo)
+
+	// Auth Routes
+	router.GET("/auth/google/login", authHandler.Login)
+	router.GET("/auth/google/callback", authHandler.Callback)
+	router.GET("/auth/me", authHandler.Me)
+	router.POST("/auth/logout", authHandler.Logout)
 
 	router.GET("/api/overview/all", server.GetOverview)
 	router.GET("/api/overview/detail", server.GetOverviewDetail)

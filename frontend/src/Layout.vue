@@ -1,5 +1,10 @@
 <template>
   <v-app id="inspire">
+    <!-- User Menu (Top Right) -->
+    <div class="user-menu-container">
+      <UserMenu />
+    </div>
+
     <template v-if="!hideNavigation">
       <AppSidebar
         v-model="drawer"
@@ -38,6 +43,7 @@ import { ref, computed, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/Navigation/AppSidebar.vue'
+import UserMenu from '@/components/UserMenu.vue'
 
 const { mobile } = useDisplay()
 const route = useRoute()
@@ -74,3 +80,11 @@ const toggleDrawer = () => {
   }
 }
 </script>
+<style scoped>
+.user-menu-container {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+</style>

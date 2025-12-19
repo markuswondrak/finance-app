@@ -28,9 +28,9 @@ tests/
 Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 
 ## Recent Changes
+- 012-google-auth: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 011-landing-page: Added Vue.js 3.3+ (Frontend) + Vuetify 3.3+ (UI), Vue Router 4.2+ (Routing)
 - 009-month-year-datepicker: Added Backend: Go 1.17+, Frontend: Vue.js 3.3+ + Backend: Gin, GORM. Frontend: Vuetify 3.3+, Chart.js 4.4+ (vue-chartjs), Vue Router 4.2+
-- 009-month-year-datepicker: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 
 <!-- MANUAL ADDITIONS START -->

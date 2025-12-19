@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: Authentication API
+  version: 1.0.0
+  description: API endpoints for Google Authentication and Session Management.
+
+paths:
+  /auth/google/login:
+    get:
+      summary: Initiate Google OAuth2 Login
+      description: Redirects the user to Google's consent screen.
+      responses:
+        302:
+          description: Redirect to Google
+          headers:
+            Location:
+              description: Google OAuth2 Authorization URL
+              schema:
+                type: string
+
+  /auth/google/callback:
+    get:
+      summary: Google OAuth2 Callback
+      description: Handles the callback from Google, exchanges code for token, creates/updates user, and sets session cookie.
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+          required: true
+          description: The authorization code returned by Google.
+        - in: query
+          name: state
+          schema:
+            type: string
+          required: true
+          description: State parameter for CSRF protection.
+      responses:
+        302:
+          description: Successful login, redirect to frontend app (e.g., /overview).
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                description: HTTP-only session cookie containing JWT.
+        400:
+          description: Invalid request or authentication failure.
+        500:
+          description: Internal server error.
+
+  /auth/logout:
+    post:
+      summary: Log out
+      description: Clears the session cookie.
+      responses:
+        200:
+          description: Successfully logged out.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                description: Expired session cookie.
+
+  /auth/me:
+    get:
+      summary: Get Current User
+      description: Returns the profile information of the currently authenticated user.
+      security:
+        - cookieAuth: []
+      responses:
+        200:
+          description: User profile information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: Not authenticated.
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token # Replace with actual cookie name
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar_url:
+          type: string
+          format: uri
+      required:
+        - id
+        - email
+        - name
