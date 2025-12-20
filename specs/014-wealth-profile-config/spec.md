@@ -4,6 +4,15 @@
 **Created**: 2025-12-20
 **Status**: Draft
 
+## Clarifications
+
+### Session 2025-12-20
+- Q: Is the implementation of the wealth forecast calculation and its visual chart display included in this task? → A: B, Table and chart will be implemented in subsequent features.
+- Q: Where should the wealth profile parameters be stored in the backend database? → A: A, Dedicated `wealth_profiles` table (linked to User ID).
+- Q: How should the editing experience be triggered? → A: B, Collapsible expansion panel (e.g., "Forecast Settings").
+- Q: Should the system support multiple named wealth profiles per user? → A: B, Single: Exactly one wealth profile per user.
+- Q: What are the specific valid ranges for the return rates and forecast duration? → A: A, Duration: 1-100 years; Rates: -20% to +100%.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Configure Wealth Parameters (Priority: P1)
@@ -16,7 +25,7 @@ As a user, I want to define my current financial status and future expectations 
 
 **Acceptance Scenarios**:
 
-1. **Given** I am on the Wealth Configuration page/section, **When** I enter "50000" for Current Wealth, "20" for Years, and "3", "7", "10" for the scenarios, **And** I click Save, **Then** the system confirms the save.
+1. **Given** I am entering the Wealth overview page/section for the first time, **When** I enter "50000" for Current Wealth, "20" for Years, and "3", "7", "10" for the scenarios, **And** I click Save, **Then** the system confirms the save.
 2. **Given** I have saved my configuration, **When** I log out and log back in, **Then** the configuration fields show my saved values.
 3. **Given** I enter invalid data (e.g., negative years), **When** I try to save, **Then** the system prevents saving and shows an error.
 
@@ -36,12 +45,28 @@ As a user, I want to define my current financial status and future expectations 
     - Average Case Return Rate (%)
     - Best Case Return Rate (%)
 - **FR-002**: The system MUST persist these parameters associated with the user's profile.
-- **FR-003**: The system MUST validate inputs (e.g., non-negative wealth, positive duration, percentage rates between 0-100 is reasonable but maybe higher allowed).
-- **FR-004**: The system MUST provide default values if the user has not configured them yet (e.g., Duration: 10 years, Rates: 3%, 5%, 7%).
+- **FR-003**: The system MUST validate inputs:
+    - Current Wealth: Non-negative.
+    - Forecast Duration: 1 to 100 years.
+    - Return Rates (Worst, Average, Best): -20% to +100%.
+    - Logical Consistency: Worst Case Rate <= Average Case Rate <= Best Case Rate.
+- **FR-004**: The system MUST provide default values if the user has not configured them yet. The Backend API MUST return these defaults with a 200 OK status if no database record exists.
+    - Defaults: Duration: 10 years, Worst Case: 3.0%, Average Case: 5.0%, Best Case: 7.0%.
+- **FR-005**: The page can be accessed by a dedicated navigation entry "Vermögensübersicht". 
+- **FR-006**: The parameters MUST be displayed within a collapsible expansion panel at the top of the "Vermögensübersicht" page, allowing users to view and edit them without navigating away.
+- **FR-007**: (Out of Scope) Forecast calculation logic, charts, and tables are NOT part of this feature (to be handled in 015/016).
 
 ### Key Entities *(include if feature involves data)*
 
-- **WealthProfile** (or UserSettings): New entity or extension of existing user profile. Attributes: `current_wealth`, `forecast_duration_years`, `rate_worst_case`, `rate_average_case`, `rate_best_case`.
+- **WealthProfile**: New database table `wealth_profiles`. 
+    - `id` (Primary Key)
+    - `user_id` (Foreign Key to users, UNIQUE)
+    - `current_wealth` (Decimal/Numeric)
+    - `forecast_duration_years` (Integer)
+    - `rate_worst_case` (Decimal, e.g., 3.0)
+    - `rate_average_case` (Decimal, e.g., 5.0)
+    - `rate_best_case` (Decimal, e.g., 7.0)
+    - `updated_at` (Timestamp)
 
 ## Success Criteria *(mandatory)*
 
