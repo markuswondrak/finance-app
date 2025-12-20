@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: Wealth Profile API
+  version: 1.0.0
+paths:
+  /api/wealth-profile:
+    get:
+      summary: Get the current user's wealth profile
+      operationId: getWealthProfile
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WealthProfile'
+        '404':
+          description: Profile not found (Frontend should show defaults)
+    put:
+      summary: Create or Update the wealth profile
+      operationId: updateWealthProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WealthProfileInput'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WealthProfile'
+        '400':
+          description: Invalid input (validation error)
+
+components:
+  schemas:
+    WealthProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        current_wealth:
+          type: number
+          format: float
+        forecast_duration_years:
+          type: integer
+        rate_worst_case:
+          type: number
+          format: float
+        rate_average_case:
+          type: number
+          format: float
+        rate_best_case:
+          type: number
+          format: float
+        updated_at:
+          type: string
+          format: date-time
+    
+    WealthProfileInput:
+      type: object
+      required:
+        - current_wealth
+        - forecast_duration_years
+        - rate_worst_case
+        - rate_average_case
+        - rate_best_case
+      properties:
+        current_wealth:
+          type: number
+          minimum: 0
+        forecast_duration_years:
+          type: integer
+          minimum: 1
+          maximum: 100
+        rate_worst_case:
+          type: number
+          minimum: -20
+          maximum: 100
+        rate_average_case:
+          type: number
+          minimum: -20
+          maximum: 100
+        rate_best_case:
+          type: number
+          minimum: -20
+          maximum: 100

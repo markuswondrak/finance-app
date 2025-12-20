@@ -20,6 +20,8 @@ As a user, I want to see a visual projection of my wealth over time, comparing w
 2. **Given** the chart is displayed, **When** I inspect the lines, **Then** I see 4 distinct lines: "Total Invested", "Worst Case", "Average Case", "Best Case".
 3. **Given** a scenario where interest rates are > 0, **When** time progresses on the X-axis, **Then** the scenario lines should diverge upwards from the "Total Invested" line.
 4. **Given** I change my "Monthly Savings" in Fixed Costs, **When** I reload the Wealth Chart, **Then** the curves update to reflect the new contribution levels.
+5. **Given** I already set my welath configuration, **When** I visit the wealth management page **Then** the saved wealth configuration (interest rate, years, etc.) is shown on top of the page.
+
 
 ### Edge Cases
 
@@ -39,6 +41,8 @@ As a user, I want to see a visual projection of my wealth over time, comparing w
 - **FR-005**: The system MUST render a Line Chart with 4 series corresponding to the calculated data.
 - **FR-006**: The chart X-Axis MUST represent Years.
 - **FR-007**: The chart visuals MUST align with the application's Dark Mode / Neon aesthetic (e.g., specific colors for scenarios).
+- **FR-008**: The wealth configuration (interest rate, years, etc.) MUST be shown at the top of the page.
+
 
 ### Key Entities *(include if feature involves data)*
 
