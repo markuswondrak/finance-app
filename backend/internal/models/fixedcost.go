@@ -14,6 +14,7 @@ type FixedCost struct {
 	From     *YearMonth
 	To       *YearMonth
 	DueMonth Months `gorm:"type:string"`
+	IsSaving bool
 }
 
 type Months []int

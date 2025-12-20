@@ -21,7 +21,7 @@
     </v-row>
     <v-row>
       <v-col>
-        <incoming-select v-model="form.incoming" />
+        <incoming-select v-model="form.type" />
       </v-col>
     </v-row>
     <v-row>

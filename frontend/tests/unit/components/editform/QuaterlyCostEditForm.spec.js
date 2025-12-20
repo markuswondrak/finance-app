@@ -44,6 +44,7 @@ describe('QuaterlyCostEditForm.vue', () => {
         wrapper.vm.form.name = 'Test Cost';
         wrapper.vm.form.amount = 100;
         wrapper.vm.form.dueMonth = 1;
+        wrapper.vm.form.type = 'expense';
 
         await wrapper.vm.saveCost();
 
@@ -61,5 +62,6 @@ describe('QuaterlyCostEditForm.vue', () => {
         });
         expect(wrapper.vm.items).toBeDefined();
         expect(wrapper.vm.items.length).toBeGreaterThan(0);
+        expect(wrapper.vm.form.type).toBe('expense'); // Default check
     });
 });

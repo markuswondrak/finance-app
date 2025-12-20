@@ -39,6 +39,8 @@ type JsonFixedCost struct {
 
         DueMonth int               `json:"dueMonth"`
 
+        IsSaving bool              `json:"isSaving"`
+
 }
 
 
@@ -275,6 +277,7 @@ func ToJsonStruct(dbObject *models.FixedCost) JsonFixedCost {
 		From:     dbObject.From,
 		To:       dbObject.To,
 		DueMonth: dbObject.DueMonth[0],
+		IsSaving: dbObject.IsSaving,
 	}
 }
 
@@ -282,6 +285,10 @@ func ToDBStruct(
 	jsonObject *JsonFixedCost,
 	dueMonthCreator func(int) ([]int, error),
 ) (*models.FixedCost, error) {
+	if jsonObject.Amount > 0 && jsonObject.IsSaving {
+		return nil, errors.New("cannot be both incoming and saving")
+	}
+
 	value, err := dueMonthCreator(jsonObject.DueMonth)
 
 	if err != nil {
@@ -295,5 +302,6 @@ func ToDBStruct(
 		From:     jsonObject.From,
 		To:       jsonObject.To,
 		DueMonth: value,
+		IsSaving: jsonObject.IsSaving,
 	}, nil
 }

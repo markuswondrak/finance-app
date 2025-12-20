@@ -46,6 +46,18 @@ func TestToDBStruct(t *testing.T) {
 	if fc.ID != 1 || fc.DueMonth[0] != 1 {
 		t.Error("Mapping mismatch")
 	}
+
+	// Test Validation: Incoming + Saving = Error
+	invalidJson := &JsonFixedCost{
+		Amount:   100, // Positive = Incoming
+		IsSaving: true,
+	}
+	_, err = ToDBStruct(invalidJson, converter)
+	if err == nil {
+		t.Error("Expected error for Incoming + Saving, got nil")
+	} else if err.Error() != "cannot be both incoming and saving" {
+		t.Errorf("Expected specific error message, got %v", err)
+	}
 }
 
 func TestCreateFixedCosts(t *testing.T) {

@@ -192,7 +192,8 @@ describe('Utils.js', () => {
         name: 'Salary',
         amount: 3000,
         from: '2023-01',
-        to: '2023-12'
+        to: '2023-12',
+        isSaving: false
       };
 
       const result = monthlyCostToForm(cost);
@@ -201,7 +202,7 @@ describe('Utils.js', () => {
         id: 1,
         name: 'Salary',
         amount: 3000,
-        incoming: true,
+        type: 'income',
         fromTo: {
           from: '2023-01',
           to: '2023-12'
@@ -215,7 +216,8 @@ describe('Utils.js', () => {
         name: 'Rent',
         amount: -1000,
         from: '2023-01',
-        to: null
+        to: null,
+        isSaving: false
       };
 
       const result = monthlyCostToForm(cost);
@@ -224,7 +226,31 @@ describe('Utils.js', () => {
         id: 2,
         name: 'Rent',
         amount: 1000,
-        incoming: false,
+        type: 'expense',
+        fromTo: {
+          from: '2023-01',
+          to: null
+        }
+      });
+    });
+
+    it('should convert cost with isSaving true', () => {
+      const cost = {
+        id: 3,
+        name: 'ETF',
+        amount: -1000,
+        from: '2023-01',
+        to: null,
+        isSaving: true
+      };
+
+      const result = monthlyCostToForm(cost);
+
+      expect(result).toEqual({
+        id: 3,
+        name: 'ETF',
+        amount: 1000,
+        type: 'saving',
         fromTo: {
           from: '2023-01',
           to: null
@@ -239,7 +265,7 @@ describe('Utils.js', () => {
         id: null,
         name: '',
         amount: 0,
-        incoming: false,
+        type: 'expense',
         fromTo: {
           from: null,
           to: null
@@ -254,7 +280,7 @@ describe('Utils.js', () => {
         id: null,
         name: '',
         amount: 0,
-        incoming: false,
+        type: 'expense',
         fromTo: {
           from: null,
           to: null
@@ -269,7 +295,7 @@ describe('Utils.js', () => {
         id: 1,
         name: 'Salary',
         amount: 3000,
-        incoming: true
+        type: 'income'
       };
 
       const result = baseFormToCost(form);
@@ -279,7 +305,8 @@ describe('Utils.js', () => {
         name: 'Salary',
         amount: 3000,
         from: null,
-        to: null
+        to: null,
+        isSaving: false
       });
     });
 
@@ -288,7 +315,7 @@ describe('Utils.js', () => {
         id: 2,
         name: 'Rent',
         amount: 1000,
-        incoming: false
+        type: 'expense'
       };
 
       const result = baseFormToCost(form);
@@ -298,7 +325,28 @@ describe('Utils.js', () => {
         name: 'Rent',
         amount: -1000,
         from: null,
-        to: null
+        to: null,
+        isSaving: false
+      });
+    });
+
+    it('should convert form to cost with negative amount for saving', () => {
+      const form = {
+        id: 3,
+        name: 'ETF',
+        amount: 1000,
+        type: 'saving'
+      };
+
+      const result = baseFormToCost(form);
+
+      expect(result).toEqual({
+        id: 3,
+        name: 'ETF',
+        amount: -1000,
+        from: null,
+        to: null,
+        isSaving: true
       });
     });
 
@@ -307,7 +355,7 @@ describe('Utils.js', () => {
         id: 3,
         name: 'Test',
         amount: 0,
-        incoming: false
+        type: 'expense'
       };
 
       const result = baseFormToCost(form);

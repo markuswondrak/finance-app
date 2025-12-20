@@ -6,4 +6,5 @@ type SpecialCost struct {
 	Name    string
 	Amount  int
 	DueDate *YearMonth
+	IsSaving bool
 }

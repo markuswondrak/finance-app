@@ -6,6 +6,36 @@ import (
 	"wondee/finance-app-backend/internal/storage"
 )
 
+func TestToDBSpecialCost(t *testing.T) {
+	// Valid Expense
+	expense := &JsonSpecialCost{Amount: -100, IsSaving: false}
+	_, err := ToDBSpecialCost(expense)
+	if err != nil {
+		t.Errorf("Unexpected error for expense: %v", err)
+	}
+
+	// Valid Saving
+	saving := &JsonSpecialCost{Amount: -100, IsSaving: true}
+	_, err = ToDBSpecialCost(saving)
+	if err != nil {
+		t.Errorf("Unexpected error for saving: %v", err)
+	}
+
+	// Valid Income
+	income := &JsonSpecialCost{Amount: 100, IsSaving: false}
+	_, err = ToDBSpecialCost(income)
+	if err != nil {
+		t.Errorf("Unexpected error for income: %v", err)
+	}
+
+	// Invalid: Income + Saving
+	invalid := &JsonSpecialCost{Amount: 100, IsSaving: true}
+	_, err = ToDBSpecialCost(invalid)
+	if err == nil {
+		t.Error("Expected error for Incoming + Saving, got nil")
+	}
+}
+
 func TestCreateSpecialCosts(t *testing.T) {
 	mockRepo := &storage.MockRepository{
 		SpecialCosts: []models.SpecialCost{

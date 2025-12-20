@@ -6,80 +6,50 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
 describe('IncomingSelect.vue', () => {
-  let vuetify;
+    let vuetify;
 
-  beforeEach(() => {
-    vuetify = createVuetify({
-      components,
-      directives,
-    });
-  });
-
-  it('should render with correct props', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: true
-      }
+    beforeEach(() => {
+        vuetify = createVuetify({
+            components,
+            directives,
+        });
     });
 
-    expect(wrapper.props().modelValue).toBe(true);
-  });
+    it('renders 3 options', () => {
+        const wrapper = mount(IncomingSelect, {
+            global: { plugins: [vuetify] },
+            props: { modelValue: 'expense' }
+        });
 
-  it('should emit update:modelValue event when toggle is changed', async () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: false
-      }
+        // Find buttons. Vuetify v-btn might be inside v-btn-toggle
+        const buttons = wrapper.findAllComponents({ name: 'VBtn' });
+        expect(buttons.length).toBe(3);
+        expect(buttons[0].text()).toContain('Ausgabe');
+        expect(buttons[1].text()).toContain('Einnahme');
+        expect(buttons[2].text()).toContain('Sparen');
     });
 
-    const toggle = wrapper.findComponent({ name: 'VBtnToggle' });
-    toggle.vm.$emit('update:modelValue', true);
-    await wrapper.vm.$nextTick();
+    it('emits income when Income clicked', async () => {
+        const wrapper = mount(IncomingSelect, {
+            global: { plugins: [vuetify] },
+            props: { modelValue: 'expense' }
+        });
 
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-    expect(wrapper.emitted('update:modelValue')[0]).toEqual([true]);
-  });
+        const buttons = wrapper.findAllComponents({ name: 'VBtn' });
+        await buttons[1].trigger('click');
 
-  it('should pass modelValue to v-btn-toggle', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: true
-      }
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['income']);
     });
 
-    const toggle = wrapper.findComponent({ name: 'VBtnToggle' });
-    expect(toggle.props().modelValue).toBe(true);
-  });
+    it('emits saving when Saving clicked', async () => {
+        const wrapper = mount(IncomingSelect, {
+            global: { plugins: [vuetify] },
+            props: { modelValue: 'expense' }
+        });
 
-  it('should have correct styling props', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: false
-      }
+        const buttons = wrapper.findAllComponents({ name: 'VBtn' });
+        await buttons[2].trigger('click');
+
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['saving']);
     });
-
-    const toggle = wrapper.findComponent({ name: 'VBtnToggle' });
-    expect(toggle.props().color).toBe('primary');
-    expect(toggle.props().variant).toBe('outlined');
-    expect(toggle.props().density).toBe('comfortable');
-    expect(toggle.props().mandatory).toBe(true);
-  });
-
-  it('should have two buttons with correct labels', () => {
-    const wrapper = mount(IncomingSelect, {
-      global: { plugins: [vuetify] },
-      props: {
-        modelValue: false
-      }
-    });
-
-    const buttons = wrapper.findAllComponents({ name: 'VBtn' });
-    expect(buttons.length).toBe(2);
-    expect(buttons[0].text()).toContain('Ausgabe');
-    expect(buttons[1].text()).toContain('Einnahme');
-  });
 });

@@ -1,0 +1,85 @@
+openapi: 3.0.0
+info:
+  title: Fixed Cost Savings API Updates
+  version: 1.0.0
+paths:
+  /api/costs/monthly:
+    post:
+      summary: Save Monthly Fixed Cost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonFixedCost'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request (Invalid validation, e.g. Incoming + Saving)
+
+  /api/costs/quarterly:
+    post:
+      summary: Save Quarterly Fixed Cost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonFixedCost'
+
+  /api/costs/halfyearly:
+    post:
+      summary: Save Half-Yearly Fixed Cost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonFixedCost'
+
+  /api/costs/yearly:
+    post:
+      summary: Save Yearly Fixed Cost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonFixedCost'
+
+  /api/specialcosts:
+    post:
+      summary: Save Special Cost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonSpecialCost'
+
+components:
+  schemas:
+    JsonFixedCost:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        amount:
+          type: integer
+          description: Positive for income (logical), Negative for expense.
+        isSaving:
+          type: boolean
+          default: false
+        # ... other fields (from/to/dueMonth)
+
+    JsonSpecialCost:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        amount:
+          type: integer
+        isSaving:
+          type: boolean
+          default: false
+        # ... other fields

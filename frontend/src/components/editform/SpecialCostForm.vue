@@ -35,21 +35,7 @@
         />
       </v-col>
       <v-col cols="12" sm="6">
-        <v-btn-toggle
-          v-model="form.incoming"
-          mandatory
-          color="primary"
-          variant="outlined"
-          density="comfortable"
-          class="w-100"
-        >
-          <v-btn :value="false" class="flex-grow-1" color="error">
-            Ausgabe
-          </v-btn>
-          <v-btn :value="true" class="flex-grow-1" color="success">
-            Einnahme
-          </v-btn>
-        </v-btn-toggle>
+        <incoming-select v-model="form.type" />
       </v-col>
     </v-row>
     <v-row>
@@ -68,6 +54,7 @@ import MonthYearDatepicker from "@/components/common/MonthYearDatepicker.vue";
 import { dateToYearMonth, yearMonthToDate } from "@/services/dateAdapter";
 import { monthlyCostToForm, CommonForm, baseFormToCost } from "../Utils";
 import { saveSpecialCost } from "../../services/specialcosts";
+import IncomingSelect from "./IncomingSelect.vue";
 
 const costToForm = cost => {
   const form = monthlyCostToForm(cost);
@@ -91,16 +78,17 @@ export default {
   mixins: [CommonForm(costToForm, formToCost, '/api/specialcosts')],
   components: {
     CostEditForm,
-    MonthYearDatepicker
+    MonthYearDatepicker,
+    IncomingSelect
   },
   props: ["btnText", "icon"],
   computed: {
     // These computed properties are added for testing compatibility (T012)
     type() {
-      return this.form.incoming ? 'income' : 'expense';
+      return this.form.type === 'income' ? 'income' : 'expense';
     },
     backendAmount() {
-      return this.form.amount === 0 ? 0 : this.form.amount * (this.form.incoming ? 1 : -1);
+      return this.form.amount === 0 ? 0 : this.form.amount * (this.form.type === 'income' ? 1 : -1);
     },
     dueDateObject: {
       get() {

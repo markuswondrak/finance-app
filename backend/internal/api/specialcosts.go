@@ -13,6 +13,7 @@ type JsonSpecialCost struct {
 	Name    string            `json:"name"`
 	Amount  int               `json:"amount"`
 	DueDate *models.YearMonth `json:"dueDate"`
+	IsSaving bool             `json:"isSaving"`
 }
 
 func (s *Server) GetSpecialCosts(c *gin.Context) {
@@ -29,15 +30,28 @@ func (s *Server) SaveSpecialCosts(c *gin.Context) {
 		return
 	}
 
-	dbObject := models.SpecialCost{
-		ID:      cost.ID,
-		UserID:  s.getUserID(c),
-		Name:    cost.Name,
-		Amount:  cost.Amount,
-		DueDate: cost.DueDate,
+	dbObject, err := ToDBSpecialCost(&cost)
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
 	}
 
-	s.Repo.SaveSpecialCost(&dbObject)
+	dbObject.UserID = s.getUserID(c)
+	s.Repo.SaveSpecialCost(dbObject)
+}
+
+func ToDBSpecialCost(cost *JsonSpecialCost) (*models.SpecialCost, error) {
+	if cost.Amount > 0 && cost.IsSaving {
+		return nil, strconv.ErrSyntax // Using a generic error or define one, but handler just checks err != nil
+	}
+
+	return &models.SpecialCost{
+		ID:       cost.ID,
+		Name:     cost.Name,
+		Amount:   cost.Amount,
+		DueDate:  cost.DueDate,
+		IsSaving: cost.IsSaving,
+	}, nil
 }
 
 func (s *Server) DeleteSpecialCosts(c *gin.Context) {
@@ -61,9 +75,10 @@ func (s *Server) createSpecialCosts(userID uint) (result []JsonSpecialCost) {
 	for _, cost := range *specialCosts {
 		result = append(result, JsonSpecialCost{
 			ID:      cost.ID,
-			Name:    cost.Name,
-			Amount:  cost.Amount,
-			DueDate: cost.DueDate,
+			Name:     cost.Name,
+			Amount:   cost.Amount,
+			DueDate:  cost.DueDate,
+			IsSaving: cost.IsSaving,
 		})
 	}
 

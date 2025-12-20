@@ -35,25 +35,30 @@ describe('SpecialCostForm.vue', () => {
     expect(wrapper.vm.backendAmount).toBe(0);
   });
 
-  it('toggles income/expense correctly', async () => {
+  it('toggles income/expense/saving correctly', async () => {
     const wrapper = mount(SpecialCostForm, {
       global: { plugins: [vuetify] },
       props: { modelValue: true }
     });
 
-    // Default should be expense (incoming = false)
+    // Default should be expense
     expect(wrapper.vm.type).toBe('expense');
-    expect(wrapper.vm.form.incoming).toBe(false);
+    expect(wrapper.vm.form.type).toBe('expense');
 
-    // Set incoming to true (income)
-    wrapper.vm.form.incoming = true;
+    // Set to income
+    wrapper.vm.form.type = 'income';
     expect(wrapper.vm.type).toBe('income');
     
     // Check logic for transforming amount based on type
     wrapper.vm.form.amount = 500;
     expect(wrapper.vm.backendAmount).toBe(500);
     
-    wrapper.vm.form.incoming = false;
+    // Set to expense
+    wrapper.vm.form.type = 'expense';
+    expect(wrapper.vm.backendAmount).toBe(-500);
+
+    // Set to saving
+    wrapper.vm.form.type = 'saving';
     expect(wrapper.vm.backendAmount).toBe(-500);
   });
 });

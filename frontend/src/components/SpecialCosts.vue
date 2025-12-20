@@ -18,7 +18,13 @@
               >
                 <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
                   <td :key="header.name" :class="[header.styleClass, header.name === 'amount' ? formatAmountColor(item.amount) : '']">
-                    {{ transform(header.transformer, item[header.name]) }}
+                    <div v-if="header.name === 'name'" class="d-flex align-center">
+                      {{ transform(header.transformer, item[header.name]) }}
+                      <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
+                    </div>
+                    <span v-else>
+                      {{ transform(header.transformer, item[header.name]) }}
+                    </span>
                   </td>
                 </template>
                 <template v-slot:item.actions="{ item }">

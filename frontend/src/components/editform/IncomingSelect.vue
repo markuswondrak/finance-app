@@ -8,11 +8,15 @@
     density="comfortable"
     class="w-100"
   >
-    <v-btn :value="false" class="flex-grow-1" color="error">
+    <v-btn value="expense" class="flex-grow-1" color="error">
       Ausgabe
     </v-btn>
-    <v-btn :value="true" class="flex-grow-1" color="success">
+    <v-btn value="income" class="flex-grow-1" color="success">
       Einnahme
+    </v-btn>
+    <v-btn value="saving" class="flex-grow-1" color="success">
+      <v-icon start icon="fa-piggy-bank"></v-icon>
+      Sparen
     </v-btn>
   </v-btn-toggle>
 </template>
