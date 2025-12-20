@@ -75,9 +75,11 @@
       </v-card>
     </v-menu>
   </div>
-  <div v-else>
+  <div v-else class="login-container">
       <v-btn
-        variant="text"
+        class="login-button text-none px-6"
+        rounded="pill"
+        variant="outlined"
         @click="login"
       >
         Log In
@@ -130,8 +132,22 @@ const menuItems = [
 </script>
 
 <style scoped>
-.user-menu-container {
+.user-menu-container, .login-container {
     margin-right: 16px;
+}
+
+.login-button {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #4ADE80 !important; /* Brand Green */
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(74, 222, 128, 0.5) !important; /* Brand Green Border on hover */
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
 }
 
 .user-trigger {
