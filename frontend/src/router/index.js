@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Overview from '../components/overview/Overview.vue'
 import FixedCosts from '../components/FixedCosts.vue'
 import SpecialCosts from '../components/SpecialCosts.vue'
+import WealthOverviewPage from '../pages/WealthOverviewPage.vue'
 import LandingPage from '../pages/LandingPage.vue'
 import { AuthService } from '../services/auth'
 
@@ -14,6 +15,11 @@ const routes = [
   { 
     path: '/overview', 
     component: Overview,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/wealth-overview', 
+    component: WealthOverviewPage,
     meta: { requiresAuth: true }
   },
   { 

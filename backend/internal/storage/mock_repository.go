@@ -3,13 +3,15 @@ package storage
 import (
 	"errors"
 	"wondee/finance-app-backend/internal/models"
+	"gorm.io/gorm"
 )
 
 // MockRepository implements Repository for testing
 type MockRepository struct {
-	FixedCosts   []models.FixedCost
-	SpecialCosts []models.SpecialCost
-	Users        []models.User
+	FixedCosts     []models.FixedCost
+	SpecialCosts   []models.SpecialCost
+	Users          []models.User
+	WealthProfiles []models.WealthProfile
 }
 
 func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
@@ -133,4 +135,31 @@ func (m *MockRepository) Update(user *models.User) error {
 		}
 	}
 	return errors.New("user not found")
+}
+
+func (m *MockRepository) GetWealthProfile(userID uint) (*models.WealthProfile, error) {
+	for _, p := range m.WealthProfiles {
+		if p.UserID == userID {
+			return &p, nil
+		}
+	}
+	return nil, gorm.ErrRecordNotFound
+}
+
+func (m *MockRepository) UpsertWealthProfile(profile *models.WealthProfile) error {
+	found := false
+	for i, p := range m.WealthProfiles {
+		if p.UserID == profile.UserID {
+			m.WealthProfiles[i] = *profile
+			found = true
+			break
+		}
+	}
+	if !found {
+		if profile.ID == 0 {
+			profile.ID = uint(len(m.WealthProfiles) + 1)
+		}
+		m.WealthProfiles = append(m.WealthProfiles, *profile)
+	}
+	return nil
 }

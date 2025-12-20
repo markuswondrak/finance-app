@@ -54,6 +54,7 @@
               
               const navigationItems = ref([
                 { title: 'Überblick', to: '/overview', icon: 'fa-chart-line' },
+                { title: 'Vermögen', to: '/wealth-overview', icon: 'fa-piggy-bank' },
                 { title: 'Fixkosten', to: '/fixedcosts', icon: 'fa-money-check-dollar' },
                 { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' }
               ])

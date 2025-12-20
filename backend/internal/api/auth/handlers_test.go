@@ -51,6 +51,8 @@ func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost) {}
 func (m *MockRepository) DeleteSpecialCost(id int, userID uint) {}
 func (m *MockRepository) GetUser() (*models.User, error) { return nil, nil }
 func (m *MockRepository) UpdateUserCurrentAmount(amount int) error { return nil }
+func (m *MockRepository) GetWealthProfile(userID uint) (*models.WealthProfile, error) { return nil, nil }
+func (m *MockRepository) UpsertWealthProfile(profile *models.WealthProfile) error { return nil }
 
 
 func TestLogin(t *testing.T) {

@@ -44,7 +44,7 @@ func ConnectDataBase() *gorm.DB {
 		panic("Failed to connect to database!")
 	}
 
-	err = database.AutoMigrate(&models.FixedCost{}, &models.SpecialCost{}, &models.User{})
+	err = database.AutoMigrate(&models.FixedCost{}, &models.SpecialCost{}, &models.User{}, &models.WealthProfile{})
 
 	if err != nil {
 		panic(err)
@@ -104,6 +104,9 @@ func main() {
 		apiGroup.DELETE("/specialcosts/:id", server.DeleteSpecialCosts)
 
 		apiGroup.PUT("/user/current-amount", server.UpdateCurrentAmount)
+
+		apiGroup.GET("/wealth-profile", server.GetWealthProfile)
+		apiGroup.PUT("/wealth-profile", server.UpsertWealthProfile)
 
 		apiGroup.GET("/statistics/surplus", server.GetSurplusStatistics)
 	}
