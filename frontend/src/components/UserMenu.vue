@@ -4,7 +4,7 @@
       v-model="menu"
       :close-on-content-click="true"
       location="bottom end"
-      offset="12"
+      offset="5"
       transition="slide-y-transition"
       :content-class="'user-menu-content'"
     >
@@ -24,7 +24,7 @@
             ></v-img>
             <span v-else class="text-subtitle-2 font-weight-bold">{{ initials }}</span>
           </v-avatar>
-          <v-icon icon="mdi-chevron-down" size="small" class="chevron-icon"></v-icon>
+          <v-icon icon="fa-chevron-down" size="x-small" class="chevron-icon"></v-icon>
         </div>
       </template>
 
@@ -64,7 +64,7 @@
             @click="logout"
           >
             <template v-slot:prepend>
-              <v-icon icon="mdi-logout" size="small" class="mr-3 text-grey-lighten-1"></v-icon>
+              <v-icon icon="fa-right-from-bracket" size="small" class="mr-3 text-grey-lighten-1"></v-icon>
             </template>
             <v-list-item-title class="text-body-2 font-weight-medium text-grey-lighten-1">
               Log Out
@@ -123,8 +123,8 @@ const handleImageError = () => {
 }
 
 const menuItems = [
-    { title: 'Profile Settings', icon: 'mdi-account-cog', action: () => {} },
-    { title: 'Subscription', icon: 'mdi-credit-card', action: () => {} },
+    { title: 'Profile Settings', icon: 'fa-user-gear', action: () => {} },
+    { title: 'Subscription', icon: 'fa-credit-card', action: () => {} },
 ];
 
 </script>
