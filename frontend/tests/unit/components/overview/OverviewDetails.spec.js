@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import OverviewDetails from '@/components/overview/OverviewDetails.vue';
+import SpecialCostForm from '@/components/editform/SpecialCostForm.vue';
+import DeleteButton from '@/components/DeleteButton.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
@@ -73,5 +75,69 @@ describe('OverviewDetails.vue', () => {
         expect(wrapper.vm.fixedCosts).toEqual(mockApiResult.fixedCosts);
         expect(wrapper.vm.specialCosts).toEqual(mockApiResult.specialCosts);
         expect(wrapper.vm.loaded).toBe(true);
+    });
+
+    it('should reload data when SpecialCostForm emits refresh', async () => {
+        global.fetch.mockResolvedValue({
+            json: vi.fn().mockResolvedValue(mockApiResult)
+        });
+
+        const wrapper = mount(OverviewDetails, {
+            global: { plugins: [vuetify] },
+            props: { detail: mockDetail }
+        });
+
+        await wrapper.setData({ show: true });
+        
+        // Wait for initial fetch
+        await new Promise(resolve => setTimeout(resolve, 0));
+        await wrapper.vm.$nextTick();
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+
+        // Find SpecialCostForm and emit refresh
+        const specialCostForm = wrapper.findComponent(SpecialCostForm);
+        expect(specialCostForm.exists()).toBe(true);
+        await specialCostForm.vm.$emit('refresh');
+
+        // Wait for reload fetch
+        await new Promise(resolve => setTimeout(resolve, 0));
+        await wrapper.vm.$nextTick();
+        expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should call delete API and reload when delete confirmed', async () => {
+        global.fetch.mockResolvedValue({
+            ok: true,
+            json: vi.fn().mockResolvedValue(mockApiResult)
+        });
+
+        const wrapper = mount(OverviewDetails, {
+            global: { plugins: [vuetify] },
+            props: { detail: mockDetail }
+        });
+
+        await wrapper.setData({ show: true });
+        
+        // Wait for initial fetch
+        await new Promise(resolve => setTimeout(resolve, 0));
+        await wrapper.vm.$nextTick();
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+
+        // Find DeleteButton and emit confirm
+        const deleteButton = wrapper.findComponent(DeleteButton);
+        expect(deleteButton.exists()).toBe(true);
+        await deleteButton.vm.$emit('confirm');
+
+        // Verify delete fetch (DELETE method)
+        // Note: global.fetch might be called for reload too, so we check calls
+        const deleteCall = global.fetch.mock.calls.find(call => call[1]?.method === 'DELETE');
+        expect(deleteCall).toBeTruthy();
+        expect(deleteCall[0]).toContain('/api/specialcosts/2');
+
+        // Wait for reload fetch
+        await new Promise(resolve => setTimeout(resolve, 0));
+        await wrapper.vm.$nextTick();
+        // 1 initial + 1 delete + 1 reload = 3 calls
+        expect(global.fetch).toHaveBeenCalledTimes(3);
     });
 });

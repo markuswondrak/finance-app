@@ -24,6 +24,7 @@ type OverviewEntry struct {
 }
 
 type CostDetail struct {
+	ID     int    `json:"id"`
 	Name   string `json:"name"`
 	Amount int    `json:"amount"`
 }
@@ -75,6 +76,7 @@ func (s *Server) createOverviewDetail(n int, userID uint) OverviewDetail {
 		if models.IsRelevant(yearMonth, cost.From, cost.To) {
 
 			costDetail := FixedCostDetail{}
+			costDetail.ID = cost.ID
 			costDetail.Amount = cost.Amount
 			costDetail.Name = cost.Name
 			costDetail.DisplayType = determineDisplayType(cost.DueMonth)
@@ -86,6 +88,7 @@ func (s *Server) createOverviewDetail(n int, userID uint) OverviewDetail {
 	if costs := specialCostMap[*yearMonth]; costs != nil {
 		for _, cost := range costs {
 			specialCosts = append(specialCosts, CostDetail{
+				ID:     cost.ID,
 				Name:   cost.Name,
 				Amount: cost.Amount,
 			})
@@ -181,6 +184,9 @@ func (s *Server) createRelevantMap(userID uint) map[int][]models.FixedCost {
 func (s *Server) createSpecialCostMap(userID uint) map[models.YearMonth][]models.SpecialCost {
 	result := make(map[models.YearMonth][]models.SpecialCost)
 	for _, cost := range *s.Repo.LoadSpecialCosts(userID) {
+		if cost.DueDate == nil {
+			continue
+		}
 		if result[*cost.DueDate] == nil {
 			result[*cost.DueDate] = []models.SpecialCost{cost}
 		} else {

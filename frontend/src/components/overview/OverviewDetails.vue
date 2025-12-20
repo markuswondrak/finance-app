@@ -22,7 +22,7 @@
                   <td class="text-body-2">{{ cost.name }}</td>
                   <td :class="[getAmountColorClass(cost.amount), 'text-h5']">{{ toCurrency(cost.amount) }}</td>
                   <td align="right">
-                    <special-cost-form :cost="cost" />
+                    <special-cost-form :cost="cost" @refresh="loadData(detail.index)" />
                     <delete-button :name="cost.name" @confirm="deleteSpecialCost(cost.id)" />
                   </td>
                 </tr>
@@ -54,6 +54,7 @@ import LoadablePage from "../LoadablePage";
 import DeleteButton from "../DeleteButton.vue";
 import SpecialCostForm from "../editform/SpecialCostForm.vue";
 import { displayMonth, toCurrency } from "../Utils";
+import { deleteSpecialCost } from "../../services/specialcosts";
 
 export default {
   mixins: [LoadablePage],
@@ -89,8 +90,13 @@ export default {
       this.fixedCosts = result.fixedCosts || [];
       this.specialCosts = result.specialCosts || [];
     },
-    deleteSpecialCost(id) {
-      window.console.log("delete", id);
+    async deleteSpecialCost(id) {
+      try {
+        await deleteSpecialCost(id);
+        await this.loadData(this.detail.index);
+      } catch (error) {
+        console.error("Failed to delete special cost:", error);
+      }
     }
   }
 };
