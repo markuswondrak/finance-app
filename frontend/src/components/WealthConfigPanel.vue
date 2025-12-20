@@ -1,68 +1,82 @@
 <template>
-  <v-expansion-panels v-model="panel">
-    <v-expansion-panel class="card-accent-success" rounded="lg">
-      <v-expansion-panel-title>
-        <v-icon icon="mdi-cog" class="mr-2"></v-icon>
-        Vermögens-Einstellungen (Forecast)
+  <v-expansion-panels v-model="panel" variant="flat">
+    <v-expansion-panel class="card-accent-success border" rounded="lg">
+      <v-expansion-panel-title class="py-3">
+        <v-row no-gutters align="center" class="w-100">
+          <v-col class="d-flex flex-column">
+            <div v-if="panel === null || panel === undefined" class="text-caption text-white">
+              {{ formatAmount(profile.current_wealth) }} • 
+              {{ profile.forecast_duration_years }} Jahre • 
+              Ø {{ profile.rate_average_case }}% jährl. Rendite
+            </div>
+            <div v-else class="text text-white">
+              Lege die Werte für die Berechnung fest
+            </div>
+          </v-col>
+          <v-col cols="auto" class="d-flex align-center mr-4">
+            <!-- Reserved for Account/Profile dropdown -->
+          </v-col>
+        </v-row>
       </v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-form ref="form" v-model="isValid" @submit.prevent="saveProfile">
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <v-text-field
+                <base-text-field
                   v-model.number="profile.current_wealth"
-                  label="Aktuelles Vermögen (€)"
+                  label="Aktuelles Vermögen"
                   type="number"
                   prefix="€"
                   :rules="wealthRules"
                   required
-                ></v-text-field>
+                ></base-text-field>
               </v-col>
               <v-col cols="12" md="6">
-                <v-text-field
+                <base-text-field
                   v-model.number="profile.forecast_duration_years"
-                  label="Vorschau-Zeitraum (Jahre)"
+                  label="Vorschau-Zeitraum"
+                  suffix="Jahre"
                   type="number"
                   :rules="durationRules"
                   required
-                ></v-text-field>
+                ></base-text-field>
               </v-col>
             </v-row>
 
             <v-divider class="my-4"></v-divider>
-            <div class="text-subtitle-1 mb-2">Erwartete Rendite (%)</div>
+            <div class="text-subtitle-1 mb-2">Erwartete Rendite</div>
 
             <v-row>
               <v-col cols="12" md="4">
-                <v-text-field
+                <base-text-field
                   v-model.number="profile.rate_worst_case"
                   label="Worst Case"
                   type="number"
-                  suffix="%"
+                  prefix="%"
                   :rules="rateRules"
                   required
-                ></v-text-field>
+                ></base-text-field>
               </v-col>
               <v-col cols="12" md="4">
-                <v-text-field
+                <base-text-field
                   v-model.number="profile.rate_average_case"
                   label="Average Case"
                   type="number"
-                  suffix="%"
+                  prefix="%"
                   :rules="rateRules"
                   required
-                ></v-text-field>
+                ></base-text-field>
               </v-col>
               <v-col cols="12" md="4">
-                <v-text-field
+                <base-text-field
                   v-model.number="profile.rate_best_case"
                   label="Best Case"
                   type="number"
-                  suffix="%"
+                  prefix="%"
                   :rules="rateRules"
                   required
-                ></v-text-field>
+                ></base-text-field>
               </v-col>
             </v-row>
 
@@ -101,9 +115,13 @@
 
 <script>
 import { wealthService } from '@/services/wealthService';
+import BaseTextField from '@/components/common/BaseTextField.vue';
 
 export default {
   name: 'WealthConfigPanel',
+  components: {
+    BaseTextField,
+  },
   data: () => ({
     panel: null,
     isValid: false,
@@ -142,6 +160,13 @@ export default {
     await this.fetchProfile();
   },
   methods: {
+    formatAmount(value) {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0,
+      }).format(value);
+    },
     async fetchProfile() {
       this.loading = true;
       try {
@@ -162,6 +187,7 @@ export default {
         this.snackbarText = 'Einstellungen erfolgreich gespeichert';
         this.snackbarColor = 'success';
         this.snackbar = true;
+        this.panel = null;
       } catch (error) {
         this.snackbarText = `Fehler: ${error.message}`;
         this.snackbarColor = 'error';

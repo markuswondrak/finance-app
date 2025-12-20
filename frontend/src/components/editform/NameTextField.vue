@@ -1,5 +1,5 @@
 <template>
-  <v-text-field
+  <base-text-field
     ref="input"
     :model-value="modelValue"
     @update:modelValue="$emit('update:modelValue', $event)"
@@ -7,14 +7,17 @@
     :counter="20"
     label="Bezeichnung"
     :required="required"
-    variant="outlined"
-    density="comfortable"
   />
 </template>
 <script>
+import BaseTextField from "../common/BaseTextField.vue";
+
 export default {
   props: ["modelValue", "required"],
   emits: ["update:modelValue"],
+  components: {
+    BaseTextField
+  },
   data() {
     return {
       nameRules: [

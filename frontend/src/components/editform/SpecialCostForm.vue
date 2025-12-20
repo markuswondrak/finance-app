@@ -12,25 +12,21 @@
   >
     <v-row>
       <v-col cols="12">
-        <v-text-field
+        <base-text-field
           label="Bezeichnung"
           v-model="form.name"
           required
-          variant="outlined"
-          density="comfortable"
         />
       </v-col>
     </v-row>
     <v-row align="center">
       <v-col cols="12" sm="6">
-        <v-text-field
+        <base-text-field
           label="Betrag"
           v-model.number="form.amount"
           type="number"
           prefix="€"
           required
-          variant="outlined"
-          density="comfortable"
           hide-details
         />
       </v-col>
@@ -51,6 +47,7 @@
 <script>
 import CostEditForm from "./CostEditForm.vue";
 import MonthYearDatepicker from "@/components/common/MonthYearDatepicker.vue";
+import BaseTextField from "@/components/common/BaseTextField.vue";
 import { dateToYearMonth, yearMonthToDate } from "@/services/dateAdapter";
 import { monthlyCostToForm, CommonForm, baseFormToCost } from "../Utils";
 import { saveSpecialCost } from "../../services/specialcosts";
@@ -79,6 +76,7 @@ export default {
   components: {
     CostEditForm,
     MonthYearDatepicker,
+    BaseTextField,
     IncomingSelect
   },
   props: ["btnText", "icon"],

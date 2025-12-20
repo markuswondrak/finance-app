@@ -1,5 +1,5 @@
 <template>
-  <v-text-field
+  <base-text-field
     :model-value="displayValue"
     :rules="valueRules"
     @input="inputChanged"
@@ -7,16 +7,18 @@
     @focus="focus = true"
     :required="required"
     :label="label"
-    variant="outlined"
-    density="comfortable"
   />
 </template>
 <script>
 import { toCurrency } from "../Utils";
+import BaseTextField from "../common/BaseTextField.vue";
 
 export default {
   props: ["id", "label", "modelValue", "required"],
   emits: ["update:modelValue"],
+  components: {
+    BaseTextField
+  },
   data() {
     return {
       focus: false,

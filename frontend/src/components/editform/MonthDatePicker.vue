@@ -7,12 +7,10 @@
     min-width="290px"
   >
     <template v-slot:activator="{ props }">
-      <v-text-field
+      <base-text-field
         :model-value="displayDate"
         :label="label"
         prepend-inner-icon="mdi-calendar-month"
-        variant="outlined"
-        density="comfortable"
         :error-messages="errorMessages"
         clearable
         readonly
@@ -32,10 +30,14 @@
 </template>
 <script>
 import { displayMonth } from "../Utils";
+import BaseTextField from "../common/BaseTextField.vue";
 
 export default {
   props: ["modelValue", "min", "max", "label", "rules"],
   emits: ["update:modelValue"],
+  components: {
+    BaseTextField
+  },
 
   data() {
     return {

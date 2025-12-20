@@ -7,18 +7,17 @@
     min-width="290px"
   >
     <template v-slot:activator="{ props }">
-      <v-text-field
+      <base-text-field
         v-bind="props"
         :model-value="displayDate"
         :label="label"
         readonly
         append-inner-icon="fa-calendar"
-        variant="outlined"
         hide-details
         class="month-year-picker-input"
         @click="menuOpen = true"
         @focus="menuOpen = true"
-      ></v-text-field>
+      ></base-text-field>
     </template>
 
     <v-card class="month-year-picker-card">
@@ -58,6 +57,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { formatDateLabel } from '@/services/dateAdapter';
+import BaseTextField from './BaseTextField.vue';
 
 const props = defineProps({
   modelValue: {

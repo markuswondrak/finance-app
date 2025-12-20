@@ -5,16 +5,15 @@
         Edit Current Balance
       </v-card-title>
       <v-card-text>
-        <v-text-field
+        <base-text-field
           v-model.number="localAmount"
           label="Amount"
           type="number"
-          variant="outlined"
           prefix="€"
           autofocus
           @keyup.enter="save"
           :error-messages="error"
-        ></v-text-field>
+        ></base-text-field>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -39,12 +38,17 @@
     </v-card>
   </v-dialog>
 </template>
-
+      
 <script>
 import { userService } from '@/services/user';
+import BaseTextField from '@/components/common/BaseTextField.vue';
 
 export default {
   name: 'BalanceEditModal',
+  components: {
+    BaseTextField
+  },
+
   props: {
     modelValue: {
       type: Boolean,
