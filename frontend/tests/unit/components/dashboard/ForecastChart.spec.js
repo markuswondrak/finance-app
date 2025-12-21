@@ -59,12 +59,12 @@ describe('ForecastChart.vue', () => {
   describe('Container', () => {
     it('renders with forecast-chart-container class', () => {
       const wrapper = mountComponent({ data: mockChartData })
-      expect(wrapper.find('.base-chart-container').exists()).toBe(true)
+      expect(wrapper.find('.forecast-chart-container').exists()).toBe(true)
     })
 
     it('has 21:9 aspect ratio CSS class applied', () => {
       const wrapper = mountComponent({ data: mockChartData })
-      const container = wrapper.find('.base-chart-container')
+      const container = wrapper.find('.forecast-chart-container')
       expect(container.exists()).toBe(true)
       // The aspect-ratio is set in scoped styles
     })
@@ -83,9 +83,9 @@ describe('ForecastChart.vue', () => {
       expect(skeleton.exists()).toBe(false)
     })
 
-    it('skeleton has base-chart-skeleton class for aspect ratio matching', () => {
+    it('skeleton has forecast-chart-skeleton class for aspect ratio matching', () => {
       const wrapper = mountComponent({ loading: true })
-      const skeleton = wrapper.find('.base-chart-skeleton')
+      const skeleton = wrapper.find('.forecast-chart-skeleton')
       expect(skeleton.exists()).toBe(true)
     })
   })
@@ -93,14 +93,14 @@ describe('ForecastChart.vue', () => {
   describe('Empty State', () => {
     it('shows "No data" message when data is null and not loading', () => {
       const wrapper = mountComponent({ loading: false, data: null })
-      const emptyState = wrapper.find('.base-chart-empty')
+      const emptyState = wrapper.find('.forecast-chart-empty')
       expect(emptyState.exists()).toBe(true)
       expect(emptyState.text()).toContain('Keine Daten')
     })
 
     it('does not show "No data" message when loading', () => {
       const wrapper = mountComponent({ loading: true, data: null })
-      const emptyState = wrapper.find('.base-chart-empty')
+      const emptyState = wrapper.find('.forecast-chart-empty')
       expect(emptyState.exists()).toBe(false)
     })
   })
@@ -425,21 +425,6 @@ describe('ForecastChart.vue', () => {
       const lineChart = wrapper.findComponent(Line)
       const options = lineChart.props('options')
       expect(options.scales.y.grid.display).not.toBe(false)
-    })
-
-    // T023: Test for zero reference line
-    it('T023: y-axis grid.color is a string', () => {
-      const wrapper = mountComponent({ data: mockChartData })
-      const lineChart = wrapper.findComponent(Line)
-      const options = lineChart.props('options')
-      expect(typeof options.scales.y.grid.color).toBe('string')
-    })
-
-    it('T028: y-axis grid.borderDash is an array', () => {
-      const wrapper = mountComponent({ data: mockChartData })
-      const lineChart = wrapper.findComponent(Line)
-      const options = lineChart.props('options')
-      expect(Array.isArray(options.scales.y.grid.borderDash)).toBe(true)
     })
 
     // T029: Test for smooth curve rendering

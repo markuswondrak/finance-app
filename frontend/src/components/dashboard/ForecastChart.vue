@@ -1,46 +1,15 @@
 <template>
-  <div class="forecast-chart-container">
-    <v-skeleton-loader
-      v-if="loading"
-      type="image"
-      class="forecast-chart-skeleton"
-    />
-    <div v-else-if="!data" class="forecast-chart-empty d-flex align-center justify-center">
-      <span class="text-grey">Keine Daten verfügbar</span>
-    </div>
-    <Line
-      v-else
-      :data="enhancedChartData"
-      :options="chartOptions"
-    />
-  </div>
+  <BaseChart
+    :loading="loading"
+    :data="enhancedChartData"
+    :options="chartOptions"
+    accent="primary"
+  />
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { Line } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from 'chart.js'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-)
+import BaseChart from '@/components/common/BaseChart.vue'
 
 // T001: Chart colors for positive/negative value visualization
 const CHART_COLORS = {
@@ -147,9 +116,9 @@ const enhancedChartData = computed(() => {
           // T029: Smooth curve rendering
           tension: 0.3,
           // T021: Prominent line width
-          borderWidth: 3,
+          borderWidth: 2,
           // T022: Data point markers
-          pointRadius: 4,
+          pointRadius: 3,
           pointHoverRadius: 6,
           // T010: Segment border color based on y-value
           segment: {
@@ -183,28 +152,9 @@ const enhancedChartData = computed(() => {
 
 // T004-T006, T026-T028: Chart options with scales configuration and zero line styling
 const chartOptions = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
   scales: {
-    x: {
-      grid: {
-        display: false
-      }
-    },
     y: {
-      grid: {
-        display: false,
-        color: (ctx) => {
-          if (ctx.tick && ctx.tick.value === 0) return CHART_COLORS.zeroLine
-          return 'transparent'
-        },
-        borderDash: (ctx) => {
-          if (ctx.tick && ctx.tick.value === 0) return [5, 5]
-          return []
-        }
-      },
       ticks: {
-        color: CHART_COLORS.text,
         callback: (value) => {
           return new Intl.NumberFormat('de-DE', {
             style: 'currency',
@@ -213,11 +163,6 @@ const chartOptions = computed(() => ({
           }).format(value)
         }
       }
-    }
-  },
-  plugins: {
-    legend: {
-      display: false
     }
   },
   ...props.options
@@ -233,23 +178,3 @@ defineExpose({
   createNegativeGradient
 })
 </script>
-
-<style scoped>
-.forecast-chart-container {
-  aspect-ratio: 21 / 9;
-  width: 100%;
-  position: relative;
-}
-
-.forecast-chart-skeleton {
-  height: 100%;
-  width: 100%;
-}
-
-.forecast-chart-empty {
-  height: 100%;
-  width: 100%;
-  background-color: rgba(30, 30, 30, 0.5);
-  border-radius: 8px;
-}
-</style>

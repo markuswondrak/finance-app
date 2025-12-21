@@ -1,12 +1,12 @@
 <template>
   <v-card variant="outlined" :class="['pa-4', 'glass', 'border', `card-accent-${accent}`]" rounded="lg">
-    <div class="base-chart-container">
+    <div class="base-chart-container forecast-chart-container">
       <v-skeleton-loader
         v-if="loading"
         type="image"
-        class="base-chart-skeleton"
+        class="base-chart-skeleton forecast-chart-skeleton"
       />
-      <div v-else-if="!data" class="base-chart-empty d-flex align-center justify-center">
+      <div v-else-if="!data" class="base-chart-empty forecast-chart-empty d-flex align-center justify-center">
         <span class="text-grey">Keine Daten verfügbar</span>
       </div>
       <Line
