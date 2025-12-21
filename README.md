@@ -2,13 +2,14 @@
 
 [![backend build](https://github.com/markuswondrak/finance-app/actions/workflows/backend.yml/badge.svg)](https://github.com/markuswondrak/finance-app/actions/workflows/backend.yml) [![frontend build](https://github.com/markuswondrak/finance-app/actions/workflows/frontend.yml/badge.svg)](https://github.com/markuswondrak/finance-app/actions/workflows/frontend.yml)
 
-A modern personal finance tracking application built with Vue.js 3 and Go. It helps users manage fixed costs, track special expenses, and visualize financial forecasts with a fintech-inspired dark theme.
+A modern personal finance tracking application built with Vue.js 3 and Go. It helps users manage fixed costs, track special expenses, manage wealth accumulation, and visualize financial forecasts with a fintech-inspired dark theme.
 
 ## Features
 
 - **Fintech Dashboard:** High-level overview of current balance, monthly surplus, and risk indicators.
 - **Fixed Costs Management:** Track recurring expenses (monthly, quarterly, half-yearly, yearly).
 - **Special Costs Tracking:** Manage one-time or irregular expenses.
+- **Wealth Management:** Track assets, configure wealth profiles, and forecast long-term accumulation.
 - **Financial Forecasting:** Visual sparklines and charts for surplus trends and balance projections.
 - **Google Authentication:** Secure login using Google OAuth2.
 - **Dark Theme:** Modern, high-contrast UI designed for readability.
@@ -68,8 +69,7 @@ A modern personal finance tracking application built with Vue.js 3 and Go. It he
 ## Folder Description
 
 - **`frontend/`**: Vue.js 3 application using Vuetify 3, Vite, and Vitest.
-  - `src/components/`: Reusable UI components.
-  - `src/pages/`: Main view components for routing.
+  - `src/components/`: Page-centric folder structure (e.g., `wealth/`, `overview/`) containing views and their specific sub-components, plus `commons/` for shared UI elements.
   - `src/services/`: API client and communication logic.
   - `mockdata/`: Mock server and JSON data for local development.
 - **`backend/`**: Go REST API using the Gin framework and GORM.
@@ -78,6 +78,6 @@ A modern personal finance tracking application built with Vue.js 3 and Go. It he
   - `internal/models/`: Database schema definitions.
   - `internal/storage/`: Database interaction and repository patterns.
   - `db/`: Database initialization scripts and data storage.
-- **`specs/`**: Detailed documentation, design plans, and task lists for project features.
+- **`specs/`**: *Spec-kit* feature folder. Detailed documentation, design plans, and task lists for project features. Each feature has its own subfolder.
 - **`.github/workflows/`**: CI/CD pipelines for automated testing and building.
 - **`.gemini/`**: Configuration and instructions for AI-assisted development.

@@ -1,21 +1,24 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.1.0 → 1.2.0
-Updated: 2025-12-14
-Rationale: Updated Layout Architecture to define floating navigation toggle behavior (overlay vs push)
+Version Change: 1.2.0 → 1.3.0
+Updated: 2025-12-21
+Rationale: Expanded scope to include Wealth Management and enforced Page-Centric Frontend Architecture
 
 Modified Principles:
-  - VII. Visual Design Language - Layout Architecture subsection expanded
+  - I. Simplicity First - Expanded scope to include wealth accumulation management
+  - V. API-First Design - Added 'wealth' to example resources
 
-Added Sections: N/A
+Added Sections:
+  - VIII. Frontend Architecture - Defined mandatory page-centric folder structure
+
 Removed Sections: N/A
 
 Templates Status:
-  ✅ plan-template.md - Reviewed, compatible with constitution principles
-  ✅ spec-template.md - Reviewed, compatible with user story approach
-  ✅ tasks-template.md - Reviewed, compatible with testing requirements
-  ⚠ Command files - Command files exist in .claude/commands/ - no updates needed
+  ✅ plan-template.md - Reviewed, compatible
+  ✅ spec-template.md - Reviewed, compatible
+  ✅ tasks-template.md - Reviewed, compatible
+  ⚠ Command files - No updates needed
 
 Follow-up TODOs: None
 -->
@@ -26,7 +29,7 @@ Follow-up TODOs: None
 
 ### I. Simplicity First
 
-The application maintains a focused scope on personal financial planning, tracking fixed costs and forecasting finances. Every feature must serve the core mission of helping users understand and plan their finances.
+The application maintains a focused scope on personal financial planning, tracking fixed costs, forecasting finances, and managing wealth accumulation. Every feature must serve the core mission of helping users understand and plan their finances.
 
 **Rationale**: As a personal finance tool, complexity is the enemy of usability. Users need clear insights, not feature bloat.
 
@@ -77,7 +80,7 @@ All data interactions flow through well-defined REST API endpoints. API contract
 - RESTful endpoints (`GET /api/costs`, `POST /api/costs/monthly`)
 - JSON request/response format
 - Standard HTTP status codes
-- Separation by resource (costs, specialcosts, overview)
+- Separation by resource (costs, specialcosts, overview, wealth)
 
 **Rationale**: Clear API contracts enable frontend/backend teams to work independently and ensure system reliability.
 
@@ -129,6 +132,17 @@ The application follows a **Fintech Dark Mode** aesthetic designed for modern, e
 - Charts use gradient fills to anchor data visually
 
 **Rationale**: Financial apps require trust and clarity. The dark mode reduces eye strain, while the visual hierarchy guides users from forecast overview (chart) to actionable metrics (cards), answering key questions: "Will I stay solvent?" and "How much can I spend?"
+
+### VIII. Frontend Architecture
+
+The frontend follows a **Page-Centric Component Structure**.
+
+**Organization Rules**:
+- **Page Directories**: Every page/view has a dedicated folder (e.g., `src/components/wealth/`) containing the main page component and its specific sub-components.
+- **Common Components**: Strictly reusable, generic UI elements reside in the `src/components/commons/` folder.
+- **Colocation**: Logic and styles specific to a page should be colocated within that page's directory.
+
+**Rationale**: This structure scales better than grouping by type (e.g., all buttons together). It ensures that deleting a feature (page) allows for safe deletion of its dependencies without checking the entire codebase.
 
 ## Technology Standards
 
@@ -223,7 +237,7 @@ Constitution follows semantic versioning (MAJOR.MINOR.PATCH):
 ### Compliance Review
 
 - All pull requests must reference this constitution
-- Architecture decisions must align with Core Principles I-VI
+- Architecture decisions must align with Core Principles I-VIII
 - Complexity must be justified (favor simplicity)
 - Test coverage verified on every build
 - UX changes reviewed for user-friendliness
@@ -235,4 +249,4 @@ Constitution follows semantic versioning (MAJOR.MINOR.PATCH):
 - Constitution applies ONLY to vue-frontend branch and future branches derived from it
 - Upon merge to master, this constitution supersedes all prior practices
 
-**Version**: 1.2.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-14
+**Version**: 1.3.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-21
