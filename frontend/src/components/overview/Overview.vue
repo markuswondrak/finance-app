@@ -3,14 +3,7 @@
     <!-- Hero Chart Section with 21:9 aspect ratio -->
     <v-row class="mb-6">
       <v-col cols="12">
-        <v-card class="mx-auto gradient-dark card-accent-primary" rounded="xl" elevation="4">
-          <v-card-text class="pa-0">
-            <div class="chart-container">
-              <v-skeleton-loader v-if="!loaded" type="image" class="chart-skeleton" />
-              <ForecastChart v-else :data="chartData" />
-            </div>
-          </v-card-text>
-        </v-card>
+        <ForecastChart :data="chartData" :loading="!loaded" />
       </v-col>
     </v-row>
 
@@ -183,14 +176,5 @@ export default {
 </script>
 
 <style scoped>
-.chart-container {
-  aspect-ratio: 21 / 9;
-  width: 100%;
-  position: relative;
-}
-
-.chart-skeleton {
-  height: 100%;
-  width: 100%;
-}
+/* Styles removed as they are handled by BaseChart */
 </style>

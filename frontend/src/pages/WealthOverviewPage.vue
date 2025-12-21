@@ -8,12 +8,10 @@
 
     <v-row class="mt-4">
       <v-col cols="12">
-        <v-card variant="outlined" class="pa-4 glass card-accent-success border" rounded="lg">
-          <WealthForecastChart 
-            :loading="loading" 
-            :forecast="forecast" 
-          />
-        </v-card>
+        <WealthForecastChart 
+          :loading="loading" 
+          :forecast="forecast" 
+        />
       </v-col>
     </v-row>
   </v-container>

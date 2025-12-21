@@ -1,46 +1,15 @@
 <template>
-  <div class="forecast-chart-container">
-    <v-skeleton-loader
-      v-if="loading"
-      type="image"
-      class="forecast-chart-skeleton"
-    />
-    <div v-else-if="!enhancedChartData" class="forecast-chart-empty d-flex align-center justify-center">
-      <span class="text-grey">Keine Daten verfügbar</span>
-    </div>
-    <Line
-      v-else
-      :data="enhancedChartData"
-      :options="chartOptions"
-    />
-  </div>
+  <BaseChart
+    :loading="loading"
+    :data="enhancedChartData"
+    :options="chartOptions"
+    accent="primary"
+  />
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { Line } from 'vue-chartjs'
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-} from 'chart.js'
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-)
+import BaseChart from '@/components/common/BaseChart.vue'
 
 // T001: Chart colors for positive/negative value visualization
 const CHART_COLORS = {
@@ -144,11 +113,6 @@ const enhancedChartData = computed(() => {
       if (index === 0) {
         return {
           ...dataset,
-          // T024: Prominent line thickness (3px)
-          borderWidth: 3,
-          // T025: Data point markers
-          pointRadius: 4,
-          pointHoverRadius: 6,
           // T029: Smooth curve rendering
           tension: 0.3,
           // T010: Segment border color based on y-value
@@ -182,48 +146,7 @@ const enhancedChartData = computed(() => {
 })
 
 // T004-T006, T026-T028: Chart options with scales configuration and zero line styling
-const chartOptions = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  layout: {
-    padding: 20
-  },
-  plugins: {
-    legend: {
-      display: false
-    }
-  },
-  scales: {
-    // T005: X-axis configuration
-    x: {
-      grid: {
-        display: false
-      }
-    },
-    // T006, T026-T028: Y-axis configuration with currency formatting and zero line
-    y: {
-      ticks: {
-        color: CHART_COLORS.text,
-        callback: function(value) {
-          return new Intl.NumberFormat('de-DE', {
-            style: 'currency',
-            currency: 'EUR',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-          }).format(value)
-        }
-      },
-      grid: {
-        // T026: Disable all grid lines (zero line handled via color callback)
-        display: false,
-        // T027: Show only zero line with zeroLine color
-        color: (ctx) => ctx.tick.value === 0 ? CHART_COLORS.zeroLine : 'transparent',
-        // T028: Dashed pattern only for zero line
-        borderDash: (ctx) => ctx.tick.value === 0 ? [5, 5] : []
-      }
-    }
-  }
-}))
+const chartOptions = computed(() => ({}))
 
 // Expose for testing
 defineExpose({
