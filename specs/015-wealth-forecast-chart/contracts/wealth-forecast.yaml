@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: Wealth Forecast API
+  version: 1.0.0
+paths:
+  /api/wealth/forecast:
+    get:
+      summary: Get wealth forecast projection
+      description: Returns a yearly projection of wealth based on current profile and savings.
+      responses:
+        '200':
+          description: Successful forecast
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  points:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        year:
+                          type: integer
+                          example: 2026
+                        invested:
+                          type: number
+                          format: double
+                          example: 12000.00
+                        worst:
+                          type: number
+                          format: double
+                          example: 12360.00
+                        average:
+                          type: number
+                          format: double
+                          example: 12600.00
+                        best:
+                          type: number
+                          format: double
+                          example: 12960.00
+                  start_capital:
+                    type: number
+                    format: double
+                  monthly_saving:
+                    type: number
+                    format: double
+                  duration_years:
+                    type: integer
+        '404':
+            description: Wealth profile not found (should trigger defaults in UI, but API might return error or defaults)
+        '500':
+          description: Internal server error

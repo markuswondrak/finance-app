@@ -1,0 +1,108 @@
+package services
+
+import (
+	"math"
+	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/storage"
+)
+
+type WealthForecastService struct {
+	Repo storage.Repository
+}
+
+func NewWealthForecastService(repo storage.Repository) *WealthForecastService {
+	return &WealthForecastService{Repo: repo}
+}
+
+func (s *WealthForecastService) CalculateForecast(userID uint) (*models.ForecastResponse, error) {
+	// 1. Get Wealth Profile
+	profile, err := s.Repo.GetWealthProfile(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. Get Saving Fixed Costs
+	fixedCosts := s.Repo.LoadFixedCosts(userID)
+	monthlySaving := 0.0
+	if fixedCosts != nil {
+		for _, cost := range *fixedCosts {
+			if cost.IsSaving {
+				monthlySaving += math.Abs(float64(cost.Amount))
+			}
+		}
+	}
+
+	// 3. Get Special Costs (Savings)
+	specialCosts := s.Repo.LoadSpecialCosts(userID)
+	specialSavingsMap := make(map[models.YearMonth]float64)
+	if specialCosts != nil {
+		for _, cost := range *specialCosts {
+			if cost.IsSaving && cost.DueDate != nil {
+				// Accumulate in case multiple events happen in the same month
+				// Use Abs to ensure savings are positive additions
+				specialSavingsMap[*cost.DueDate] += math.Abs(float64(cost.Amount))
+			}
+		}
+	}
+
+	// 4. Calculate
+	startCapital := profile.CurrentWealth
+	durationYears := profile.ForecastDurationYears
+	if durationYears <= 0 {
+		durationYears = 10 // Safety default
+	}
+
+	points := make([]models.ForecastPoint, durationYears)
+	
+	currentYear := models.CurrentYearMonth().Year
+	simDate := models.CurrentYearMonth()
+	
+	simWorst := startCapital
+	simAvg := startCapital
+	simBest := startCapital
+	simInvested := startCapital
+	
+	rateWorstMonthly := profile.RateWorstCase / 12 / 100
+	rateAvgMonthly := profile.RateAverageCase / 12 / 100
+	rateBestMonthly := profile.RateBestCase / 12 / 100
+	
+	for y := 1; y <= durationYears; y++ {
+		for m := 0; m < 12; m++ {
+			simDate = models.NextYearMonth(simDate)
+			
+			// Add monthly savings
+			simWorst += monthlySaving
+			simAvg += monthlySaving
+			simBest += monthlySaving
+			simInvested += monthlySaving
+			
+			// Add special savings if any for this month
+			if amount, ok := specialSavingsMap[*simDate]; ok {
+				simWorst += amount
+				simAvg += amount
+				simBest += amount
+				simInvested += amount
+			}
+			
+			// Apply interest
+			simWorst *= (1 + rateWorstMonthly)
+			simAvg *= (1 + rateAvgMonthly)
+			simBest *= (1 + rateBestMonthly)
+		}
+		
+		points[y-1] = models.ForecastPoint{
+			Year:     currentYear + y,
+			Invested: math.Round(simInvested*100) / 100,
+			Worst:    math.Round(simWorst*100) / 100,
+			Average:  math.Round(simAvg*100) / 100,
+			Best:     math.Round(simBest*100) / 100,
+		}
+	}
+	
+	return &models.ForecastResponse{
+		Points:        points,
+		StartCapital:  startCapital,
+		MonthlySaving: monthlySaving,
+		DurationYears: durationYears,
+	}, nil
+}

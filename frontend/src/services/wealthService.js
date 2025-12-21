@@ -39,4 +39,19 @@ export const wealthService = {
 
     return await response.json();
   },
+
+  /**
+   * Fetches the user's wealth forecast.
+   * @returns {Promise<object>} The forecast data (points, details).
+   * @throws {Error} If the network request fails.
+   */
+  async getForecast() {
+    const response = await fetch('/api/wealth/forecast');
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch wealth forecast: ${response.statusText}`);
+    }
+
+    return await response.json();
+  },
 };

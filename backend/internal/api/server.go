@@ -8,14 +8,16 @@ import (
 
 // Server holds the repository and service dependencies
 type Server struct {
-	Repo           storage.Repository
-	WealthService *services.WealthProfileService
+	Repo            storage.Repository
+	WealthService   *services.WealthProfileService
+	ForecastService *services.WealthForecastService
 }
 
 func NewServer(repo storage.Repository) *Server {
 	return &Server{
-		Repo:          repo,
-		WealthService: services.NewWealthProfileService(repo),
+		Repo:            repo,
+		WealthService:   services.NewWealthProfileService(repo),
+		ForecastService: services.NewWealthForecastService(repo),
 	}
 }
 

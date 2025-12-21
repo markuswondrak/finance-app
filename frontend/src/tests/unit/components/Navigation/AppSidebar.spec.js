@@ -112,13 +112,14 @@ describe('AppSidebar.vue', () => {
       }
     })
 
-    // Check all 3 navigation items are rendered
+    // Check all 4 navigation items are rendered
     expect(wrapper.text()).toContain('Überblick')
+    expect(wrapper.text()).toContain('Vermögen')
     expect(wrapper.text()).toContain('Fixkosten')
     expect(wrapper.text()).toContain('Sonderkosten')
 
-    // Verify we have exactly 3 list items
+    // Verify we have exactly 4 list items
     const items = wrapper.findAllComponents({ name: 'v-list-item' })
-    expect(items.length).toBe(3)
+    expect(items.length).toBe(4)
   })
 })

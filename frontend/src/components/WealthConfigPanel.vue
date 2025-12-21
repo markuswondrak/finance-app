@@ -188,6 +188,7 @@ export default {
         this.snackbarColor = 'success';
         this.snackbar = true;
         this.panel = null;
+        this.$emit('saved');
       } catch (error) {
         this.snackbarText = `Fehler: ${error.message}`;
         this.snackbarColor = 'error';

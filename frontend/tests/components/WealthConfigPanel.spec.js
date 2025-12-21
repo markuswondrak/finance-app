@@ -42,8 +42,8 @@ describe('WealthConfigPanel.vue', () => {
     await wrapper.vm.$nextTick()
   })
 
-  it('renders expansion panel with title', () => {
-    expect(wrapper.text()).toContain('Vermögens-Einstellungen')
+  it('renders expansion panel with title info', () => {
+    expect(wrapper.text()).toContain('Rendite')
   })
 
   it('loads data from service on mount', () => {

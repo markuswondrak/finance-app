@@ -2,30 +2,49 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <WealthConfigPanel />
+        <WealthConfigPanel @saved="fetchForecast" />
       </v-col>
     </v-row>
 
-    <!-- Placeholder for Forecast Chart (T015) -->
-    <v-row class="mt-6">
+    <v-row class="mt-4">
       <v-col cols="12">
-        <v-card variant="outlined" class="pa-6 text-center">
-          <v-icon icon="mdi-chart-line" size="large" color="grey"></v-icon>
-          <div class="text-h6 text-grey mt-2">Zukünftiger Vermögensverlauf (Coming Soon)</div>
-          <div class="text-body-2 text-grey">Konfigurieren Sie oben Ihre Parameter, um die Vorschau zu sehen.</div>
+        <v-card variant="outlined" class="pa-4 glass card-accent-success border" rounded="lg">
+          <WealthForecastChart 
+            :loading="loading" 
+            :forecast="forecast" 
+          />
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import WealthConfigPanel from '@/components/WealthConfigPanel.vue';
+import WealthForecastChart from '@/components/dashboard/WealthForecastChart.vue';
+import { wealthService } from '@/services/wealthService';
 
-export default {
-  name: 'WealthOverviewPage',
-  components: {
-    WealthConfigPanel,
-  },
+const loading = ref(true);
+const forecast = ref(null);
+const error = ref(null);
+
+const fetchForecast = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const data = await wealthService.getForecast();
+    forecast.value = data;
+  } catch (err) {
+    console.error('Error fetching wealth forecast:', err);
+    error.value = 'Kein Vermögensprofil konfiguriert oder Fehler beim Laden der Daten.';
+    forecast.value = null;
+  } finally {
+    loading.value = false;
+  }
 };
+
+onMounted(() => {
+  fetchForecast();
+});
 </script>

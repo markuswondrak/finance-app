@@ -108,6 +108,8 @@ func main() {
 		apiGroup.GET("/wealth-profile", server.GetWealthProfile)
 		apiGroup.PUT("/wealth-profile", server.UpsertWealthProfile)
 
+		apiGroup.GET("/wealth/forecast", server.GetWealthForecast)
+
 		apiGroup.GET("/statistics/surplus", server.GetSurplusStatistics)
 	}
 
