@@ -1,44 +1,48 @@
 <template>
-  <v-card class="card-accent-primary" rounded="xl" elevation="4">
-    <v-card-text>
-      <v-data-table
-        :headers="transformedHeaders"
-        :items="entries"
-        class="elevation-1"
-        :no-data-text="'Keine Einträge bisher'"
-        hover
-      >
-        <!-- Custom item slots for each dynamic column to apply transformation and styleClass -->
-        <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
-          <td :key="header.name" :class="[header.styleClass, header.name === 'amount' ? formatAmountColor(item.amount) : '']">
-            <div v-if="header.name === 'name'" class="d-flex align-center">
-              {{ transform(header.transformer, item[header.name]) }}
-              <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
-            </div>
-            <span v-else>
-              {{ transform(header.transformer, item[header.name]) }}
-            </span>
-          </td>
-        </template>
-
-        <!-- Slot for action buttons (edit and delete) -->
-        <template v-slot:item.actions="{ item }">
-          <div class="d-flex align-center">
+  <BaseTable :no-card="noCard">
+    <thead>
+      <tr>
+        <th v-for="header in transformedHeaders" :key="header.key" :class="header.class">
+          {{ header.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="item in entries" :key="item.id">
+        <td v-for="col in visibleCols" :key="col.name" :class="[col.styleClass, col.name === 'amount' ? formatAmountColor(item.amount) : '']">
+          <div v-if="col.name === 'name'" class="d-flex align-center">
+            {{ transform(col.transformer, item[col.name]) }}
+            <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
+          </div>
+          <span v-else>
+            {{ transform(col.transformer, item[col.name]) }}
+          </span>
+        </td>
+        <td align="right" width="100px">
+          <div class="d-flex align-center justify-end">
             <component :is="formComponent" :cost="item" @saved="$emit('saved')" />
             <delete-button :name="item.name" @confirm="$emit('delete-clicked', item)"/>
           </div>
-        </template>
+        </td>
+      </tr>
+      <tr v-if="!entries || entries.length === 0">
+        <td :colspan="visibleCols.length + 1" class="text-center text-medium-emphasis pa-4">
+          Keine Einträge bisher
+        </td>
+      </tr>
+    </tbody>
 
-      </v-data-table>
-    </v-card-text>
-
-    <v-card-actions>
-      <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" btn-color="primary" @saved="$emit('saved')" />
-    </v-card-actions>
-  </v-card>
+    <template #actions>
+      <v-card-actions>
+        <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" btn-color="primary" @saved="$emit('saved')" />
+      </v-card-actions>
+    </template>
+  </BaseTable>
 </template>
+
 <script>
 import { useDisplay } from 'vuetify'
+import BaseTable from "@/components/common/BaseTable.vue";
 import { toCurrency } from "./Utils";
 import ResponsiveDateCol from "./ResponsiveDateCol.vue";
 import MonthlyCostEditForm from "./editform/MonthlyCostEditForm.vue";
@@ -47,11 +51,19 @@ import HalfyearlyCostEditForm from "./editform/HalfyearlyCostEditForm.vue";
 import YearlyCostEditForm from "./editform/YearlyCostEditForm.vue";
 import DeleteButton from './DeleteButton.vue';
 
-
 export default {
-  props: ["entries", "cols", "formComponent"],
+  props: {
+    entries: Array,
+    cols: Array,
+    formComponent: String,
+    noCard: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   components: {
+    BaseTable,
     ResponsiveDateCol,
     MonthlyCostEditForm,
     QuaterlyCostEditForm,
@@ -78,8 +90,11 @@ export default {
     }
   },
   computed: {
+    visibleCols() {
+       return this.filter(this.cols);
+    },
     transformedHeaders() {
-      const filteredCols = this.filter(this.cols);
+      const filteredCols = this.visibleCols;
       const headers = filteredCols.map(col => ({
         title: col.label,
         key: col.name,

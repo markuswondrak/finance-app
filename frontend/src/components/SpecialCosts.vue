@@ -8,35 +8,45 @@
           transition="scale-transition"
           class="mx-auto"
         >
-          <v-card rounded="xl" elevation="4">
-            <v-card-text>
-              <v-data-table
-                :headers="headers"
-                :items="filteredEntries"
-                class="elevation-1"
-                :no-data-text="'Keine Einträge bisher'"
-              >
-                <template v-for="header in cols" #[`item.${header.name}`]="{ item }">
-                  <td :key="header.name" :class="[header.styleClass, header.name === 'amount' ? formatAmountColor(item.amount) : '']">
-                    <div v-if="header.name === 'name'" class="d-flex align-center">
-                      {{ transform(header.transformer, item[header.name]) }}
-                      <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
-                    </div>
-                    <span v-else>
-                      {{ transform(header.transformer, item[header.name]) }}
-                    </span>
-                  </td>
-                </template>
-                <template v-slot:item.actions="{ item }">
-                  <special-cost-form :cost="item" @refresh="loadEntries" />
-                  <delete-button :name="item.name" @confirm="deleteCost(item)"/>
-                </template>
-              </v-data-table>
-            </v-card-text>
-            <v-card-actions>
-              <special-cost-form btn-text="Neue Sonderkosten Hinzufügen" @refresh="loadEntries" />
-            </v-card-actions>
-          </v-card>
+          <BaseTable>
+            <thead>
+              <tr>
+                <th v-for="header in headers" :key="header.key" :class="header.class">
+                  {{ header.title }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in filteredEntries" :key="item.id">
+                <td v-for="col in cols" :key="col.name" :class="[col.styleClass, col.name === 'amount' ? formatAmountColor(item.amount) : '']">
+                  <div v-if="col.name === 'name'" class="d-flex align-center">
+                    {{ transform(col.transformer, item[col.name]) }}
+                    <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
+                  </div>
+                  <span v-else>
+                    {{ transform(col.transformer, item[col.name]) }}
+                  </span>
+                </td>
+                <td align="right" width="100px">
+                  <div class="d-flex align-center justify-end">
+                    <special-cost-form :cost="item" @refresh="loadEntries" />
+                    <delete-button :name="item.name" @confirm="deleteCost(item)"/>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="!filteredEntries || filteredEntries.length === 0">
+                 <td :colspan="cols.length + 1" class="text-center text-medium-emphasis pa-4">
+                  Keine Einträge bisher
+                </td>
+              </tr>
+            </tbody>
+
+            <template #actions>
+              <v-card-actions>
+                <special-cost-form btn-text="Neue Sonderkosten Hinzufügen" @refresh="loadEntries" />
+              </v-card-actions>
+            </template>
+          </BaseTable>
         </v-skeleton-loader>
       </v-col>
     </v-row>
@@ -58,6 +68,7 @@ import {
 } from "./Utils";
 import SpecialCostForm from './editform/SpecialCostForm.vue';
 import DeleteButton from './DeleteButton.vue';
+import BaseTable from "@/components/common/BaseTable.vue";
 
 const costToForm = cost => {
   const form = monthlyCostToForm(cost);
@@ -76,6 +87,7 @@ const costToForm = cost => {
 export default {
   mixins: [LoadablePage, CommonForm(costToForm)],
   components: {
+    BaseTable,
     SpecialCostForm,
     DeleteButton
   },
@@ -99,10 +111,10 @@ export default {
        const h = this.cols.map(col => ({
           title: col.label,
           key: col.name,
-          sortable: false,
+          class: col.styleClass,
           transformer: col.transformer
        }));
-       h.push({ title: '', key: 'actions', sortable: false, align: 'right' });
+       h.push({ title: '', key: 'actions', align: 'right', width: '100px' });
        return h;
     },
     filteredEntries() {

@@ -8,7 +8,7 @@
           transition="scale-transition"
           class="mx-auto"
         >
-          <v-card no-body rounded="xl" elevation="4">
+          <v-card variant="outlined" class="glass border card-accent-primary" rounded="lg">
             <v-tabs v-model="tab" grow>
               <v-tab
                 v-for="config in tabsConfig"
@@ -27,6 +27,7 @@
                   :entries="config.entries"
                   :cols="config.cols"
                   :formComponent="config.formComponent"
+                  no-card
                   @delete-clicked="deleteCost"
                   @saved="handleSaved"
                 />
