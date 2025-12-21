@@ -5,9 +5,12 @@
     </v-table>
     <slot name="actions"></slot>
   </v-card>
-  <v-table v-else fixed-header :class="{ 'tight-table': xs }" hover>
-    <slot></slot>
-  </v-table>
+  <div v-else>
+    <v-table fixed-header :class="{ 'tight-table': xs }" hover>
+      <slot></slot>
+    </v-table>
+    <slot name="actions"></slot>
+  </div>
 </template>
 
 <script>

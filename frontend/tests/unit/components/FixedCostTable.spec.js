@@ -4,6 +4,7 @@ import FixedCostTable from '@/components/FixedCostTable.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import BaseTable from '@/components/common/BaseTable.vue';
 
 describe('FixedCostTable.vue', () => {
   let vuetify;
@@ -42,7 +43,7 @@ describe('FixedCostTable.vue', () => {
     expect(wrapper.props().formComponent).toBe('MonthlyCostEditForm');
   });
 
-  it('should wrap content in v-card', () => {
+  it('should wrap content in BaseTable', () => {
     const wrapper = mount(FixedCostTable, {
       global: {
         plugins: [vuetify],
@@ -54,11 +55,11 @@ describe('FixedCostTable.vue', () => {
       }
     });
 
-    const card = wrapper.findComponent({ name: 'VCard' });
-    expect(card.exists()).toBe(true);
+    const baseTable = wrapper.findComponent(BaseTable);
+    expect(baseTable.exists()).toBe(true);
   });
 
-  it('should render v-data-table instead of CostTable', () => {
+  it('should render table rows based on entries', () => {
     const wrapper = mount(FixedCostTable, {
       global: {
         plugins: [vuetify],
@@ -70,29 +71,11 @@ describe('FixedCostTable.vue', () => {
       }
     });
 
-    // v-data-table is complex, finding by component name usually works with Vuetify 3 aliases?
-    // Vuetify 3 component names are usually PascalCase VSomething.
-    const dataTable = wrapper.findComponent({ name: 'VDataTable' });
-    expect(dataTable.exists()).toBe(true);
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBe(mockEntries.length);
   });
 
-  it('should pass entries to v-data-table items', () => {
-    const wrapper = mount(FixedCostTable, {
-      global: {
-        plugins: [vuetify],
-      },
-      props: {
-        entries: mockEntries,
-        cols: mockCols,
-        formComponent: 'MonthlyCostEditForm'
-      }
-    });
-
-    const dataTable = wrapper.findComponent({ name: 'VDataTable' });
-    expect(dataTable.props().items).toEqual(mockEntries);
-  });
-
-  it('should render add new costs button in card actions', () => {
+  it('should render add new costs button', () => {
     const wrapper = mount(FixedCostTable, {
       global: {
         plugins: [vuetify],
@@ -120,9 +103,7 @@ describe('FixedCostTable.vue', () => {
       }
     });
 
-    // Verify the formComponent prop is set correctly
     expect(wrapper.props().formComponent).toBe('MonthlyCostEditForm');
-    // The component should use this prop for dynamic components
     expect(wrapper.vm.$options.components).toHaveProperty('MonthlyCostEditForm');
   });
 
@@ -138,9 +119,7 @@ describe('FixedCostTable.vue', () => {
       }
     });
 
-    // Verify the formComponent prop is set correctly
     expect(wrapper.props().formComponent).toBe('QuaterlyCostEditForm');
-    // The component should have QuaterlyCostEditForm registered
     expect(wrapper.vm.$options.components).toHaveProperty('QuaterlyCostEditForm');
   });
 
@@ -156,9 +135,7 @@ describe('FixedCostTable.vue', () => {
       }
     });
 
-    // Verify DeleteButton is registered as a component
     expect(wrapper.vm.$options.components).toHaveProperty('DeleteButton');
-    // Verify the component renders without errors
     expect(wrapper.exists()).toBe(true);
   });
 });
