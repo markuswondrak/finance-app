@@ -1,5 +1,5 @@
 <template>
-  <v-card class="card-accent-primary" rounded="xl" elevation="4">
+  <v-card variant="outlined" class="glass border card-accent-primary" rounded="lg">
     <v-table fixed-header :class="{ 'tight-table': xs }" hover>
       <thead>
         <tr>

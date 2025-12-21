@@ -179,6 +179,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -208,6 +210,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -271,6 +275,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     }
@@ -279,9 +285,9 @@ describe('Overview.vue', () => {
 
             expect(wrapper.vm.loaded).toBe(false);
 
-            // Chart (1) + CurrentBalanceCard (1) + KPICards (2) + Table (1) = 5
+            // Chart (0 - internal) + CurrentBalanceCard (1) + SurplusCard (1) + LowestPointCard (1) + Table (1) = 4
             const skeletonLoaders = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
-            expect(skeletonLoaders.length).toBe(5); 
+            expect(skeletonLoaders.length).toBe(4); 
 
             resolvePromise({
                 json: vi.fn().mockResolvedValue(detailedMockApiResult)
@@ -377,6 +383,8 @@ describe('Overview.vue', () => {
                         ForecastChart: ForecastChartStub,
                         CurrentBalanceCard: CurrentBalanceCardStub,
                         KPICard: KPICardStub,
+                        MonthlySurplusCard: MonthlySurplusCardStub,
+                        LowestPointCard: LowestPointCardStub,
                         OverviewTable: OverviewTableStub,
                         VSkeletonLoader: VSkeletonLoaderStub
                     },
