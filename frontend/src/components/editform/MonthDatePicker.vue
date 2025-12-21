@@ -10,7 +10,7 @@
       <base-text-field
         :model-value="displayDate"
         :label="label"
-        prepend-inner-icon="mdi-calendar-month"
+        prepend-inner-icon="fa-calendar"
         :error-messages="errorMessages"
         clearable
         readonly

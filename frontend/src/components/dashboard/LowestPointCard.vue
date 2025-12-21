@@ -17,7 +17,7 @@
         >
           <v-icon 
             v-if="status === 'negative'" 
-            icon="mdi-alert-circle-outline" 
+            icon="fa-circle-exclamation" 
             class="mr-2"
             size="small"
           />
