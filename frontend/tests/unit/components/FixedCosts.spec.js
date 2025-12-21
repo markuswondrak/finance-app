@@ -81,7 +81,6 @@ describe('FixedCosts.vue', () => {
 
     // Initial state before fetch completes
     expect(wrapper.vm.monthly).toEqual([]);
-    expect(wrapper.vm.currentBalance).toBe(-1);
   });
 
   it('should fetch data on created', async () => {
@@ -117,24 +116,6 @@ describe('FixedCosts.vue', () => {
 
     expect(wrapper.vm.monthly).toEqual(mockApiData.monthly);
     expect(wrapper.vm.quaterly).toEqual(mockApiData.quarterly);
-    expect(wrapper.vm.currentBalance).toBe(500);
-  });
-
-  it('should display current balance', async () => {
-    global.fetch.mockResolvedValue({
-      json: vi.fn(() => Promise.resolve(mockApiData))
-    });
-
-    const wrapper = mount(FixedCosts, {
-      global: {
-        plugins: [vuetify],
-        stubs: { FixedCostsTable: FixedCostsTableStub, VSkeletonLoader: VSkeletonLoaderStub }
-      }
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    expect(wrapper.vm.currentBalanceDisplay).toBe('500,00\xa0€');
   });
 
   it('should have four tabs for different cost frequencies', async () => {
@@ -210,24 +191,5 @@ describe('FixedCosts.vue', () => {
 
     const skeletonLoaders = wrapper.findAllComponents({ name: 'VSkeletonLoader' });
     expect(skeletonLoaders.length).toBeGreaterThan(0);
-  });
-
-  it('should display banner with current balance text', async () => {
-    global.fetch.mockResolvedValue({
-      json: vi.fn(() => Promise.resolve(mockApiData))
-    });
-
-    const wrapper = mount(FixedCosts, {
-      global: {
-        plugins: [vuetify],
-        stubs: { FixedCostsTable: FixedCostsTableStub, VSkeletonLoader: VSkeletonLoaderStub }
-      }
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    const banner = wrapper.findComponent({ name: 'VBanner' });
-    expect(banner.exists()).toBe(true);
-    expect(banner.text()).toContain('Monatliche Summe:');
   });
 });

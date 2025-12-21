@@ -3,25 +3,6 @@
     <v-row>
       <v-col>
         <v-skeleton-loader
-          type="heading"
-          :loading="!loaded"
-          transition="scale-transition"
-          class="mx-auto"
-        >
-          <v-banner sticky icon="fa-wallet" elevation="4">
-            <template v-slot:text>
-              <span class="text-body-2 text-medium-emphasis mr-2">Monatliche Summe:</span>
-              <strong
-                :class="[currentBalance < 0 ? 'text-error' : 'text-success', 'text-h4', 'font-weight-bold']"
-              >{{ currentBalanceDisplay }}</strong>
-            </template>
-          </v-banner>
-        </v-skeleton-loader>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-skeleton-loader
           type="table-tbody"
           :loading="!loaded"
           transition="scale-transition"
@@ -131,8 +112,6 @@ export default {
       halfyearly: [],
       yearly: [],
 
-      currentBalance: -1,
-
       monthlyCols: cols(),
       quaterlyCols,
       halfyearlyCols,
@@ -140,9 +119,6 @@ export default {
     };
   },
   computed: {
-    currentBalanceDisplay() {
-      return toCurrency(this.currentBalance);
-    },
     tabsConfig() {
       return [
         {
@@ -182,7 +158,6 @@ export default {
       this.quaterly = data.quarterly;
       this.halfyearly = data.halfyearly;
       this.yearly = data.yearly;
-      this.currentBalance = data.currentBalance;
     },
     async deleteCost(cost) {
       await fetch(`/api/costs/${cost.id}`, { method: 'DELETE' });

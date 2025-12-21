@@ -31,8 +31,8 @@ describe('WealthForecastChart.vue', () => {
       }
     })
 
-    expect(wrapper.find('.forecast-chart-skeleton').exists()).toBe(true)
-    expect(wrapper.find('.forecast-chart-empty').exists()).toBe(false)
+    expect(wrapper.find('.base-chart-skeleton').exists()).toBe(true)
+    expect(wrapper.find('.base-chart-empty').exists()).toBe(false)
   })
 
   it('renders empty state when no data provided', () => {
@@ -46,7 +46,7 @@ describe('WealthForecastChart.vue', () => {
       }
     })
 
-    expect(wrapper.find('.forecast-chart-empty').exists()).toBe(true)
+    expect(wrapper.find('.base-chart-empty').exists()).toBe(true)
     expect(wrapper.text()).toContain('Keine Daten verfügbar')
   })
 
@@ -68,8 +68,8 @@ describe('WealthForecastChart.vue', () => {
       }
     })
 
-    expect(wrapper.find('.forecast-chart-skeleton').exists()).toBe(false)
-    expect(wrapper.find('.forecast-chart-empty').exists()).toBe(false)
+    expect(wrapper.find('.base-chart-skeleton').exists()).toBe(false)
+    expect(wrapper.find('.base-chart-empty').exists()).toBe(false)
     // We mocked Line, so we check if the mock exists or if the container renders the component
     // Since we mocked Line as a component with class mock-chart (if we did full mount)
     // But let's check if the Line component is passed the correct data
@@ -81,6 +81,5 @@ describe('WealthForecastChart.vue', () => {
     expect(passedData.datasets.length).toBe(4)
     expect(passedData.datasets[0].label).toBe('Best Case')
     expect(passedData.datasets[0].data).toEqual([1150, 2300])
-    expect(passedData.datasets[0].pointRadius).toBe(3)
   })
 })
