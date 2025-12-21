@@ -1,5 +1,6 @@
 <template>
   <BaseChart
+    ref="baseChartRef"
     :loading="loading"
     :data="chartData"
     :options="chartOptions"
@@ -8,7 +9,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import BaseChart from '@/components/common/BaseChart.vue'
 
 const props = defineProps({
@@ -21,6 +22,8 @@ const props = defineProps({
     default: null
   }
 })
+
+const baseChartRef = ref(null)
 
 // Colors aligned with finance.css and theme
 const COLORS = {
@@ -133,4 +136,36 @@ const chartOptions = computed(() => ({
     }
   }
 }))
+
+const highlightYear = (year) => {
+  const chart = baseChartRef.value?.chart
+  if (!chart || !chart.data.labels) return
+
+  const index = chart.data.labels.indexOf(year)
+  if (index === -1) return
+
+  const activeElements = []
+  // Assume all 4 datasets should be highlighted at that index
+  for (let i = 0; i < chart.data.datasets.length; i++) {
+    activeElements.push({ datasetIndex: i, index })
+  }
+
+  chart.setActiveElements(activeElements)
+  chart.tooltip.setActiveElements(activeElements, { x: 0, y: 0 })
+  chart.update()
+}
+
+const clearHighlight = () => {
+  const chart = baseChartRef.value?.chart
+  if (!chart) return
+
+  chart.setActiveElements([])
+  chart.tooltip.setActiveElements([], { x: 0, y: 0 })
+  chart.update()
+}
+
+defineExpose({
+  highlightYear,
+  clearHighlight
+})
 </script>

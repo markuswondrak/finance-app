@@ -1,6 +1,5 @@
 <template>
-  <v-card variant="outlined" class="glass border card-accent-primary" rounded="lg">
-    <v-table fixed-header :class="{ 'tight-table': xs }" hover>
+  <BaseTable>
       <thead>
         <tr>
           <th>Monat</th>
@@ -25,24 +24,20 @@
           </td>
         </tr>
       </tbody>
-    </v-table>
-  </v-card>
+  </BaseTable>
 </template>
 <script>
-import { useDisplay } from 'vuetify'
 import OverviewDetails from "./OverviewDetails.vue";
 import { displayMonth, toCurrency } from "../Utils";
 import SpecialCostForm from "../editform/SpecialCostForm.vue";
+import BaseTable from "@/components/common/BaseTable.vue";
 
 export default {
   props: ["entries"],
   components: {
+    BaseTable,
     OverviewDetails,
     SpecialCostForm
-  },
-  setup() {
-    const { xs } = useDisplay();
-    return { xs };
   },
   data() {
     return {

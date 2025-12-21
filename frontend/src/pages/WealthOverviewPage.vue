@@ -9,8 +9,20 @@
     <v-row class="mt-4">
       <v-col cols="12">
         <WealthForecastChart 
+          ref="chartRef"
           :loading="loading" 
           :forecast="forecast" 
+        />
+      </v-col>
+    </v-row>
+
+    <v-row class="mt-4">
+      <v-col cols="12">
+        <WealthForecastTable
+          :loading="loading"
+          :forecast="forecast"
+          @row-hover="onRowHover"
+          @row-leave="onRowLeave"
         />
       </v-col>
     </v-row>
@@ -21,11 +33,13 @@
 import { ref, onMounted } from 'vue';
 import WealthConfigPanel from '@/components/WealthConfigPanel.vue';
 import WealthForecastChart from '@/components/dashboard/WealthForecastChart.vue';
+import WealthForecastTable from '@/components/wealth/WealthForecastTable.vue';
 import { wealthService } from '@/services/wealthService';
 
 const loading = ref(true);
 const forecast = ref(null);
 const error = ref(null);
+const chartRef = ref(null);
 
 const fetchForecast = async () => {
   loading.value = true;
@@ -39,6 +53,18 @@ const fetchForecast = async () => {
     forecast.value = null;
   } finally {
     loading.value = false;
+  }
+};
+
+const onRowHover = (year) => {
+  if (chartRef.value && chartRef.value.highlightYear) {
+    chartRef.value.highlightYear(year);
+  }
+};
+
+const onRowLeave = () => {
+  if (chartRef.value && chartRef.value.clearHighlight) {
+    chartRef.value.clearHighlight();
   }
 };
 

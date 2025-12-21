@@ -11,6 +11,7 @@
       </div>
       <Line
         v-else
+        ref="chartRef"
         :data="data"
         :options="mergedOptions"
       />
@@ -19,7 +20,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -126,6 +127,12 @@ const defaultOptions = {
 
 const mergedOptions = computed(() => {
   return deepmerge(defaultOptions, props.options)
+})
+
+const chartRef = ref(null)
+
+defineExpose({
+  chart: computed(() => chartRef.value?.chart)
 })
 </script>
 
