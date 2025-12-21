@@ -1,15 +1,46 @@
 <template>
-  <BaseChart
-    :loading="loading"
-    :data="enhancedChartData"
-    :options="chartOptions"
-    accent="primary"
-  />
+  <div class="forecast-chart-container">
+    <v-skeleton-loader
+      v-if="loading"
+      type="image"
+      class="forecast-chart-skeleton"
+    />
+    <div v-else-if="!data" class="forecast-chart-empty d-flex align-center justify-center">
+      <span class="text-grey">Keine Daten verfügbar</span>
+    </div>
+    <Line
+      v-else
+      :data="enhancedChartData"
+      :options="chartOptions"
+    />
+  </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import BaseChart from '@/components/common/BaseChart.vue'
+import { Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 // T001: Chart colors for positive/negative value visualization
 const CHART_COLORS = {
@@ -115,6 +146,11 @@ const enhancedChartData = computed(() => {
           ...dataset,
           // T029: Smooth curve rendering
           tension: 0.3,
+          // T021: Prominent line width
+          borderWidth: 3,
+          // T022: Data point markers
+          pointRadius: 4,
+          pointHoverRadius: 6,
           // T010: Segment border color based on y-value
           segment: {
             borderColor: (ctx) => {
@@ -146,7 +182,46 @@ const enhancedChartData = computed(() => {
 })
 
 // T004-T006, T026-T028: Chart options with scales configuration and zero line styling
-const chartOptions = computed(() => ({}))
+const chartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      grid: {
+        display: false
+      }
+    },
+    y: {
+      grid: {
+        display: false,
+        color: (ctx) => {
+          if (ctx.tick && ctx.tick.value === 0) return CHART_COLORS.zeroLine
+          return 'transparent'
+        },
+        borderDash: (ctx) => {
+          if (ctx.tick && ctx.tick.value === 0) return [5, 5]
+          return []
+        }
+      },
+      ticks: {
+        color: CHART_COLORS.text,
+        callback: (value) => {
+          return new Intl.NumberFormat('de-DE', {
+            style: 'currency',
+            currency: 'EUR',
+            maximumFractionDigits: 0
+          }).format(value)
+        }
+      }
+    }
+  },
+  plugins: {
+    legend: {
+      display: false
+    }
+  },
+  ...props.options
+}))
 
 // Expose for testing
 defineExpose({

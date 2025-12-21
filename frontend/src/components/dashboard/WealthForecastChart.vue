@@ -1,15 +1,46 @@
 <template>
-  <BaseChart
-    :loading="loading"
-    :data="chartData"
-    :options="chartOptions"
-    accent="success"
-  />
+  <div class="forecast-chart-container">
+    <v-skeleton-loader
+      v-if="loading"
+      type="image"
+      class="forecast-chart-skeleton"
+    />
+    <div v-else-if="!forecast" class="forecast-chart-empty d-flex align-center justify-center">
+      <span class="text-grey">Keine Daten verfügbar</span>
+    </div>
+    <Line
+      v-else
+      :data="chartData"
+      :options="chartOptions"
+    />
+  </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import BaseChart from '@/components/common/BaseChart.vue'
+import { Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+)
 
 const props = defineProps({
   loading: {
@@ -67,7 +98,8 @@ const chartData = computed(() => {
         backgroundColor: (ctx) => createGradient(ctx, COLORS.best),
         borderWidth: 2,
         fill: true,
-        tension: 0.4
+        tension: 0.4,
+        pointRadius: 3
       },
       {
         label: 'Average Case',
@@ -75,7 +107,8 @@ const chartData = computed(() => {
         borderColor: COLORS.average,
         backgroundColor: (ctx) => createGradient(ctx, COLORS.average),
         fill: true,
-        tension: 0.4
+        tension: 0.4,
+        pointRadius: 3
       },
       {
         label: 'Worst Case',
@@ -84,7 +117,8 @@ const chartData = computed(() => {
         backgroundColor: (ctx) => createGradient(ctx, COLORS.worst),
         borderWidth: 2,
         fill: true,
-        tension: 0.4
+        tension: 0.4,
+        pointRadius: 3
       },
       {
         label: 'Investiertes Kapital',
@@ -93,13 +127,16 @@ const chartData = computed(() => {
         borderDash: [5, 5], // Dashed for baseline
         borderWidth: 2,
         fill: false,
-        tension: 0.4
+        tension: 0.4,
+        pointRadius: 3
       }
     ]
   }
 })
 
 const chartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: true,
@@ -130,3 +167,23 @@ const chartOptions = computed(() => ({
   }
 }))
 </script>
+
+<style scoped>
+.forecast-chart-container {
+  aspect-ratio: 21 / 9;
+  width: 100%;
+  position: relative;
+}
+
+.forecast-chart-skeleton {
+  height: 100%;
+  width: 100%;
+}
+
+.forecast-chart-empty {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(30, 30, 30, 0.5);
+  border-radius: 8px;
+}
+</style>
