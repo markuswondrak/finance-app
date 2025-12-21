@@ -4,6 +4,8 @@
 
 A modern personal finance tracking application built with Vue.js 3 and Go. It helps users manage fixed costs, track special expenses, manage wealth accumulation, and visualize financial forecasts with a fintech-inspired dark theme.
 
+<img width="1440" height="734" alt="grafik" src="https://github.com/user-attachments/assets/b9a6a251-1abc-44cd-b7dc-3c6a06d0c634" />
+
 ## Features
 
 - **Fintech Dashboard:** High-level overview of current balance, monthly surplus, and risk indicators.
