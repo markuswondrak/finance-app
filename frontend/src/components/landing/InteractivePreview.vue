@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import LowestPointCard from '@/components/dashboard/LowestPointCard.vue'
+import LowestPointCard from '@/components/overview/LowestPointCard.vue'
 import { useIntersectionObserver } from '@/composables/useIntersectionObserver'
 
 const mockEntries = [

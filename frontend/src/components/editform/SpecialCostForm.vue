@@ -49,7 +49,7 @@ import CostEditForm from "./CostEditForm.vue";
 import MonthYearDatepicker from "@/components/common/MonthYearDatepicker.vue";
 import BaseTextField from "@/components/common/BaseTextField.vue";
 import { dateToYearMonth, yearMonthToDate } from "@/services/dateAdapter";
-import { monthlyCostToForm, CommonForm, baseFormToCost } from "../Utils";
+import { monthlyCostToForm, CommonForm, baseFormToCost } from "../common/Utils";
 import { saveSpecialCost } from "../../services/specialcosts";
 import IncomingSelect from "./IncomingSelect.vue";
 

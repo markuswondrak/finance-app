@@ -43,7 +43,7 @@
 <script>
 import { computed } from 'vue';
 import BaseTable from '@/components/common/BaseTable.vue';
-import { toCurrency } from '@/components/Utils';
+import { toCurrency } from '@/components/common/Utils';
 
 export default {
   name: "WealthForecastTable",

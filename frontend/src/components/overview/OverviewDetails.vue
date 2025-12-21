@@ -50,10 +50,10 @@
 </template>
 
 <script>
-import LoadablePage from "../LoadablePage";
-import DeleteButton from "../DeleteButton.vue";
+import LoadablePage from "../common/LoadablePage";
+import DeleteButton from "../common/DeleteButton.vue";
 import SpecialCostForm from "../editform/SpecialCostForm.vue";
-import { displayMonth, toCurrency } from "../Utils";
+import { displayMonth, toCurrency } from "../common/Utils";
 import { deleteSpecialCost } from "../../services/specialcosts";
 
 export default {

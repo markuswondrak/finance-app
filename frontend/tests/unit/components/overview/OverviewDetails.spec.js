@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import OverviewDetails from '@/components/overview/OverviewDetails.vue';
 import SpecialCostForm from '@/components/editform/SpecialCostForm.vue';
-import DeleteButton from '@/components/DeleteButton.vue';
+import DeleteButton from '@/components/common/DeleteButton.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';

@@ -4,7 +4,7 @@ import CurrencyInput from '@/components/editform/CurrencyInput.vue';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { toCurrency } from '@/components/Utils';
+import { toCurrency } from '@/components/common/Utils';
 
 describe('CurrencyInput.vue', () => {
   let vuetify;

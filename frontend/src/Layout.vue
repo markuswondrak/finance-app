@@ -42,7 +42,7 @@
 import { ref, computed, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
-import AppSidebar from '@/components/Navigation/AppSidebar.vue'
+import AppSidebar from '@/components/navigation/AppSidebar.vue'
 import UserMenu from '@/components/UserMenu.vue'
 
 const { mobile } = useDisplay()

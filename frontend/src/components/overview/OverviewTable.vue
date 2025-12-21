@@ -28,7 +28,7 @@
 </template>
 <script>
 import OverviewDetails from "./OverviewDetails.vue";
-import { displayMonth, toCurrency } from "../Utils";
+import { displayMonth, toCurrency } from "../common/Utils";
 import SpecialCostForm from "../editform/SpecialCostForm.vue";
 import BaseTable from "@/components/common/BaseTable.vue";
 

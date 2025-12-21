@@ -3,8 +3,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
-import LoadablePage from './components/LoadablePage'
-import { toCurrency, displayMonth } from './components/Utils' 
+import LoadablePage from './components/common/LoadablePage'
+import { toCurrency, displayMonth } from './components/common/Utils' 
 
 const app = createApp(App)
 

@@ -1,0 +1,175 @@
+<template>
+  <v-container>
+    <v-row>
+      <v-col>
+        <v-skeleton-loader
+          type="table-tbody"
+          :loading="!loaded"
+          transition="scale-transition"
+          class="mx-auto"
+        >
+          <BaseTable>
+            <thead>
+              <tr>
+                <th v-for="header in headers" :key="header.key" :class="header.class">
+                  {{ header.title }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in filteredEntries" :key="item.id">
+                <td v-for="col in cols" :key="col.name" :class="[col.styleClass, col.name === 'amount' ? formatAmountColor(item.amount) : '']">
+                  <div v-if="col.name === 'name'" class="d-flex align-center">
+                    {{ transform(col.transformer, item[col.name]) }}
+                    <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
+                  </div>
+                  <span v-else>
+                    {{ transform(col.transformer, item[col.name]) }}
+                  </span>
+                </td>
+                <td align="right" width="100px">
+                  <div class="d-flex align-center justify-end">
+                    <special-cost-form :cost="item" @refresh="loadEntries" />
+                    <delete-button :name="item.name" @confirm="deleteCost(item)"/>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="!filteredEntries || filteredEntries.length === 0">
+                 <td :colspan="cols.length + 1" class="text-center text-medium-emphasis pa-4">
+                  Keine Einträge bisher
+                </td>
+              </tr>
+            </tbody>
+
+            <template #actions>
+              <v-card-actions>
+                <special-cost-form btn-text="Neue Sonderkosten Hinzufügen" @refresh="loadEntries" />
+              </v-card-actions>
+            </template>
+          </BaseTable>
+        </v-skeleton-loader>
+      </v-col>
+    </v-row>
+    <v-snackbar v-model="snackbar" :color="snackbarColor" location="bottom">
+      {{ snackbarText }}
+    </v-snackbar>
+  </v-container>
+</template>
+
+<script>
+import LoadablePage from "./common/LoadablePage";
+import { getSpecialCosts, deleteSpecialCost } from "../services/specialcosts";
+
+import {
+  CommonForm,
+  toCurrency,
+  monthlyCostToForm,
+  displayMonth
+} from "./common/Utils";
+import SpecialCostForm from './editform/SpecialCostForm.vue';
+import DeleteButton from './common/DeleteButton.vue';
+import BaseTable from "@/components/common/BaseTable.vue";
+
+const costToForm = cost => {
+  const form = monthlyCostToForm(cost);
+
+  return !cost
+    ? {
+        ...form,
+        dueYearMonth: null
+      }
+    : {
+        ...form,
+        dueYearMonth: cost.dueYearMonth
+      };
+};
+
+export default {
+  mixins: [LoadablePage, CommonForm(costToForm)],
+  components: {
+    BaseTable,
+    SpecialCostForm,
+    DeleteButton
+  },
+  data() {
+    return {
+      entries: [],
+      snackbar: false,
+      snackbarText: "",
+      snackbarColor: "success"
+    };
+  },
+  computed: {
+    cols() {
+      return [
+        { name: "name", label: "Bezeichnung", styleClass: "text-body-2" },
+        { name: "amount", label: "Betrag", transformer: this.formatAmount, styleClass: "text-body-1 font-weight-bold" },
+        { name: "dueDate", label: "Fällig am", transformer: this.formatDate, styleClass: "text-body-2" }
+      ];
+    },
+    headers() {
+       const h = this.cols.map(col => ({
+          title: col.label,
+          key: col.name,
+          class: col.styleClass,
+          transformer: col.transformer
+       }));
+       h.push({ title: '', key: 'actions', align: 'right', width: '100px' });
+       return h;
+    },
+    filteredEntries() {
+      if (!this.entries) return [];
+      return this.entries.filter(entry => this.isFuture(entry.dueDate));
+    }
+  },
+  methods: {
+    transform: (f, v) => (f ? f(v) : v),
+    async loadEntries() {
+      this.entries = await getSpecialCosts();
+    },
+    async deleteCost(cost) {
+      try {
+        await deleteSpecialCost(cost.id);
+        await this.loadEntries();
+        this.showSnackbar("Sonderkosten erfolgreich gelöscht", "success");
+      } catch (error) {
+        console.error("Failed to delete special cost:", error);
+        this.showSnackbar("Fehler beim Löschen der Sonderkosten", "error");
+      }
+    },
+    showSnackbar(text, color) {
+      this.snackbarText = text;
+      this.snackbarColor = color;
+      this.snackbar = true;
+    },
+    isFuture(dateObj) {
+      if (!dateObj) return false;
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1; // 1-based
+      
+      if (dateObj.year > currentYear) return true;
+      if (dateObj.year === currentYear && dateObj.month >= currentMonth) return true;
+      return false;
+    },
+    formatAmount(val) {
+      const formatted = toCurrency(Math.abs(val));
+      if (val > 0) return `+ ${formatted}`;
+      if (val < 0) return `- ${formatted}`;
+      return formatted;
+    },
+    formatAmountColor(val) {
+      if (val > 0) return "text-success";
+      if (val < 0) return "text-error";
+      return "";
+    },
+    formatDate(val) {
+      return displayMonth(val);
+    }
+  },
+  created: async function() {
+    await this.loadEntries();
+    this.loaded = true;
+  }
+};
+</script>

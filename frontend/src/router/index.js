@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Overview from '../components/overview/Overview.vue'
-import FixedCosts from '../components/FixedCosts.vue'
-import SpecialCosts from '../components/SpecialCosts.vue'
-import WealthOverviewPage from '../pages/WealthOverviewPage.vue'
-import LandingPage from '../pages/LandingPage.vue'
+import Overview from '../components/overview/OverviewPage.vue'
+import FixedCosts from '../components/fixedcosts/FixedCostsPage.vue'
+import SpecialCosts from '../components/SpecialCostsPage.vue'
+import WealthOverviewPage from '../components/wealth/WealthOverviewPage.vue'
+import LandingPage from '../components/landing/LandingPage.vue'
 import { AuthService } from '../services/auth'
 
 const routes = [

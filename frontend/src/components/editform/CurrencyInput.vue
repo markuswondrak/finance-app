@@ -10,7 +10,7 @@
   />
 </template>
 <script>
-import { toCurrency } from "../Utils";
+import { toCurrency } from "../common/Utils";
 import BaseTextField from "../common/BaseTextField.vue";
 
 export default {

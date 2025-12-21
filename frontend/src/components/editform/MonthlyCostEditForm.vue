@@ -31,7 +31,7 @@
 </template>
 <script>
 import CurrencyInput from "./CurrencyInput.vue";
-import { CommonForm, monthlyCostToForm, monthlyFormToCost } from "../Utils";
+import { CommonForm, monthlyCostToForm, monthlyFormToCost } from "../common/Utils";
 import CostEditForm from "./CostEditForm.vue";
 import NameTextField from "./NameTextField.vue";
 import FromToDateFields from "./FromToDateFields.vue";
