@@ -86,7 +86,7 @@ export default {
       return this.form.type === 'income' ? 'income' : 'expense';
     },
     backendAmount() {
-      return this.form.amount === 0 ? 0 : this.form.amount * (this.form.type === 'income' ? 1 : -1);
+      return this.form.amount === 0 ? 0 : this.form.amount * (['income', 'wealth_extraction'].includes(this.form.type) ? 1 : -1);
     },
     dueDateObject: {
       get() {

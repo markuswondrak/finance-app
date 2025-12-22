@@ -63,67 +63,85 @@ func TestCalculateForecast(t *testing.T) {
 		t.Errorf("Expected Best > Average, got Best=%f Avg=%f", lastPoint.Best, lastPoint.Average)
 	}
 
-	    if lastPoint.Average <= lastPoint.Worst {
-	        t.Errorf("Expected Average > Worst, got Avg=%f Worst=%f", lastPoint.Average, lastPoint.Worst)
-	    }
+	if lastPoint.Average <= lastPoint.Worst {
+		t.Errorf("Expected Average > Worst, got Avg=%f Worst=%f", lastPoint.Average, lastPoint.Worst)
 	}
-	
-	func TestCalculateForecast_WithSpecialSavings(t *testing.T) {
-		specialSavingDate := models.NextYearMonth(models.CurrentYearMonth())
-		
-		mockRepo := &storage.MockRepository{
-			WealthProfiles: []models.WealthProfile{
-				{
-					UserID:                1,
-					CurrentWealth:         10000,
-					ForecastDurationYears: 1, // 1 year for simplicity
-					RateWorstCase:         0.0,
-					RateAverageCase:       0.0,
-					RateBestCase:          0.0, // 0% interest for easier calculation
-				},
+}
+
+func TestCalculateForecast_WithSpecialSavingsAndFromSavings(t *testing.T) {
+	specialSavingDate := models.AddMonths(models.CurrentYearMonth(), 2)
+
+	mockRepo := &storage.MockRepository{
+		WealthProfiles: []models.WealthProfile{
+			{
+				UserID:                1,
+				CurrentWealth:         10000,
+				ForecastDurationYears: 2, // 1 year for simplicity
+				RateWorstCase:         0.0,
+				RateAverageCase:       0.0,
+				RateBestCase:          0.0, // 0% interest for easier calculation
 			},
-			FixedCosts: []models.FixedCost{}, // No monthly savings
-			SpecialCosts: []models.SpecialCost{
-				{
-					UserID:   1,
-					Name:     "Bonus",
-					Amount:   5000,
-					IsSaving: true,
-					DueDate:  specialSavingDate,
-				},
-				{
-					UserID:   1,
-					Name:     "Car",
-					Amount:   20000,
-					IsSaving: false, // Expense, should be IGNORED per current logic
-					DueDate:  specialSavingDate,
-				},
+		},
+		FixedCosts: []models.FixedCost{
+			{
+				UserID:   1,
+				Name:     "Saving",
+				Amount:   -100,
+				IsSaving: true,
+				From:     models.AddMonths(models.CurrentYearMonth(), 12),
 			},
-		}
-	
-		service := NewWealthForecastService(mockRepo)
-	
-		forecast, err := service.CalculateForecast(1)
-	
-		if err != nil {
-			t.Fatalf("Expected no error, got %v", err)
-		}
-	
-		if len(forecast.Points) != 1 {
-			t.Fatalf("Expected 1 point, got %d", len(forecast.Points))
-		}
-		
-		lastPoint := forecast.Points[0]
-		// Start 10000 + Bonus 5000 = 15000. 
-		// Expense 20000 is ignored.
-		expected := 15000.0
-		
-		if lastPoint.Invested != expected {
-			t.Errorf("Expected invested %f, got %f", expected, lastPoint.Invested)
-		}
+		}, // No monthly savings
+		SpecialCosts: []models.SpecialCost{
+			{
+				UserID:   1,
+				Name:     "Bonus",
+				Amount:   -5000, // Negative for Saving (Wealth Increase)
+				IsSaving: true,
+				DueDate:  specialSavingDate,
+			},
+			{
+				UserID:   1,
+				Name:     "Car",
+				Amount:   20000,
+				IsSaving: false, // Expense, should be IGNORED per current logic
+				DueDate:  specialSavingDate,
+			},
+		},
 	}
-	
-	func TestCalculateForecast_NoProfile(t *testing.T) {	mockRepo := &storage.MockRepository{}
+
+	service := NewWealthForecastService(mockRepo)
+
+	forecast, err := service.CalculateForecast(1)
+
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	if len(forecast.Points) != 2 {
+		t.Errorf("Expected 2 points, got %d", len(forecast.Points))
+	}
+
+	AssertInvestedPoint(t, forecast, 0, 15000.0)
+	AssertInvestedPoint(t, forecast, 1, 16200.0)
+
+}
+
+func AssertInvestedPoint(
+	t *testing.T,
+	forecast *models.ForecastResponse,
+	index int,
+	expected float64,
+) {
+
+	lastPoint := forecast.Points[index]
+
+	if lastPoint.Invested != expected {
+		t.Errorf("Expected invested %f, got %f", expected, lastPoint.Invested)
+	}
+}
+
+func TestCalculateForecast_NoProfile(t *testing.T) {
+	mockRepo := &storage.MockRepository{}
 	service := NewWealthForecastService(mockRepo)
 
 	_, err := service.CalculateForecast(999)

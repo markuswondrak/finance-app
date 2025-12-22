@@ -41,9 +41,7 @@ func (s *Server) SaveSpecialCosts(c *gin.Context) {
 }
 
 func ToDBSpecialCost(cost *JsonSpecialCost) (*models.SpecialCost, error) {
-	if cost.Amount > 0 && cost.IsSaving {
-		return nil, strconv.ErrSyntax // Using a generic error or define one, but handler just checks err != nil
-	}
+	// Validation removed to support Wealth Extraction (IsSaving=true, Amount>0)
 
 	return &models.SpecialCost{
 		ID:       cost.ID,

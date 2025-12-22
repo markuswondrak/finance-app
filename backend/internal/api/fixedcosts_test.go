@@ -47,16 +47,14 @@ func TestToDBStruct(t *testing.T) {
 		t.Error("Mapping mismatch")
 	}
 
-	// Test Validation: Incoming + Saving = Error
-	invalidJson := &JsonFixedCost{
+	// Test Validation: Incoming + Saving = Wealth Extraction (Now Valid)
+	validWealthExtraction := &JsonFixedCost{
 		Amount:   100, // Positive = Incoming
 		IsSaving: true,
 	}
-	_, err = ToDBStruct(invalidJson, converter)
-	if err == nil {
-		t.Error("Expected error for Incoming + Saving, got nil")
-	} else if err.Error() != "cannot be both incoming and saving" {
-		t.Errorf("Expected specific error message, got %v", err)
+	_, err = ToDBStruct(validWealthExtraction, converter)
+	if err != nil {
+		t.Errorf("Expected success for Wealth Extraction, got error: %v", err)
 	}
 }
 

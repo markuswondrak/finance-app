@@ -67,7 +67,9 @@ export const monthlyCostToForm = cost =>
       id: cost.id,
       name: cost.name,
       amount: Math.abs(cost.amount),
-      type: cost.isSaving ? 'saving' : (cost.amount > 0 ? 'income' : 'expense'),
+      type: cost.isSaving
+        ? (cost.amount > 0 ? 'wealth_extraction' : 'saving')
+        : (cost.amount > 0 ? 'income' : 'expense'),
       fromTo: {
         from: cost.from,
         to: cost.to
@@ -87,8 +89,8 @@ export const monthlyCostToForm = cost =>
 export const baseFormToCost = form => ({
   id: form.id,
   name: form.name,
-  amount: form.amount === 0 ? 0 : form.amount * (form.type === 'income' ? 1 : -1),
-  isSaving: form.type === 'saving',
+  amount: form.amount === 0 ? 0 : form.amount * (['income', 'wealth_extraction'].includes(form.type) ? 1 : -1),
+  isSaving: ['saving', 'wealth_extraction'].includes(form.type),
   from: form.fromTo ? form.fromTo.from : null,
   to: form.fromTo ? form.fromTo.to : null
 })

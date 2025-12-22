@@ -28,11 +28,11 @@ func TestToDBSpecialCost(t *testing.T) {
 		t.Errorf("Unexpected error for income: %v", err)
 	}
 
-	// Invalid: Income + Saving
-	invalid := &JsonSpecialCost{Amount: 100, IsSaving: true}
-	_, err = ToDBSpecialCost(invalid)
-	if err == nil {
-		t.Error("Expected error for Incoming + Saving, got nil")
+	// Valid: Income + Saving (Wealth Extraction)
+	validExtraction := &JsonSpecialCost{Amount: 100, IsSaving: true}
+	_, err = ToDBSpecialCost(validExtraction)
+	if err != nil {
+		t.Errorf("Unexpected error for Wealth Extraction: %v", err)
 	}
 }
 

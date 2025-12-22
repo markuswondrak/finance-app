@@ -285,9 +285,7 @@ func ToDBStruct(
 	jsonObject *JsonFixedCost,
 	dueMonthCreator func(int) ([]int, error),
 ) (*models.FixedCost, error) {
-	if jsonObject.Amount > 0 && jsonObject.IsSaving {
-		return nil, errors.New("cannot be both incoming and saving")
-	}
+	// Validation removed to support Wealth Extraction (IsSaving=true, Amount>0)
 
 	value, err := dueMonthCreator(jsonObject.DueMonth)
 

@@ -18,10 +18,13 @@
             </thead>
             <tbody>
               <tr v-for="item in filteredEntries" :key="item.id">
-                <td v-for="col in cols" :key="col.name" :class="[col.styleClass, col.name === 'amount' ? formatAmountColor(item.amount) : '']">
+                <td v-for="col in cols" :key="col.name" :class="[col.styleClass, col.name === 'amount' ? formatColor(item) : '']">
                   <div v-if="col.name === 'name'" class="d-flex align-center">
                     {{ transform(col.transformer, item[col.name]) }}
-                    <v-icon v-if="item.isSaving" icon="fa-piggy-bank" color="success" class="ml-2" size="small"></v-icon>
+                    <template v-if="item.isSaving">
+                      <v-icon v-if="item.amount > 0" icon="fa-money-bill-transfer" color="info" class="ml-2" size="small"></v-icon>
+                      <v-icon v-else icon="fa-piggy-bank" color="warning" class="ml-2" size="small"></v-icon>
+                    </template>
                   </div>
                   <span v-else>
                     {{ transform(col.transformer, item[col.name]) }}
@@ -158,9 +161,12 @@ export default {
       if (val < 0) return `- ${formatted}`;
       return formatted;
     },
-    formatAmountColor(val) {
-      if (val > 0) return "text-success";
-      if (val < 0) return "text-error";
+    formatColor(item) {
+      if (item.isSaving) {
+        return item.amount > 0 ? "text-info" : "text-warning";
+      }
+      if (item.amount > 0) return "text-success";
+      if (item.amount < 0) return "text-error";
       return "";
     },
     formatDate(val) {

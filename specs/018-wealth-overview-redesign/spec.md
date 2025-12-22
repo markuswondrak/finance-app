@@ -17,8 +17,8 @@ As a user, I want to see my key wealth parameters (Current Wealth, Time Horizon,
 
 **Acceptance Scenarios**:
 
-1. **Given** I am on the Wealth Overview page, **When** the page loads, **Then** I see three highlight cards at the top: "Current Wealth", "Time Horizon", and "Expected Return" (or similar).
-2. **Given** the page loads, **When** I look at the cards, **Then** they display the currently configured values (e.g., "50.000 €", "20 Years", "Ø 5%").
+1. **Given** I am on the Wealth Overview page, **When** the page loads, **Then** I see three highlight cards below the chart: "Current Wealth", "Time Horizon", and "Expected Return" (or similar).
+2. **Given** the page loads, **When** I look at the cards, **Then** they display the currently configured values (e.g., "50.000 €", "20 Years", "Ø 5%") as well as information when certain milestones are achieved (e.g. "100000€ in 2032")
 3. **Given** the page loads, **When** I check the layout, **Then** the cards are arranged in a responsive grid (3 columns on desktop, stacked on mobile) matching the Forecast Overview style.
 
 ---

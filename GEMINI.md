@@ -37,7 +37,6 @@ Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 ## Recent Changes
 - 016-wealth-forecast-table: Added Go 1.17+ (Backend), Vue.js 3.3+ (Frontend) + Gin (Go), Vuetify 3.3+, Chart.js (interaction)
 - 015-wealth-forecast-chart: Added Go 1.17+, Vue.js 3.3+ + Gin (Go), GORM (Go), Vuetify 3.3+, Chart.js 4.4+ (vue-chartjs)
-- 014-wealth-profile-config: Added Backend: Go 1.17+, Frontend: Vue.js 3.3+ (Javascript ES6+) + Backend: Gin, GORM. Frontend: Vuetify 3.3+, Vue Router 4.2+
 
 
 <!-- MANUAL ADDITIONS START -->

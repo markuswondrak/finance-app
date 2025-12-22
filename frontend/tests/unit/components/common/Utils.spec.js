@@ -258,6 +258,30 @@ describe('Utils.js', () => {
       });
     });
 
+    it('should convert cost with isSaving true and positive amount to wealth_extraction', () => {
+      const cost = {
+        id: 4,
+        name: 'Pension',
+        amount: 500,
+        from: '2023-01',
+        to: null,
+        isSaving: true
+      };
+
+      const result = monthlyCostToForm(cost);
+
+      expect(result).toEqual({
+        id: 4,
+        name: 'Pension',
+        amount: 500,
+        type: 'wealth_extraction',
+        fromTo: {
+          from: '2023-01',
+          to: null
+        }
+      });
+    });
+
     it('should return default form object when cost is null', () => {
       const result = monthlyCostToForm(null);
 
@@ -344,6 +368,26 @@ describe('Utils.js', () => {
         id: 3,
         name: 'ETF',
         amount: -1000,
+        from: null,
+        to: null,
+        isSaving: true
+      });
+    });
+
+    it('should convert form to cost with positive amount for wealth_extraction', () => {
+      const form = {
+        id: 4,
+        name: 'Pension',
+        amount: 500,
+        type: 'wealth_extraction'
+      };
+
+      const result = baseFormToCost(form);
+
+      expect(result).toEqual({
+        id: 4,
+        name: 'Pension',
+        amount: 500,
         from: null,
         to: null,
         isSaving: true
