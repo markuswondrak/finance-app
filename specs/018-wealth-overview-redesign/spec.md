@@ -7,6 +7,15 @@
 
 ## User Scenarios & Testing *(mandatory)*
 
+## Clarifications
+
+### Session 2025-12-22
+- Q: How should the "milestone" insights (e.g., "100k in 2032") be determined? → A: Frontend-calculated Insights: The frontend derives milestones from the existing forecast data it loads for the chart.
+- Q: How should the edit interaction be handled for the 3 highlight cards? → A: 3 Separate Modals: Clicking a card opens a modal specific to that parameter (e.g., "Edit Time Horizon").
+- Q: How should the UI components for these cards be implemented? → A: Refactor KPICard: Modify the existing `KPICard.vue` to support a generic "footer/insight" slot and click events to ensure consistency across the app.
+- Q: Which specific milestones should be displayed on each card? → A: Next 100k milestone for Wealth, Portfolio at end date for Horizon, and Difference between Worst/Best case for Return.
+- Q: How should validation or backend errors be communicated during editing? → A: Dashboard-style Notification: Display error messages using the app's standard snackbar/toast notification system.
+
 ### User Story 1 - View Wealth Insights (Priority: P1)
 
 As a user, I want to see my key wealth parameters (Current Wealth, Time Horizon, Expected Return) presented as highlight cards at the top of the wealth overview page, so that I can quickly grasp my current configuration and status without a cluttered panel.
@@ -18,7 +27,7 @@ As a user, I want to see my key wealth parameters (Current Wealth, Time Horizon,
 **Acceptance Scenarios**:
 
 1. **Given** I am on the Wealth Overview page, **When** the page loads, **Then** I see three highlight cards below the chart: "Current Wealth", "Time Horizon", and "Expected Return" (or similar).
-2. **Given** the page loads, **When** I look at the cards, **Then** they display the currently configured values (e.g., "50.000 €", "20 Years", "Ø 5%") as well as information when certain milestones are achieved (e.g. "100000€ in 2032")
+2. **Given** the page loads, **When** I look at the cards, **Then** they display the currently configured values (e.g., "50.000 €", "20 Years", "Ø 5%") as well as dynamic insights (e.g. "100.000 € in 2032", "Final: 1.2M €").
 3. **Given** the page loads, **When** I check the layout, **Then** the cards are arranged in a responsive grid (3 columns on desktop, stacked on mobile) matching the Forecast Overview style.
 
 ---
@@ -43,7 +52,7 @@ As a user, I want to be able to edit the configuration parameters directly from 
 ### Edge Cases
 
 - What happens if the backend returns no profile? -> Cards should show default values or prompts to configure (e.g., "0 €", "Set Duration").
-- What happens if I enter invalid values (e.g., negative duration)? -> Validation in the edit modals should prevent saving.
+- What happens if I enter invalid values (e.g., negative duration)? -> Validation in the edit modals should prevent saving, and errors should be shown via global notifications.
 
 ## Requirements *(mandatory)*
 
@@ -51,14 +60,16 @@ As a user, I want to be able to edit the configuration parameters directly from 
 
 - **FR-001**: System MUST replace the existing `WealthConfigPanel` with a section containing exactly 3 highlight cards.
 - **FR-002**: The 3 cards MUST represent:
-    1.  **Current Wealth**: Displays the user's current starting capital.
-    2.  **Time Horizon**: Displays the forecast duration in years.
-    3.  **Expected Return**: Displays the average expected yearly return rate (%).
+    1.  **Current Wealth**: Displays the user's current starting capital. Insight: Next 100k threshold (e.g., "100k in 2032").
+    2.  **Time Horizon**: Displays the forecast duration in years. Insight: Projected portfolio value at the end of the horizon.
+    3.  **Expected Return**: Displays the average expected yearly return rate (%). Insight: The spread between Worst and Best case scenarios.
 - **FR-003**: Each card MUST be clickable or contain an edit action that opens a modal to modify its respective parameters.
 - **FR-004**: The "Expected Return" edit modal MUST allow configuring all three rate scenarios: Worst Case, Average Case, and Best Case.
 - **FR-005**: Upon saving changes in any card's modal, the system MUST persist the new configuration to the backend (`updateProfile`).
 - **FR-006**: Upon saving changes, the system MUST trigger a refresh of the wealth forecast chart and table.
 - **FR-007**: The visual style of the cards MUST be consistent with the Dashboard KPI cards (e.g., `CurrentBalanceCard`, `MonthlySurplusCard`), utilizing the same elevation, rounding, and typography.
+- **FR-008**: The `KPICard` component MUST be refactored to support a footer slot or specific props for these dynamic insights and to emit click events.
+- **FR-009**: The system MUST use the global notification (snackbar) system to communicate validation or persistence errors during editing.
 
 ### Key Entities *(include if feature involves data)*
 

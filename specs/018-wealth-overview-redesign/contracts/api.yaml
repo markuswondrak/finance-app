@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Finance App API
+  version: 1.0.0
+paths:
+  /api/wealth-profile:
+    get:
+      summary: Get wealth profile
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WealthProfile'
+    put:
+      summary: Update wealth profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WealthProfile'
+      responses:
+        '200':
+          description: Updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WealthProfile'
+  /api/wealth/forecast:
+    get:
+      summary: Get wealth forecast
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForecastResponse'
+
+components:
+  schemas:
+    WealthProfile:
+      type: object
+      properties:
+        current_wealth:
+          type: number
+        forecast_duration_years:
+          type: integer
+        rate_worst_case:
+          type: number
+        rate_average_case:
+          type: number
+        rate_best_case:
+          type: number
+    ForecastResponse:
+      type: object
+      properties:
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForecastPoint'
+        start_capital:
+          type: number
+        monthly_saving:
+          type: number
+        duration_years:
+          type: integer
+    ForecastPoint:
+      type: object
+      properties:
+        year:
+          type: integer
+        invested:
+          type: number
+        worst:
+          type: number
+        average:
+          type: number
+        best:
+          type: number
