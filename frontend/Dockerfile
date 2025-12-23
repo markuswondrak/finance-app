@@ -18,7 +18,7 @@ COPY . .
 RUN pnpm build
 
 # Production Stage
-FROM nginx:stable-alpine as production-stage
+FROM docker.io/nginx:stable-alpine as production-stage
 RUN apk add --no-cache gettext
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template

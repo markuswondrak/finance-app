@@ -65,7 +65,12 @@ Follow these steps to deploy the application from scratch.
     ```bash
     gcloud services enable compute.googleapis.com run.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com vpcaccess.googleapis.com iap.googleapis.com
     ```
-2.  **Create Service Account** for Terraform (or use your own `gcloud auth application-default login`).
+2.  **Create Service Account**: 
+
+    ```bash
+    ./create_artifact_sa.sh YOUR_PROJECT_ID YOUR_SA_NAME
+    ```
+
 3.  **GitHub Secrets**: Add `GCP_PROJECT_ID` and `GCP_SA_KEY` (JSON key for a service account with Artifact Registry Writer permissions).
 
 ### Phase 2: Infrastructure - Layer 1 (Registry & VM)
