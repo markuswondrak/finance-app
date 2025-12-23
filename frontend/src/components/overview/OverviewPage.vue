@@ -47,7 +47,6 @@ import ForecastChart from "./ForecastChart.vue";
 import LoadablePage from "../common/LoadablePage";
 import OverviewTable from "./OverviewTable.vue";
 import CurrentBalanceCard from "./CurrentBalanceCard.vue";
-import KPICard from "./KPICard.vue";
 import MonthlySurplusCard from "./MonthlySurplusCard.vue";
 import LowestPointCard from "./LowestPointCard.vue";
 import { toCurrency, displayMonth } from "../common/Utils";
@@ -58,7 +57,6 @@ export default {
     ForecastChart,
     OverviewTable,
     CurrentBalanceCard,
-    KPICard,
     MonthlySurplusCard,
     LowestPointCard
   },

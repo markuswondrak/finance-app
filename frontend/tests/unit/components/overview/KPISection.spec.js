@@ -4,7 +4,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import KPISection from '@/components/overview/KPISection.vue'
-import KPICard from '@/components/overview/KPICard.vue'
+import BaseHighlightCard from '@/components/common/BaseHighlightCard.vue'
 
 const vuetify = createVuetify({
   components,
@@ -73,15 +73,15 @@ describe('KPISection.vue', () => {
   })
 
   describe('Metrics Rendering', () => {
-    it('renders 3 KPICard components', () => {
+    it('renders 3 BaseHighlightCard components', () => {
       const wrapper = mountComponent({ metrics: mockMetrics })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
       expect(cards).toHaveLength(3)
     })
 
-    it('passes correct props to each KPICard', () => {
+    it('passes correct props to each BaseHighlightCard', () => {
       const wrapper = mountComponent({ metrics: mockMetrics })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       expect(cards[0].props('title')).toBe('Balance')
       expect(cards[0].props('value')).toBe('€5,000')
@@ -94,9 +94,9 @@ describe('KPISection.vue', () => {
       expect(cards[2].props('value')).toBe('15%')
     })
 
-    it('passes trend data to KPICard', () => {
+    it('passes trend data to BaseHighlightCard', () => {
       const wrapper = mountComponent({ metrics: mockMetrics })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       expect(cards[0].props('trend')).toEqual({ direction: 'up', percentage: 5 })
     })
@@ -105,13 +105,13 @@ describe('KPISection.vue', () => {
   describe('Placeholder Behavior', () => {
     it('renders 3 slots even with empty metrics array', () => {
       const wrapper = mountComponent({ metrics: [] })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
       expect(cards).toHaveLength(3)
     })
 
     it('uses placeholder data for missing metrics', () => {
       const wrapper = mountComponent({ metrics: [] })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       // All should have placeholder values
       cards.forEach(card => {
@@ -126,7 +126,7 @@ describe('KPISection.vue', () => {
       const wrapper = mountComponent({
         metrics: [{ title: 'Only One', value: '€100', variant: 'default' }]
       })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       expect(cards).toHaveLength(3)
       expect(cards[0].props('title')).toBe('Only One')
@@ -136,18 +136,18 @@ describe('KPISection.vue', () => {
   })
 
   describe('Loading State', () => {
-    it('passes loading=true to all KPICards when loading', () => {
+    it('passes loading=true to all BaseHighlightCards when loading', () => {
       const wrapper = mountComponent({ metrics: mockMetrics, loading: true })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       cards.forEach(card => {
         expect(card.props('loading')).toBe(true)
       })
     })
 
-    it('passes loading=false to all KPICards when not loading', () => {
+    it('passes loading=false to all BaseHighlightCards when not loading', () => {
       const wrapper = mountComponent({ metrics: mockMetrics, loading: false })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       cards.forEach(card => {
         expect(card.props('loading')).toBe(false)
@@ -156,7 +156,7 @@ describe('KPISection.vue', () => {
 
     it('defaults loading to false', () => {
       const wrapper = mountComponent({ metrics: mockMetrics })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       cards.forEach(card => {
         expect(card.props('loading')).toBe(false)
@@ -167,7 +167,7 @@ describe('KPISection.vue', () => {
   describe('Edge Cases', () => {
     it('handles undefined metrics prop', () => {
       const wrapper = mountComponent({})
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
       expect(cards).toHaveLength(3)
     })
 
@@ -177,7 +177,7 @@ describe('KPISection.vue', () => {
         { title: 'Extra', value: '€999', variant: 'default' }
       ]
       const wrapper = mountComponent({ metrics: extraMetrics })
-      const cards = wrapper.findAllComponents(KPICard)
+      const cards = wrapper.findAllComponents(BaseHighlightCard)
 
       // displayMetrics computed only returns 3
       expect(cards).toHaveLength(3)

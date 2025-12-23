@@ -6,7 +6,7 @@
       cols="12"
       sm="4"
     >
-      <KPICard
+      <BaseHighlightCard
         :title="metric.title"
         :value="metric.value"
         :trend="metric.trend"
@@ -19,7 +19,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import KPICard from './KPICard.vue'
+import BaseHighlightCard from '../common/BaseHighlightCard.vue'
 
 const props = defineProps({
   metrics: {
