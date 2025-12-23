@@ -87,9 +87,6 @@ export default {
       });
     },
     formatColor(item) {
-      if (item.isSaving) {
-        return item.amount > 0 ? "text-info" : "text-warning";
-      }
       if (item.amount > 0) return "text-success";
       if (item.amount < 0) return "text-error";
       return "";
