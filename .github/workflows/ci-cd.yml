@@ -94,8 +94,11 @@ jobs:
 
       - name: Setup artifact registry
         run: |
-          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://europe-west3-docker.pkg.dev
-
+          gcloud auth print-access-token \
+            --impersonate-service-account ${{ secrets.GCP_SA_NAME }} | docker login \
+            -u oauth2accesstoken \
+            --password-stdin https://europe-west3-docker.pkg.dev
+            
       # Build & Push Backend
       - name: Build and push Backend
         uses: docker/build-push-action@v5
