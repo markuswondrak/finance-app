@@ -1,0 +1,117 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ==========================================
+  # 1. BACKEND TEST & BUILD CHECK
+  # ==========================================
+  backend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.0'
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build Check
+        run: go build -v -o server ./cmd/server
+
+  # ==========================================
+  # 2. FRONTEND TEST & BUILD CHECK
+  # ==========================================
+  frontend-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build Check
+        run: pnpm build
+
+  # ==========================================
+  # 3. BUILD & PUSH ARTIFACTS (Only if both succeed)
+  # ==========================================
+  deploy-images:
+    needs: [backend-test, frontend-test]
+    # Only run on push to main, not on PRs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker europe-west3-docker.pkg.dev
+
+      # Build & Push Backend
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: backend
+          push: true
+          tags: |
+            europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/finanz-repo/backend:latest
+            europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/finanz-repo/backend:${{ github.sha }}
+
+      # Build & Push Frontend
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: frontend
+          push: true
+          tags: |
+            europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/finanz-repo/frontend:latest
+            europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/finanz-repo/frontend:${{ github.sha }}

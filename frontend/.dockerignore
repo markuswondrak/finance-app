@@ -1,0 +1,29 @@
+# Dependency directories (crucial to ignore!)
+# We want to install dependencies FRESH inside the container.
+node_modules/
+
+# Build outputs
+# We build inside the container, so we don't want local old builds.
+dist/
+
+# Logs and Lockfiles (optional, but good practice)
+npm-debug.log
+yarn-error.log
+
+# Git metadata
+.git/
+.gitignore
+
+# Environment files
+# Secrets should be passed via Docker ENV vars, not copied from local .env files
+.env.local
+.env.*.local
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md

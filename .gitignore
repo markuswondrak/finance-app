@@ -1,7 +1,4 @@
-# Node/Vue
 node_modules/
-dist/
-coverage/
 .env*
 *.log
 

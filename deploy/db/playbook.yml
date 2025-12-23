@@ -1,0 +1,100 @@
+---
+- name: Configure Secure Postgres on Micro Instance
+  hosts: all
+  become: true
+  vars:
+    # Set these via --extra-vars during execution
+    db_name: "finanz_db"
+    db_user: "finanz_user"
+    # db_password must be passed via --extra-vars
+    gcs_bucket_name: "finanz-backups-xxxx"
+    vpc_cidr: "10.8.0.0/28" # Must match Terraform VPC Connector range!
+    postgres_version: "15"
+
+  tasks:
+    # --- SWAP & BASICS ---
+    - name: Check swap
+      stat: { path: /swapfile }
+      register: swap_check
+
+    - name: Setup Swap (2GB)
+      shell: |
+        fallocate -l 2G /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+      when: not swap_check.stat.exists
+
+    - name: Persist Swap
+      mount:
+        name: none
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        state: present
+
+    - name: Install Postgres
+      apt:
+        name: ["postgresql-{{ postgres_version }}", "postgresql-client-{{ postgres_version }}", "acl", "python3-psycopg2"]
+        update_cache: yes
+        state: present
+
+    # --- CONFIGURATION ---
+    - name: Tune Postgres for Micro VM
+      lineinfile:
+        path: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: "^shared_buffers", line: "shared_buffers = 128MB" }
+        - { regexp: "^work_mem", line: "work_mem = 4MB" }
+        - { regexp: "^max_connections", line: "max_connections = 50" }
+        # Listen on all interfaces so VPC Connector can connect
+        - { regexp: "^listen_addresses", line: "listen_addresses = '*'" } 
+      notify: Restart Postgres
+
+    - name: Configure pg_hba.conf (Allow Local + VPC Connector)
+      template:
+        src: pg_hba.conf.j2
+        dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+        owner: postgres
+        group: postgres
+        mode: '0640'
+      notify: Restart Postgres
+
+    # --- DB SETUP ---
+    - name: Create Database
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+      become_user: postgres
+
+    - name: Create User
+      community.postgresql.postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        db: "{{ db_name }}"
+        priv: "ALL"
+      become_user: postgres
+
+    # --- BACKUPS ---
+    - name: Backup Script
+      copy:
+        dest: /opt/pg_backup.sh
+        mode: '0700'
+        content: |
+          #!/bin/bash
+          TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+          pg_dump -U postgres -F c -b -f "/tmp/db_$TIMESTAMP.dump" {{ db_name }}
+          gsutil cp "/tmp/db_$TIMESTAMP.dump" "gs://{{ gcs_bucket_name }}/"
+          rm "/tmp/db_$TIMESTAMP.dump"
+      
+    - name: Cron Job
+      cron:
+        name: "Daily Backup"
+        minute: "0"
+        hour: "3"
+        job: "/opt/pg_backup.sh"
+
+  handlers:
+    - name: Restart Postgres
+      service: { name: postgresql, state: restarted }
