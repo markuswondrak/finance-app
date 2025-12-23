@@ -58,8 +58,10 @@ backend/
 frontend/
 ├── src/
 │   ├── components/
+│   │   ├── common/
+│   │   │   └── BaseHighlightCard.vue  # Renamed/Moved from overview/KPICard.vue (Refactored shared component)
 │   │   ├── overview/
-│   │   │   └── KPICard.vue        # Shared component (to be refactored, musst be moved to common package and renamed to BaseHighlightCard)
+│   │   │   └── KPICard.vue        # To be moved/renamed
 │   │   └── wealth/
 │   │       ├── WealthOverviewPage.vue  # Main page (to be updated)
 │   │       ├── WealthConfigPanel.vue   # To be deleted/replaced
@@ -72,7 +74,7 @@ frontend/
             └── wealth/            # New tests
 ```
 
-**Structure Decision**: Refactor `KPICard.vue` in place. Implement new logic and modals within `frontend/src/components/wealth/`.
+**Structure Decision**: Refactor `KPICard.vue` into `BaseHighlightCard.vue` and move to `frontend/src/components/common/`. Implement new logic and modals within `frontend/src/components/wealth/`.
 
 ## Complexity Tracking
 

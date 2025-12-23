@@ -68,7 +68,7 @@ As a user, I want to be able to edit the configuration parameters directly from 
 - **FR-005**: Upon saving changes in any card's modal, the system MUST persist the new configuration to the backend (`updateProfile`).
 - **FR-006**: Upon saving changes, the system MUST trigger a refresh of the wealth forecast chart and table.
 - **FR-007**: The visual style of the cards MUST be consistent with the Dashboard KPI cards (e.g., `CurrentBalanceCard`, `MonthlySurplusCard`), utilizing the same elevation, rounding, and typography.
-- **FR-008**: The `KPICard` component MUST be refactored to support a footer slot or specific props for these dynamic insights and to emit click events.
+- **FR-008**: The `KPICard` component MUST be renamed to `BaseHighlightCard`, moved to `common`, and refactored to support a footer slot or specific props for these dynamic insights and to emit click events.
 - **FR-009**: The system MUST use the global notification (snackbar) system to communicate validation or persistence errors during editing.
 
 ### Key Entities *(include if feature involves data)*
