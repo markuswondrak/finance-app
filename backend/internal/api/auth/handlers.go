@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -48,12 +49,35 @@ func NewAuthHandler(repo storage.Repository) *AuthHandler {
 	}
 }
 
+func (h *AuthHandler) getOAuthConfig(c *gin.Context) *oauth2.Config {
+	config := *h.OAuthConfig // Shallow copy
+
+	host := c.Request.Header.Get("X-Forwarded-Host")
+	if host == "" {
+		host = c.Request.Host
+	}
+
+	scheme := c.Request.Header.Get("X-Forwarded-Proto")
+	if scheme == "" {
+		if c.Request.TLS != nil {
+			scheme = "https"
+		} else {
+			scheme = "http"
+		}
+	}
+
+	config.RedirectURL = fmt.Sprintf("%s://%s/auth/google/callback", scheme, host)
+	return &config
+}
+
 func (h *AuthHandler) Login(c *gin.Context) {
 	b := make([]byte, 16)
 	rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
 	c.SetCookie("oauth_state", state, 300, "/", "", false, true)
-	url := h.OAuthConfig.AuthCodeURL(state)
+	
+	config := h.getOAuthConfig(c)
+	url := config.AuthCodeURL(state)
 	c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
@@ -70,7 +94,8 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 	}
 
 	code := c.Query("code")
-	token, err := h.OAuthConfig.Exchange(context.Background(), code)
+	config := h.getOAuthConfig(c)
+	token, err := config.Exchange(context.Background(), code)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Code exchange failed"})
 		return
@@ -134,9 +159,23 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 	c.SetCookie("auth_token", tokenString, 3600*24, "/", "", false, true) // Secure=false for dev
 
 	// Redirect to frontend
-	frontendURL := os.Getenv("FRONTEND_URL")
-	if frontendURL == "" {
-		frontendURL = "http://localhost:8080"
+	host := c.Request.Header.Get("X-Forwarded-Host")
+	if host == "" {
+		host = c.Request.Host
+	}
+
+	scheme := c.Request.Header.Get("X-Forwarded-Proto")
+	if scheme == "" {
+		if c.Request.TLS != nil {
+			scheme = "https"
+		} else {
+			scheme = "http"
+		}
+	}
+
+	frontendURL := fmt.Sprintf("%s://%s", scheme, host)
+	if os.Getenv("FRONTEND_URL") != "" {
+		frontendURL = os.Getenv("FRONTEND_URL")
 	}
 	c.Redirect(http.StatusTemporaryRedirect, frontendURL+"/overview")
 }

@@ -8,6 +8,7 @@ provider "google" {
 # 3. SECRETS (Password Management)
 # ==========================================
 
+# DB Password
 resource "google_secret_manager_secret" "db_password" {
   secret_id = "finanz-db-password"
   replication {
@@ -15,10 +16,35 @@ resource "google_secret_manager_secret" "db_password" {
   }
 }
 
-# Placeholder version - YOU MUST ADD THE ACTUAL PASSWORD IN GCP CONSOLE MANUALLY
 resource "google_secret_manager_secret_version" "db_password_val" {
   secret = google_secret_manager_secret.db_password.id
   secret_data = var.db_password_initial
+}
+
+# Google Client Secret
+resource "google_secret_manager_secret" "google_client_secret" {
+  secret_id = "finanz-google-client-secret"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "google_client_secret_val" {
+  secret = google_secret_manager_secret.google_client_secret.id
+  secret_data = var.google_client_secret
+}
+
+# JWT Secret
+resource "google_secret_manager_secret" "jwt_secret" {
+  secret_id = "finanz-jwt-secret"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "jwt_secret_val" {
+  secret = google_secret_manager_secret.jwt_secret.id
+  secret_data = var.jwt_secret
 }
 
 # ==========================================
@@ -66,6 +92,30 @@ resource "google_cloud_run_v2_service" "backend" {
           }
         }
       }
+      
+      # OAuth & Security
+      env {
+        name  = "GOOGLE_CLIENT_ID"
+        value = var.google_client_id
+      }
+      env {
+        name = "GOOGLE_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.google_client_secret.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "JWT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.jwt_secret.secret_id
+            version = "latest"
+          }
+        }
+      }
     }
     vpc_access {
       connector = google_vpc_access_connector.connector.id
@@ -75,9 +125,21 @@ resource "google_cloud_run_v2_service" "backend" {
   depends_on = [google_vpc_access_connector.connector]
 }
 
-# Allow Backend to access Secret
-resource "google_secret_manager_secret_iam_member" "backend_secret_access" {
+# Allow Backend to access Secrets
+resource "google_secret_manager_secret_iam_member" "backend_db_secret_access" {
   secret_id = google_secret_manager_secret.db_password.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.backend_sa.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "backend_client_secret_access" {
+  secret_id = google_secret_manager_secret.google_client_secret.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.backend_sa.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "backend_jwt_secret_access" {
+  secret_id = google_secret_manager_secret.jwt_secret.id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.backend_sa.email}"
 }
