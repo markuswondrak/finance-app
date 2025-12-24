@@ -118,4 +118,30 @@ describe('OverviewTable.vue', () => {
 
         expect(wrapper.emitted('refresh')).toBeTruthy();
     });
+
+    it('should format large numbers correctly in responsive mode', () => {
+        // Mock window.innerWidth to trigger responsive formatting
+        Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 500 });
+
+        const entries = [{
+            yearMonth: { year: 2023, month: 1 },
+            sumFixedCosts: 12000,
+            sumSpecialCosts: 0,
+            currentAmount: 0,
+            empty: false
+        }];
+
+        const wrapper = mount(OverviewTable, {
+            global: { plugins: [vuetify] },
+            props: {
+                entries
+            }
+        });
+
+        const firstRowCells = wrapper.findAll('tbody tr')[0].findAll('td');
+        const text = firstRowCells[1].text();
+
+        // The bug causes "Tundefined", we want "12T€"
+        expect(text).toBe('12T€'); 
+    });
 });

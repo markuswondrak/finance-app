@@ -56,12 +56,18 @@ export default {
     },
     formatResponsive(value) {
       if (value.length > 5 && window.innerWidth < 768) {
-        var tmp = value.split(" ");
-        var rest = tmp[0].substring(0, tmp[0].length - 2);
-        return rest + " T" + tmp[1];
-      } else {
-        return value;
+        const tmp = value.split(/\s/);
+        const amount = tmp[0];
+        const currency = tmp.length > 1 ? tmp[1] : '€';
+        
+        const integerPart = amount.split(',')[0];
+        if (integerPart.includes('.')) {
+          const thousands = integerPart.split('.')[0];
+          return thousands + 'T' + currency;
+        }
+        return integerPart + currency;
       }
+      return value;
     },
     cost(index, dueYearMonth) {
       return {
