@@ -61,10 +61,8 @@ fi
 ROLES=(
     "roles/artifactregistry.writer"       # Push Docker images
     "roles/serviceusage.serviceUsageConsumer" # Use Google Cloud APIs
-    # Uncomment the following if you intend to deploy to Cloud Run via Terraform/CLI from CI
-    # "roles/run.admin"
-    # "roles/iam.serviceAccountUser"      # To act as the runtime service account
-    # "roles/storage.admin"               # For Terraform State management
+    "roles/run.admin"                     # Deploy Cloud Run services
+    "roles/iam.serviceAccountUser"        # Act as the runtime service account
 )
 
 echo "Granting IAM roles to '$SA_EMAIL'..."
