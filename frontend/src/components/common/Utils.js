@@ -1,4 +1,11 @@
-export const toCurrency = (number) => {
+export const toCurrency = (number, responsive = false) => {
+  if (responsive && window.innerWidth < 768) {
+    if (Math.abs(number) >= 1000) {
+      return Math.trunc(number / 1000) + 'T€';
+    }
+    return Math.trunc(number) + '€';
+  }
+
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
     currency: 'EUR',

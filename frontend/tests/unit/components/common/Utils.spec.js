@@ -17,6 +17,13 @@ import {
 
 describe('Utils.js', () => {
   describe('toCurrency', () => {
+    // Save original window.innerWidth
+    const originalInnerWidth = window.innerWidth;
+
+    afterEach(() => {
+       Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: originalInnerWidth });
+    });
+
     it('should format number with thousands separator and euro symbol', () => {
       expect(toCurrency(1000)).toBe('1.000,00 €');
       expect(toCurrency(1000000)).toBe('1.000.000,00 €');
@@ -32,6 +39,21 @@ describe('Utils.js', () => {
     it('should handle decimal numbers', () => {
       expect(toCurrency(1000.50)).toBe('1.000,50 €');
       expect(toCurrency(999.99)).toBe('999,99 €');
+    });
+
+    it('should format normally when responsive=true but screen is wide', () => {
+        Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1024 });
+        expect(toCurrency(12000, true)).toBe('12.000,00 €');
+    });
+
+    it('should format compactly when responsive=true and screen is small', () => {
+         Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 500 });
+         expect(toCurrency(12000, true)).toBe('12T€');
+         expect(toCurrency(12900, true)).toBe('12T€'); // floor behavior
+         expect(toCurrency(500, true)).toBe('500€');
+         expect(toCurrency(500.99, true)).toBe('500€');
+         expect(toCurrency(-12000, true)).toBe('-12T€');
+         expect(toCurrency(-500, true)).toBe('-500€');
     });
   });
 
