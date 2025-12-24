@@ -38,7 +38,7 @@ func ConnectDataBase() *gorm.DB {
 		dbHost, dbUser, dbPassword, dbName, dbPort, dbSSLMode)
 
 	// Debug Log (Masking Password)
-	fmt.Printf("Connecting to DB: host=%s user=%s dbname=%s port=%s sslmode=%s\n", 
+	fmt.Printf("Connecting to DB: host=%s user=%s dbname=%s port=%s sslmode=%s\n",
 		dbHost, dbUser, dbName, dbPort, dbSSLMode)
 
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -74,7 +74,10 @@ func main() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "http://localhost:8080" || origin == "http://localhost:5173" || frontendRegex.MatchString(origin)
+			return origin == "http://localhost:8080" ||
+				origin == "http://localhost:5173" ||
+				origin == "https://finance.wondee.info" ||
+				frontendRegex.MatchString(origin)
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
