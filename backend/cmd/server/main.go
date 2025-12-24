@@ -36,6 +36,10 @@ func ConnectDataBase() *gorm.DB {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 		dbHost, dbUser, dbPassword, dbName, dbPort, dbSSLMode)
 
+	// Debug Log (Masking Password)
+	fmt.Printf("Connecting to DB: host=%s user=%s dbname=%s port=%s sslmode=%s\n", 
+		dbHost, dbUser, dbName, dbPort, dbSSLMode)
+
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})

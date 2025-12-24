@@ -27,6 +27,7 @@ The application is deployed on Google Cloud Platform (GCP) using a secure, conta
 *   `database.tf`: Defines the **Database VM**, its Service Account, and the **Backup Bucket** (GCS).
 *   `network.tf`: Sets up the **VPC Access Connector** and **Firewall Rules** (SSH via IAP, DB access from connector).
 *   `registry.tf`: Configures the **Artifact Registry** for storing Docker images.
+*   `wif.tf`: Configures **Workload Identity Federation** for secure GitHub Actions authentication.
 *   `variables.tf`: Defines project-level variables (e.g., `project_id`).
 *   `db/playbook.yml`: An **Ansible Playbook** to provision the Postgres server, configure security/swap, and set up backup cron jobs.
 
@@ -63,15 +64,20 @@ Follow these steps to deploy the application from scratch.
 
 1.  **Enable Google Cloud APIs**:
     ```bash
-    gcloud services enable compute.googleapis.com run.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com vpcaccess.googleapis.com iap.googleapis.com
+    gcloud services enable compute.googleapis.com \ 
+        run.googleapis.com \
+        artifactregistry.googleapis.com \
+        secretmanager.googleapis.com \
+        vpcaccess.googleapis.com \
+        iap.googleapis.com \
+        iamcredentials.googleapis.com 
     ```
-2.  **Create Service Account**: 
+2.  **Workload Identity Federation**: 
+    The service account and authentication infrastructure are now managed via Terraform (`wif.tf`). You do not need to manually create a key.
 
-    ```bash
-    ./create_artifact_sa.sh YOUR_PROJECT_ID YOUR_SA_NAME
-    ```
-
-3.  **GitHub Secrets**: Add `GCP_PROJECT_ID` and `GCP_SA_KEY` (JSON key for a service account with Artifact Registry Writer permissions).
+3.  **GitHub Secrets**:
+    *   `GCP_PROJECT_ID`: Your Google Cloud Project ID.
+    *   `GCP_WIF_PROVIDER`: The full resource name of the Workload Identity Provider (output from Terraform: `wif_provider_name`).
 
 ### Phase 2: Infrastructure - Layer 1 (Registry & VM)
 
@@ -122,11 +128,14 @@ Configure the PostgreSQL instance.
       ProxyCommand gcloud compute start-iap-tunnel finanz-postgres-vm %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west3-c
     ```
 2.  **Run Ansible**:
-    ```bash
-    # Update inventory to use the Host alias
-    echo "finanz-postgres-vm" > deploy/db/hosts.ini
     
-    ansible-playbook -i deploy/db/hosts.ini deploy/db/playbook.yml \
+    Create hosts.ini:
+    ```
+    [db]
+    finanz-postgres-vm ansible_connection=ssh ansible_user=SSH_USER ansible_ssh_common_args='-o ProxyCommand="gcloud compute start-iap-tunnel %h %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west3-c" -o StrictHostKeyChecking=no'
+    ``` 
+    ```bash
+    ansible-playbook -i db/hosts.ini db/playbook.yml \
       --extra-vars "project_id=YOUR_PROJECT_ID gcs_bucket_name=finanz-backups-YOUR_SUFFIX vpc_cidr=10.8.0.0/28 db_password=YOUR_SECURE_PASSWORD"
     ```
 
@@ -137,6 +146,7 @@ Deploy the Cloud Run services.
 1.  Run the full apply:
     ```bash
     terraform apply \
+      -var="github_repo=GIT_USER/REPO" \
       -var="project_id=YOUR_PROJECT_ID" \
       -var="db_password_initial=YOUR_SECURE_PASSWORD" \
       -var="ssh_user=YOUR_SSH_USER"

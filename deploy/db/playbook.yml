@@ -40,7 +40,7 @@
         state: present
 
     # --- CONFIGURATION ---
-    - name: Tune Postgres for Micro VM
+    - name: Tune Postgres Performance
       lineinfile:
         path: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
         regexp: "{{ item.regexp }}"
@@ -49,8 +49,16 @@
         - { regexp: "^shared_buffers", line: "shared_buffers = 128MB" }
         - { regexp: "^work_mem", line: "work_mem = 4MB" }
         - { regexp: "^max_connections", line: "max_connections = 50" }
-        # Listen on all interfaces so VPC Connector can connect
-        - { regexp: "^listen_addresses", line: "listen_addresses = '*'" } 
+      notify: Restart Postgres
+
+    - name: Enable Remote Connections (listen_addresses)
+      lineinfile:
+        path: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+        # Added \s* to handle optional spaces after the comment hash
+        regexp: '^#?\s*listen_addresses\s*='
+        line: "listen_addresses = '*'"
+        state: present
+        backrefs: no
       notify: Restart Postgres
 
     - name: Configure pg_hba.conf (Allow Local + VPC Connector)
@@ -73,7 +81,23 @@
         name: "{{ db_user }}"
         password: "{{ db_password }}"
         db: "{{ db_name }}"
-        priv: "ALL"
+      become_user: postgres
+
+    - name: Grant Schema Privileges
+      community.postgresql.postgresql_privs:
+        db: "{{ db_name }}"
+        role: "{{ db_user }}"
+        objs: public
+        type: schema
+        privs: CREATE,USAGE
+      become_user: postgres
+
+    - name: Grant Table Privileges
+      community.postgresql.postgresql_privs:
+        db: "{{ db_name }}"
+        role: "{{ db_user }}"
+        objs: ALL_IN_SCHEMA
+        privs: ALL
       become_user: postgres
 
     # --- BACKUPS ---

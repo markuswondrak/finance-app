@@ -25,3 +25,8 @@ variable "ssh_user" {
   description = "Username for SSH access to the VM"
   type        = string
 }
+
+variable "github_repo" {
+  description = "The GitHub repository (owner/repo) allowed to authenticate"
+  type        = string
+}

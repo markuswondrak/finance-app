@@ -31,8 +31,9 @@ resource "google_service_account" "backend_sa" {
 }
 
 resource "google_cloud_run_v2_service" "backend" {
-  name     = "finanz-backend"
-  location = var.region
+  name                = "finanz-backend"
+  location            = var.region
+  deletion_protection = false
   
   template {
     service_account = google_service_account.backend_sa.email
@@ -94,8 +95,9 @@ resource "google_cloud_run_service_iam_member" "backend_public" {
 # ==========================================
 
 resource "google_cloud_run_v2_service" "frontend" {
-  name     = "finanz-frontend"
-  location = var.region
+  name                = "finanz-frontend"
+  location            = var.region
+  deletion_protection = false
 
   template {
     containers {

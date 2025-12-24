@@ -1,3 +1,4 @@
 /.terraform
 *.tfstate
 *.tfstate.backup
+/db/hosts.ini
