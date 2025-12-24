@@ -155,5 +155,10 @@ Deploy the Cloud Run services.
 
 ### Phase 6: Continuous Deployment
 
-The `.github/workflows/ci-cd.yml` pipeline will automatically build and push new images on commits to `main`.
-To enable automatic deployment to Cloud Run upon push, uncomment the "Deploy" steps in the workflow file or set up Continuous Deployment triggers in Cloud Run.
+Create service account for GitHub Actions: 
+
+```bash
+ ./create_github_sa.sh YOUR_PROJECT_ID \
+       WIF_PROVIDER_PATH \
+       GITHUB_USER/finance-app
+```
