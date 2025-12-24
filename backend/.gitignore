@@ -16,7 +16,7 @@ db/
 # Ignore local builds
 bin/
 dist/
-server
+/server
 
 # Ignore dependency directories (Docker will re-download them cleanly)
 vendor/
