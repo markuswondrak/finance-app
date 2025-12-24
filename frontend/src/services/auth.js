@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8082/auth';
+const API_URL = '/auth';
 
 export const AuthService = {
   async getUser() {

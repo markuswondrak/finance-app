@@ -48,7 +48,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { Line } from 'vue-chartjs'
 import { AuthService } from '@/services/auth'
 import {
