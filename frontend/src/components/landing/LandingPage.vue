@@ -1,6 +1,7 @@
 <template>
   <v-container fluid class="pa-0 landing-page">
     <LandingHero />
+    <CostTrackingFeature />
     <WealthFeature />
     <SavingsCalculator />
     <LandingFooter />
@@ -9,6 +10,7 @@
 
 <script setup>
 import LandingHero from './LandingHero.vue';
+import CostTrackingFeature from './CostTrackingFeature.vue';
 import WealthFeature from './WealthFeature.vue';
 import SavingsCalculator from './SavingsCalculator.vue';
 import LandingFooter from './LandingFooter.vue';
