@@ -113,21 +113,6 @@ td.action-cell {
   outline-offset: 2px;
 }
 
-/* Floating navigation toggle positioning */
-.nav-toggle-desktop {
-  position: fixed !important;
-  bottom: 16px;
-  left: 16px;
-  z-index: 1006;
-}
-
-.nav-toggle-mobile {
-  position: fixed !important;
-  top: 16px;
-  left: 16px;
-  z-index: 1006;
-}
-
 /* Phase 2: Landing Page Styles */
 .glass-card {
   background-color: rgba(255, 255, 255, 0.05) !important;

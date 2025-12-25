@@ -1,27 +1,19 @@
 <template>
   <v-app id="inspire">
-    <!-- User Menu (Top Right) -->
-    <div class="user-menu-container">
-      <UserMenu />
-    </div>
+    <!-- Mobile Header -->
+    <v-app-bar v-if="mobile" app color="surface" elevation="0" class="border-b">
+      <v-app-bar-nav-icon icon="fa-bars" @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-title class="font-weight-bold">
+        <span class="text-income">Finanz</span><span class="text-white">-App</span>
+      </v-app-bar-title>
+    </v-app-bar>
 
     <template v-if="!hideNavigation">
       <AppSidebar
         v-model="drawer"
         :rail="rail"
         :temporary="mobile"
-      />
-
-      <!-- Floating Navigation Toggle Button -->
-      <v-btn
-        :class="[mobile ? 'nav-toggle-mobile' : 'nav-toggle-desktop', 'glass-button']"
-        :icon="navIcon"
-        color="income"
-        size="large"
-        :aria-label="mobile ? (drawer ? 'Navigation schließen' : 'Navigation öffnen') : (rail ? 'Navigation erweitern' : 'Navigation minimieren')"
-        :aria-expanded="mobile ? drawer : !rail"
-        aria-controls="app-navigation"
-        @click="toggleDrawer"
+        @update:rail="rail = $event"
       />
     </template>
 
@@ -43,7 +35,6 @@ import { ref, computed, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/navigation/AppSidebar.vue'
-import UserMenu from '@/components/UserMenu.vue'
 
 const { mobile } = useDisplay()
 const route = useRoute()
@@ -62,29 +53,12 @@ watch(mobile, (isMobile) => {
     rail.value = false
   } else {
     drawer.value = true
+    rail.value = false // Ensure it's expanded by default on desktop switch
   }
 })
-
-const navIcon = computed(() => {
-  if (mobile.value) {
-    return drawer.value ? 'fa-xmark' : 'fa-bars'
-  }
-  return rail.value ? 'fa-chevron-right' : 'fa-chevron-left'
-})
-
-const toggleDrawer = () => {
-  if (mobile.value) {
-    drawer.value = !drawer.value
-  } else {
-    rail.value = !rail.value
-  }
-}
 </script>
 <style scoped>
-.user-menu-container {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 1000;
+.border-b {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 </style>
