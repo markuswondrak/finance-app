@@ -120,6 +120,6 @@ describe('AppSidebar.vue', () => {
 
     // Verify we have exactly 4 list items
     const items = wrapper.findAllComponents({ name: 'v-list-item' })
-    expect(items.length).toBe(4)
+    expect(items.length).toBe(5)
   })
 })
