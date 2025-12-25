@@ -27,31 +27,44 @@ if [ -z "$PGPASSWORD" ]; then
 fi
 export PGPASSWORD
 
-# 2. Discover Bucket
-echo "Finding backup bucket..."
-BUCKET_NAME=$(gsutil ls | grep "gs://finanz-backups-" | head -n 1)
-if [ -z "$BUCKET_NAME" ]; then
-    echo "Error: No bucket found matching 'gs://finanz-backups-'"
-    exit 1
+# 2. Determine Dump File
+if [ -n "$1" ]; then
+    DUMP_FILE="$1"
+    if [ ! -f "$DUMP_FILE" ]; then
+        echo "Error: Provided file '$DUMP_FILE' does not exist."
+        exit 1
+    fi
+    echo "Using provided local dump file: $DUMP_FILE"
+    DOWNLOADED_DUMP=false
+else
+    # Discover Bucket
+    echo "Finding backup bucket..."
+    BUCKET_NAME=$(gsutil ls | grep "gs://finanz-backups-" | head -n 1)
+    if [ -z "$BUCKET_NAME" ]; then
+        echo "Error: No bucket found matching 'gs://finanz-backups-'"
+        exit 1
+    fi
+    echo "Using bucket: $BUCKET_NAME"
+
+    # Find Latest Dump
+    echo "Finding latest dump..."
+    # List files, sort by time (last item is newest), extract path
+    LATEST_DUMP=$(gsutil ls -l "$BUCKET_NAME" | grep ".dump" | sort -k 2 | tail -n 1 | awk '{print $3}')
+
+    if [ -z "$LATEST_DUMP" ]; then
+        echo "Error: No dump files found in $BUCKET_NAME"
+        exit 1
+    fi
+    echo "Latest dump found: $LATEST_DUMP"
+
+    # Download Dump
+    echo "Downloading dump to $TEMP_DUMP..."
+    gsutil cp "$LATEST_DUMP" "$TEMP_DUMP"
+    DUMP_FILE="$TEMP_DUMP"
+    DOWNLOADED_DUMP=true
 fi
-echo "Using bucket: $BUCKET_NAME"
 
-# 3. Find Latest Dump
-echo "Finding latest dump..."
-# List files, sort by time (last item is newest), extract path
-LATEST_DUMP=$(gsutil ls -l "$BUCKET_NAME" | grep ".dump" | sort -k 2 | tail -n 1 | awk '{print $3}')
-
-if [ -z "$LATEST_DUMP" ]; then
-    echo "Error: No dump files found in $BUCKET_NAME"
-    exit 1
-}
-echo "Latest dump found: $LATEST_DUMP"
-
-# 4. Download Dump
-echo "Downloading dump to $TEMP_DUMP..."
-gsutil cp "$LATEST_DUMP" "$TEMP_DUMP"
-
-# 5. Start IAP Tunnel
+# 3. Start IAP Tunnel
 echo "Starting IAP tunnel to $INSTANCE_NAME in zone $ZONE..."
 # We use a temp file to track if the tunnel is ready
 TUNNEL_LOG=$(mktemp)
@@ -69,15 +82,18 @@ while ! grep -q "Listening on port" "$TUNNEL_LOG" && [ $COUNT -lt $MAX_RETRIES ]
     ((COUNT++))
 done
 
-# 6. Restore Database
+# 4. Restore Database
 echo "Starting restore..."
 # We use --no-owner to avoid errors if the local user doesn't match the remote user
 # and --role if needed, but since we are connecting as DB_USER it should be fine.
-pg_restore -h localhost -p "$LOCAL_PORT" -U "$DB_USER" -d "$DB_NAME" --clean --if-exists --no-owner --verbose "$TEMP_DUMP"
+pg_restore -h localhost -p "$LOCAL_PORT" -U "$DB_USER" -d "$DB_NAME" --clean --if-exists --no-owner --verbose "$DUMP_FILE"
 
-# 7. Cleanup
+# 5. Cleanup
 echo "Restoration complete."
 echo "Cleaning up..."
 kill "$TUNNEL_PID" 2>/dev/null || true
-rm "$TEMP_DUMP" "$TUNNEL_LOG"
+if [ "$DOWNLOADED_DUMP" = true ]; then
+    rm "$DUMP_FILE"
+fi
+rm "$TUNNEL_LOG"
 echo "Done."
