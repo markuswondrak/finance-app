@@ -4,6 +4,7 @@
     <CostTrackingFeature />
     <WealthFeature />
     <SavingsCalculator />
+    <LandingCTA />
     <LandingFooter />
   </v-container>
 </template>
@@ -13,6 +14,7 @@ import LandingHero from './LandingHero.vue';
 import CostTrackingFeature from './CostTrackingFeature.vue';
 import WealthFeature from './WealthFeature.vue';
 import SavingsCalculator from './SavingsCalculator.vue';
+import LandingCTA from './LandingCTA.vue';
 import LandingFooter from './LandingFooter.vue';
 </script>
 
