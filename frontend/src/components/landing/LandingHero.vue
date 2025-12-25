@@ -2,7 +2,7 @@
   <v-container fluid class="landing-hero d-flex flex-column justify-center align-center text-center">
     <!-- Made in EU Badge -->
     <v-chip
-      color="primary"
+      color="income"
       variant="outlined"
       class="mb-6 font-weight-bold"
       prepend-icon="fa-globe-europe"
@@ -13,7 +13,7 @@
     <!-- Main Headline -->
     <h1 class="text-h2 font-weight-bold mb-4 text-white">
       Deine Finanzen.<br>
-      <span class="text-primary">Einfach. Klar. Sicher.</span>
+      <span class="text-income">Einfach. Klar. Sicher.</span>
     </h1>
 
     <!-- Subheadline -->

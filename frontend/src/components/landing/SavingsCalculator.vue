@@ -30,7 +30,7 @@
             step="0.5"
             thumb-label
             class="mb-4"
-            color="primary"
+            color="income"
           >
             <template v-slot:append>
               <v-text-field
@@ -49,7 +49,7 @@
             <label class="text-caption text-medium-emphasis">Laufzeit</label>
             <v-btn-toggle
               v-model="years"
-              color="primary"
+              color="income"
               variant="outlined"
               mandatory
               rounded="xl"
@@ -64,7 +64,7 @@
           <!-- Result Display -->
           <div class="mt-8 text-center">
              <div class="text-caption text-medium-emphasis text-uppercase">Erwartetes Vermögen</div>
-             <div class="text-h3 font-weight-bold text-primary">{{ formattedTotal }}</div>
+             <div class="text-h3 font-weight-bold text-income">{{ formattedTotal }}</div>
              <div class="text-caption text-medium-emphasis mt-2">
                Eingezahlt: {{ formattedInvested }} <br>
                Zinseszins: {{ formattedInterest }}
