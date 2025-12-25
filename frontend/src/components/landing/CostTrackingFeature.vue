@@ -13,15 +13,15 @@
           </p>
           
           <v-list bg-color="transparent" class="px-0 d-inline-block text-left mb-8">
-            <v-list-item class="px-0" prepend-icon="fa-circle-check" base-color="income">
+            <v-list-item class="px-0" prepend-icon="fa-circle-check" base-color="income" lines="three">
                <v-list-item-title class="font-weight-bold">Maximale Intervall-Flexibilität</v-list-item-title>
                <v-list-item-subtitle class="text-wrap text-medium-emphasis">Ob monatlich, quartalsweise oder jährlich – vermeide böse Überraschungen.</v-list-item-subtitle>
             </v-list-item>
-            <v-list-item class="px-0 mt-4" prepend-icon="fa-circle-check" base-color="income">
+            <v-list-item class="px-0 mt-4" prepend-icon="fa-circle-check" base-color="income" lines="three">
                 <v-list-item-title class="font-weight-bold">Einmalkosten fest im Griff</v-list-item-title>
                 <v-list-item-subtitle class="text-wrap text-medium-emphasis">Plane Sonderausgaben oder außerordentliche Einzahlungen punktgenau ein.</v-list-item-subtitle>
             </v-list-item>
-            <v-list-item class="px-0 mt-4" prepend-icon="fa-circle-check" base-color="income">
+            <v-list-item class="px-0 mt-4" prepend-icon="fa-circle-check" base-color="income" lines="three">
                 <v-list-item-title class="font-weight-bold">Finanzielle Weitsicht als Standard</v-list-item-title>
                 <v-list-item-subtitle class="text-wrap text-medium-emphasis">Nutze die Übersicht, um Sparpotenziale für deine Ziele zu identifizieren.</v-list-item-subtitle>
             </v-list-item>
