@@ -1,36 +1,22 @@
 <template>
-  <div class="landing-page">
-    <HeroSection />
-    <FeatureGrid />
-    <InteractivePreview />
-    <RoadmapTeaser />
+  <v-container fluid class="pa-0 landing-page">
+    <LandingHero />
+    <WealthFeature />
+    <SavingsCalculator />
     <LandingFooter />
-  </div>
+  </v-container>
 </template>
 
-<script>
-import HeroSection from '@/components/landing/HeroSection.vue'
-import FeatureGrid from '@/components/landing/FeatureGrid.vue'
-import InteractivePreview from '@/components/landing/InteractivePreview.vue'
-import RoadmapTeaser from '@/components/landing/RoadmapTeaser.vue'
-import LandingFooter from '@/components/landing/LandingFooter.vue'
-
-export default {
-  name: 'LandingPage',
-  components: {
-    HeroSection,
-    FeatureGrid,
-    InteractivePreview,
-    RoadmapTeaser,
-    LandingFooter
-  }
-}
+<script setup>
+import LandingHero from './LandingHero.vue';
+import WealthFeature from './WealthFeature.vue';
+import SavingsCalculator from './SavingsCalculator.vue';
+import LandingFooter from './LandingFooter.vue';
 </script>
 
 <style scoped>
 .landing-page {
-  background-color: #0a0a0a;
+  background-color: #121212; /* Fintech Dark Mode */
   min-height: 100vh;
-  color: white;
 }
 </style>

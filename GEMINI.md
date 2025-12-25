@@ -44,4 +44,5 @@ Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 
 
 <!-- MANUAL ADDITIONS START -->
+- Use FontAwesome (FA6) icons instead of Material Design Icons (MDI). Icons are configured in `frontend/src/plugins/vuetify.js` to automatically prepend `fa-solid`. For brands, use `fa-brands fa-name`.
 <!-- MANUAL ADDITIONS END -->

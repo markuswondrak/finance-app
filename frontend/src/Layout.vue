@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <!-- Mobile Header -->
-    <v-app-bar v-if="mobile" app color="surface" elevation="0" class="border-b">
+    <v-app-bar v-if="mobile && !hideNavigation" app color="surface" elevation="0" class="border-b">
       <v-app-bar-nav-icon icon="fa-bars" @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title class="font-weight-bold">
         <span class="text-income">Finanz</span><span class="text-white">-App</span>
