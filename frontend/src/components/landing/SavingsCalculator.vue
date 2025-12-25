@@ -10,7 +10,7 @@
     </v-row>
 
     <v-row justify="center">
-      <v-col cols="12" md="4">
+      <v-col cols="12" md="5" lg="4">
         <v-card color="surface" variant="flat" class="pa-6 rounded-xl h-100">
           <!-- Inputs -->
           <v-text-field
@@ -73,7 +73,7 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="7" lg="8">
         <v-card color="surface" variant="flat" class="pa-6 rounded-xl h-100 d-flex align-center justify-center">
            <div style="height: 400px; width: 100%;">
              <Line :data="chartData" :options="chartOptions" />
