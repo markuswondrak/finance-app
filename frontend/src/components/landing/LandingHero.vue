@@ -2,7 +2,7 @@
   <v-container fluid class="landing-hero d-flex align-center">
     <v-row align="center" justify="center">
       <!-- Left Column: Content -->
-      <v-col cols="12" md="6" class="text-center text-md-left pl-md-16">
+      <v-col cols="12" md="6" lg="5" class="text-center text-md-left pl-md-16">
         <!-- Made in EU Badge -->
         <v-chip
           color="income"
@@ -41,10 +41,12 @@
         </div>
       </v-col>
 
-      <!-- Right Column: Chart -->
-      <v-col cols="12" md="6" class="pr-md-16">
-        <div class="hero-chart-container">
-          <Line :data="chartData" :options="chartOptions" />
+      <!-- Right Column: 3D Chart Visualization -->
+      <v-col cols="12" md="6" lg="6" class="position-relative">
+        <div class="chart-3d-container">
+          <div class="chart-3d-card glass-card">
+            <Line :data="chartData" :options="chartOptions" class="chart-canvas" />
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -97,8 +99,7 @@ const chartData = {
       },
       fill: true,
       tension: 0.4,
-      pointRadius: 4,
-      pointBackgroundColor: '#4ADE80',
+      pointRadius: 0,
       borderWidth: 3
     }
   ]
@@ -109,18 +110,28 @@ const chartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
-    tooltip: { enabled: true }
+    tooltip: { enabled: false }
   },
   scales: {
-    x: { 
-      display: true,
-      grid: { display: false },
-      ticks: { color: 'rgba(255,255,255,0.5)' }
+    x: { display: false },
+    y: { display: false, min: 0 }
+  },
+  animation: {
+    x: {
+      type: 'number',
+      easing: 'linear',
+      duration: 1000,
+      from: NaN, // simpler progressive draw
+      delay(ctx) {
+        if (ctx.type !== 'data' || ctx.xStarted) {
+          return 0;
+        }
+        ctx.xStarted = true;
+        return ctx.index * 300;
+      }
     },
-    y: { 
-      display: true,
-      grid: { color: 'rgba(255,255,255,0.1)' },
-      ticks: { color: 'rgba(255,255,255,0.5)' }
+    y: {
+      duration: 0 // Immediate Y presence
     }
   }
 }
@@ -128,16 +139,46 @@ const chartOptions = {
 
 <style scoped>
 .landing-hero {
-  min-height: 80vh;
+  min-height: 90vh; /* Increased to match old hero */
+  position: relative;
+  overflow: hidden;
   background: radial-gradient(circle at top right, rgba(74, 222, 128, 0.05), transparent 40%),
               radial-gradient(circle at bottom left, rgba(74, 222, 128, 0.05), transparent 40%);
 }
-.hero-chart-container {
+
+.chart-3d-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  padding: 40px;
+}
+
+.chart-3d-card {
+  transform: rotateY(-10deg) rotateX(5deg);
+  transition: transform 0.5s ease-out;
+  border-radius: 16px;
+  padding: 20px;
   height: 400px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 24px;
-  padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  /* glass-card styles are in finance.css, but adding shadow here as in old file */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.chart-3d-container:hover .chart-3d-card {
+  transform: rotateY(-5deg) rotateX(2deg) translateY(-10px);
+}
+
+.chart-canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 960px) {
+  .chart-3d-container {
+    padding: 20px 0;
+    perspective: none;
+  }
+  .chart-3d-card {
+    transform: none !important;
+    height: 300px;
+  }
 }
 </style>
