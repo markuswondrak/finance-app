@@ -1,5 +1,5 @@
 ---
-- name: Configure Secure Postgres on Micro Instance
+- name: Configure Dockerized Postgres on Micro Instance
   hosts: all
   become: true
   vars:
@@ -10,6 +10,8 @@
     gcs_bucket_name: "finanz-backups-xxxx"
     vpc_cidr: "10.8.0.0/28" # Must match Terraform VPC Connector range!
     postgres_version: "15"
+    postgres_data_dir: "/opt/finanz/postgres/data"
+    postgres_config_dir: "/opt/finanz/postgres/config"
 
   tasks:
     # --- SWAP & BASICS ---
@@ -33,44 +35,130 @@
         opts: sw
         state: present
 
-    - name: Install Postgres
-      apt:
-        name: ["postgresql-{{ postgres_version }}", "postgresql-client-{{ postgres_version }}", "acl", "python3-psycopg2"]
+    # --- DOCKER INSTALLATION ---
+    - name: Install dependencies for Docker
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - python3-pip # For docker python SDK
+        state: present
         update_cache: yes
+
+    - name: Add Docker official GPG key
+      ansible.builtin.shell: |
+        mkdir -p /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Add Docker APT repository
+      ansible.builtin.shell: |
+        echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+          $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Install Docker Engine
+      ansible.builtin.apt:
+        name: 
+          - docker-ce 
+          - docker-ce-cli 
+          - containerd.io 
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Install Docker Python SDK (for Ansible modules)
+      ansible.builtin.pip:
+        name: docker
+        state: present
+    
+    # --- CLIENT TOOLS ---
+    - name: Install PostgreSQL Client and dependencies (for Ansible & Backups)
+      ansible.builtin.apt:
+        name: 
+          - postgresql-client-{{ postgres_version }}
+          - python3-psycopg2 # For ansible postgres modules
+          - acl
         state: present
 
-    # --- CONFIGURATION ---
-    - name: Configure postgresql.conf
+    # --- DIRECTORIES & CONFIG ---
+    - name: Create Postgres directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+        owner: root 
+      loop:
+        - "{{ postgres_data_dir }}"
+        - "{{ postgres_config_dir }}"
+
+    - name: Configure postgresql.conf (Docker optimized)
       copy:
-        src: postgresql.conf
-        dest: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
-        owner: postgres
-        group: postgres
+        src: postgresql_docker.conf
+        dest: "{{ postgres_config_dir }}/postgresql.conf"
         mode: '0644'
-      notify: Restart Postgres
+      notify: Restart Docker Postgres
 
     - name: Configure pg_hba.conf (Allow Local + VPC Connector)
       template:
         src: pg_hba.conf.j2
-        dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
-        owner: postgres
-        group: postgres
-        mode: '0640'
-      notify: Restart Postgres
+        dest: "{{ postgres_config_dir }}/pg_hba.conf"
+        mode: '0644'
+      notify: Restart Docker Postgres
 
-    # --- DB SETUP ---
-    - name: Create Database
-      community.postgresql.postgresql_db:
-        name: "{{ db_name }}"
-      become_user: postgres
+    # --- DOCKER CONTAINER ---
+    - name: Run Postgres Container
+      community.docker.docker_container:
+        name: finanz-postgres
+        image: "postgres:{{ postgres_version }}"
+        restart_policy: always
+        ports:
+          - "5432:5432"
+        volumes:
+          - "{{ postgres_data_dir }}:/var/lib/postgresql/data"
+          - "{{ postgres_config_dir }}/postgresql.conf:/etc/postgresql/postgresql.conf"
+          - "{{ postgres_config_dir }}/pg_hba.conf:/etc/postgresql/pg_hba.conf"
+        env:
+          POSTGRES_DB: "{{ db_name }}"
+          POSTGRES_USER: "postgres" # Initial superuser
+          POSTGRES_PASSWORD: "{{ db_password }}"
+        # Override command to use our config files
+        command: "postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf"
+        state: started
+      register: docker_postgres
 
-    - name: Create User
+    - name: Wait for Postgres to be ready
+      wait_for:
+        port: 5432
+        host: 127.0.0.1
+        delay: 5
+        timeout: 60
+
+    # --- DB SETUP (Using Ansible modules connected to localhost:5432) ---
+    # Note: Using 'postgres' superuser to create the app user/db
+    
+    - name: Create Application User
       community.postgresql.postgresql_user:
         name: "{{ db_user }}"
         password: "{{ db_password }}"
-        db: "{{ db_name }}"
-      become_user: postgres
-
+        login_host: 127.0.0.1
+        login_user: postgres
+        login_password: "{{ db_password }}"
+      
+    - name: Create Application Database
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        owner: "{{ db_user }}"
+        login_host: 127.0.0.1
+        login_user: postgres
+        login_password: "{{ db_password }}"
+    
     - name: Grant Schema Privileges
       community.postgresql.postgresql_privs:
         db: "{{ db_name }}"
@@ -78,38 +166,39 @@
         objs: public
         type: schema
         privs: CREATE,USAGE
-      become_user: postgres
-
-    - name: Grant Table Privileges
-      community.postgresql.postgresql_privs:
-        db: "{{ db_name }}"
-        role: "{{ db_user }}"
-        objs: ALL_IN_SCHEMA
-        privs: ALL
-      become_user: postgres
+        login_host: 127.0.0.1
+        login_user: postgres
+        login_password: "{{ db_password }}"
 
     # --- BACKUPS ---
     - name: Backup Script
       copy:
         dest: /opt/pg_backup.sh
-        owner: postgres
-        group: postgres
+        owner: root
+        group: root
         mode: '0700'
         content: |
           #!/bin/bash
           TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-          pg_dump -U postgres -F c -b -f "/tmp/db_$TIMESTAMP.dump" {{ db_name }}
+          # Use docker exec to dump from inside (cleaner regarding versions) 
+          docker exec -u postgres finanz-postgres pg_dump -U postgres -F c -b "{{ db_name }}" > "/tmp/db_$TIMESTAMP.dump"
+          
+          # Upload to GCS
           gsutil cp "/tmp/db_$TIMESTAMP.dump" "gs://{{ gcs_bucket_name }}/"
+          
+          # Cleanup
           rm "/tmp/db_$TIMESTAMP.dump"
       
     - name: Cron Job
       cron:
         name: "Daily Backup"
-        user: postgres
+        user: root
         minute: "0"
         hour: "3"
         job: "/opt/pg_backup.sh"
 
   handlers:
-    - name: Restart Postgres
-      service: { name: postgresql, state: restarted }
+    - name: Restart Docker Postgres
+      community.docker.docker_container:
+        name: finanz-postgres
+        restart: yes
