@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GAR_LOCATION: europe-west3
+  GAR_LOCATION: europe-west1
   REPOSITORY: finanz-repo
 
 jobs:

@@ -45,7 +45,7 @@ Run the following command in your terminal:
 ```bash
 gcloud compute ssh finanz-postgres-vm \
     --project=YOUR_PROJECT_ID \
-    --zone=europe-west3-c \
+    --zone=europe-west1-b \
     --tunnel-through-iap
 ```
 
@@ -106,14 +106,14 @@ Build the images manually once so Terraform can deploy the Cloud Run services.
 1.  **Backend**:
     ```bash
     # From project root
-    gcloud auth configure-docker europe-west3-docker.pkg.dev
-    podman build -t europe-west3-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/backend:latest ./backend
-    podman push europe-west3-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/backend:latest
+    gcloud auth configure-docker europe-west1-docker.pkg.dev
+    podman build -t europe-west1-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/backend:latest ./backend
+    podman push europe-west1-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/backend:latest
     ```
 2.  **Frontend**:
     ```bash
-    podman build -t europe-west3-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/frontend:latest ./frontend
-    podman push europe-west3-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/frontend:latest
+    podman build -t europe-west1-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/frontend:latest ./frontend
+    podman push europe-west1-docker.pkg.dev/YOUR_PROJECT_ID/finanz-repo/frontend:latest
     ```
 
 ### Phase 4: Database Configuration (Ansible)
@@ -125,14 +125,14 @@ Configure the PostgreSQL instance.
     Add this to your `~/.ssh/config`:
     ```config
     Host finanz-postgres-vm
-      ProxyCommand gcloud compute start-iap-tunnel finanz-postgres-vm %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west3-c
+      ProxyCommand gcloud compute start-iap-tunnel finanz-postgres-vm %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west1-b
     ```
 2.  **Run Ansible**:
     
     Create hosts.ini:
     ```
     [db]
-    finanz-postgres-vm ansible_connection=ssh ansible_user=SSH_USER ansible_ssh_common_args='-o ProxyCommand="gcloud compute start-iap-tunnel %h %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west3-c" -o StrictHostKeyChecking=no'
+    finanz-postgres-vm ansible_connection=ssh ansible_user=SSH_USER ansible_ssh_common_args='-o ProxyCommand="gcloud compute start-iap-tunnel %h %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west1-b" -o StrictHostKeyChecking=no'
     ``` 
     ```bash
     ansible-playbook -i db/hosts.ini db/playbook.yml \
