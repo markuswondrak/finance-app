@@ -33,6 +33,11 @@
         opts: sw
         state: present
 
+    - name: Disable mandb to prevent performance issues
+      ansible.builtin.file:
+        path: /usr/bin/mandb
+        mode: '-x'
+
     - name: Install Postgres
       apt:
         name: ["postgresql-{{ postgres_version }}", "postgresql-client-{{ postgres_version }}", "acl", "python3-psycopg2"]
