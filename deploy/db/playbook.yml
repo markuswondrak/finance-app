@@ -92,6 +92,8 @@
     - name: Backup Script
       copy:
         dest: /opt/pg_backup.sh
+        owner: postgres
+        group: postgres
         mode: '0700'
         content: |
           #!/bin/bash
@@ -103,6 +105,7 @@
     - name: Cron Job
       cron:
         name: "Daily Backup"
+        user: postgres
         minute: "0"
         hour: "3"
         job: "/opt/pg_backup.sh"
