@@ -22,28 +22,31 @@
             class="mb-4"
           ></v-text-field>
 
-          <v-slider
-            v-model="returnRate"
-            label="Rendite pro Jahr (%)"
-            min="0"
-            max="15"
-            step="0.5"
-            thumb-label
-            class="mb-4"
-            color="income"
-          >
-            <template v-slot:append>
-              <v-text-field
-                v-model.number="returnRate"
-                type="number"
-                style="width: 80px"
-                density="compact"
-                hide-details
-                variant="outlined"
-                suffix="%"
-              ></v-text-field>
-            </template>
-          </v-slider>
+          <div class="mb-4">
+            <label class="text-caption text-medium-emphasis">Rendite pro Jahr (%)</label>
+            <v-slider
+              v-model="returnRate"
+              min="0"
+              max="15"
+              step="0.5"
+              thumb-label
+              color="income"
+              hide-details
+              class="mt-1"
+            >
+              <template v-slot:append>
+                <v-text-field
+                  v-model.number="returnRate"
+                  type="number"
+                  style="width: 80px"
+                  density="compact"
+                  hide-details
+                  variant="outlined"
+                  suffix="%"
+                ></v-text-field>
+              </template>
+            </v-slider>
+          </div>
 
           <div class="mb-4">
             <label class="text-caption text-medium-emphasis">Laufzeit</label>
