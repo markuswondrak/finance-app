@@ -134,9 +134,6 @@ Configure the PostgreSQL instance.
     [db]
     finanz-postgres-vm ansible_connection=ssh ansible_user=SSH_USER ansible_ssh_common_args='-o ProxyCommand="gcloud compute start-iap-tunnel %h %p --listen-on-stdin --project=YOUR_PROJECT_ID --zone=europe-west1-b" -o StrictHostKeyChecking=no'
     ``` 
-
-    Enable internet access for the vm to download the packages.
-
     ```bash
     ansible-playbook -i db/hosts.ini db/playbook.yml \
       --extra-vars "project_id=YOUR_PROJECT_ID gcs_bucket_name=finanz-backups-YOUR_SUFFIX vpc_cidr=10.8.0.0/28 db_password=YOUR_SECURE_PASSWORD"
