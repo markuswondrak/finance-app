@@ -17,6 +17,8 @@ Auto-generated from all feature plans. Last updated: 2025-12-16
 - Go 1.17+ (Backend), Vue.js 3.3+ (Frontend) + Gin (Go), Vuetify 3.3+, Chart.js (interaction) (016-wealth-forecast-table)
 - N/A (Read-only data from existing Forecast logic) (016-wealth-forecast-table)
 - Go 1.24.0 (Backend), Vue.js 3.3.4 (Frontend) + Gin, GORM (Backend); Vuetify 3.3.15, Chart.js 4.4.0 (Frontend) (018-wealth-overview-redesign)
+- Vue.js 3.3+ (Frontend) + Vuetify 3.3+, Chart.js (vue-chartjs), Vue Router 4.2+ (019-landing-page-redesign)
+- N/A (Client-side only) (019-landing-page-redesign)
 
 - Backend: Go 1.17+, Frontend: Vue.js 3.3+ + Backend: Gin, GORM. Frontend: Vuetify 3.3+, Chart.js 4.4+ (vue-chartjs), Vue Router 4.2+ (006-surplus-card-sparkline)
 
@@ -36,9 +38,9 @@ tests/
 Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 
 ## Recent Changes
+- 019-landing-page-redesign: Added Vue.js 3.3+ (Frontend) + Vuetify 3.3+, Chart.js (vue-chartjs), Vue Router 4.2+
 - 018-wealth-overview-redesign: Added Go 1.24.0 (Backend), Vue.js 3.3.4 (Frontend) + Gin, GORM (Backend); Vuetify 3.3.15, Chart.js 4.4.0 (Frontend)
 - 016-wealth-forecast-table: Added Go 1.17+ (Backend), Vue.js 3.3+ (Frontend) + Gin (Go), Vuetify 3.3+, Chart.js (interaction)
-- 015-wealth-forecast-chart: Added Go 1.17+, Vue.js 3.3+ + Gin (Go), GORM (Go), Vuetify 3.3+, Chart.js 4.4+ (vue-chartjs)
 
 
 <!-- MANUAL ADDITIONS START -->
