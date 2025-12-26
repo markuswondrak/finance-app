@@ -512,10 +512,12 @@ describe('Utils.js', () => {
           costToForm: mockCostToForm,
           $refs: {
             editform: {
-              success: vi.fn()
+              success: vi.fn(),
+              resetValidation: vi.fn()
             }
           },
-          $emit: vi.fn()
+          $emit: vi.fn(),
+          $nextTick: vi.fn(callback => callback())
         };
 
         await mixin.methods.saveCost.call(component);
