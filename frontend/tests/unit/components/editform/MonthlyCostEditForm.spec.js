@@ -24,7 +24,8 @@ describe('MonthlyCostEditForm.vue', () => {
         name: 'CostEditForm',
         template: '<div><slot></slot></div>',
         methods: {
-            success: vi.fn()
+            success: vi.fn(),
+            resetValidation: vi.fn()
         },
         emits: ['save']
     };
@@ -152,7 +153,10 @@ describe('MonthlyCostEditForm.vue', () => {
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy },
+            methods: { 
+                success: successSpy,
+                resetValidation: vi.fn()
+            },
             emits: ['save']
         };
 

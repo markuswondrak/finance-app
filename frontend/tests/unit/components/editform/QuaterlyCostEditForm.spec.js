@@ -27,7 +27,10 @@ describe('QuaterlyCostEditForm.vue', () => {
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy },
+            methods: { 
+                success: successSpy,
+                resetValidation: vi.fn()
+            },
             emits: ['save']
         };
 
@@ -56,7 +59,7 @@ describe('QuaterlyCostEditForm.vue', () => {
         const wrapper = mount(QuaterlyCostEditForm, {
             global: { 
                 plugins: [vuetify],
-                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } } }
+                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { }, resetValidation: () => { } } } }
             },
             props: { cost: null }
         });

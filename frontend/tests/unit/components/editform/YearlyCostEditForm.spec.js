@@ -27,7 +27,10 @@ describe('YearlyCostEditForm.vue', () => {
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy },
+            methods: { 
+                success: successSpy,
+                resetValidation: vi.fn()
+            },
             emits: ['save']
         };
 
@@ -55,7 +58,7 @@ describe('YearlyCostEditForm.vue', () => {
         const wrapper = mount(YearlyCostEditForm, {
             global: { 
                 plugins: [vuetify],
-                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } } }
+                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { }, resetValidation: () => { } } } }
             },
             props: { cost: null }
         });

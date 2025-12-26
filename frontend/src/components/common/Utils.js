@@ -140,7 +140,15 @@ export const CommonForm = (costToForm, formToCost, endpoint) => ({
         }
       })
 
-      this.$refs.editform.success();
+      const isEdit = !!this.cost;
+      this.$refs.editform.success(isEdit);
+
+      if (!isEdit) {
+        this.form = this.costToForm(null);
+        this.$nextTick(() => {
+          this.$refs.editform.resetValidation();
+        });
+      }
       this.$emit('saved');
     }
 

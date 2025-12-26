@@ -19,18 +19,19 @@
         />
       </v-col>
     </v-row>
-    <v-row align="center">
-      <v-col cols="12" sm="6">
+    <v-row>
+      <v-col cols="12">
         <base-text-field
           label="Betrag"
           v-model.number="form.amount"
           type="number"
           prefix="€"
           required
-          hide-details
         />
       </v-col>
-      <v-col cols="12" sm="6">
+    </v-row>
+    <v-row>
+      <v-col cols="12">
         <incoming-select v-model="form.type" />
       </v-col>
     </v-row>
@@ -102,7 +103,16 @@ export default {
       const cost = formToCost(this.form);
       try {
         await saveSpecialCost(cost);
-        this.$refs.editform.success();
+        const isEdit = !!this.cost;
+        this.$refs.editform.success(isEdit);
+        
+        if (!isEdit) {
+          this.form = costToForm(null);
+          this.$nextTick(() => {
+            this.$refs.editform.resetValidation();
+          });
+        }
+        
         this.$emit('refresh');
       } catch (error) {
         console.error("Failed to save special cost:", error);

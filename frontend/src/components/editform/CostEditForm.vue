@@ -74,8 +74,10 @@ export default {
         this.saving = true;
       }
     },
-    success() {
-      this.dialog = false;
+    success(shouldClose = true) {
+      if (shouldClose) {
+        this.dialog = false;
+      }
       this.saving = false;
       this.snackbar = true;
     },
@@ -83,6 +85,11 @@ export default {
       this.saving = false;
       this.errorMsg = msg || "Ein Fehler ist aufgetreten.";
       this.errorSnackbar = true;
+    },
+    resetValidation() {
+      if (this.$refs.form) {
+        this.$refs.form.resetValidation();
+      }
     }
   }
 };

@@ -27,7 +27,10 @@ describe('HalfyearlyCostEditForm.vue', () => {
         const CostEditFormStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { success: successSpy },
+            methods: { 
+                success: successSpy,
+                resetValidation: vi.fn()
+            },
             // In Vue 3, template refs are accessed differently but calling method on component instance ref works if methods are exposed?
             // Options API components expose methods by default.
         };
@@ -56,7 +59,7 @@ describe('HalfyearlyCostEditForm.vue', () => {
         const wrapper = mount(HalfyearlyCostEditForm, {
             global: { 
                 plugins: [vuetify],
-                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { } } } }
+                stubs: { CostEditForm: { template: '<div><slot></slot></div>', methods: { success: () => { }, resetValidation: () => { } } } }
             },
             props: { cost: null }
         });

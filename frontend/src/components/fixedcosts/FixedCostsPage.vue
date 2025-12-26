@@ -8,6 +8,22 @@
           transition="scale-transition"
           class="mx-auto"
         >
+          <!-- Action Bar -->
+          <table-action-bar
+            v-model:search="search"
+            v-model:date="date"
+          >
+            <template #action>
+              <component 
+                v-if="activeConfig"
+                :is="activeConfig.formComponent" 
+                btn-text="Neue Kosten Hinzufügen" 
+                btn-color="primary" 
+                @saved="handleSaved" 
+              />
+            </template>
+          </table-action-bar>
+
           <v-card variant="outlined" class="glass border card-accent-primary" rounded="lg">
             <v-tabs v-model="tab" grow>
               <v-tab
@@ -24,7 +40,7 @@
                 :value="config.label"
               >
                 <fixed-costs-table
-                  :entries="config.entries"
+                  :entries="config.filteredEntries"
                   :cols="config.cols"
                   :formComponent="config.formComponent"
                   no-card
@@ -48,10 +64,16 @@
   </v-container>
 </template>
 
-
 <script>
 import FixedCostsTable from "./FixedCostTable.vue";
 import LoadablePage from "../common/LoadablePage";
+import TableActionBar from "../common/TableActionBar.vue";
+import MonthlyCostEditForm from "../editform/MonthlyCostEditForm.vue";
+import QuaterlyCostEditForm from "../editform/QuaterlyCostEditForm.vue";
+import HalfyearlyCostEditForm from "../editform/HalfyearlyCostEditForm.vue";
+import YearlyCostEditForm from "../editform/YearlyCostEditForm.vue";
+import { dateToYearMonth } from "@/services/dateAdapter";
+
 import {
   displayMonth,
   toCurrency,
@@ -97,11 +119,18 @@ const yearlyCols = cols([
 export default {
   mixins: [LoadablePage],
   components: {
-    FixedCostsTable
+    FixedCostsTable,
+    TableActionBar,
+    MonthlyCostEditForm,
+    QuaterlyCostEditForm,
+    HalfyearlyCostEditForm,
+    YearlyCostEditForm
   },
   data() {
     return {
       tab: null,
+      search: "",
+      date: null,
       snackbar: {
         show: false,
         text: '',
@@ -125,28 +154,35 @@ export default {
         {
           label: 'Monatliche Kosten',
           entries: this.monthly,
+          filteredEntries: this.filterCosts(this.monthly),
           cols: this.monthlyCols,
           formComponent: 'monthly-cost-edit-form'
         },
         {
           label: 'Vierteljährliche Kosten',
           entries: this.quaterly,
+          filteredEntries: this.filterCosts(this.quaterly),
           cols: this.quaterlyCols,
           formComponent: 'quaterly-cost-edit-form'
         },
         {
           label: 'Halbjährliche Kosten',
           entries: this.halfyearly,
+          filteredEntries: this.filterCosts(this.halfyearly),
           cols: this.halfyearlyCols,
           formComponent: 'halfyearly-cost-edit-form'
         },
         {
           label: 'Jährliche Kosten',
           entries: this.yearly,
+          filteredEntries: this.filterCosts(this.yearly),
           cols: this.yearlyCols,
           formComponent: 'yearly-cost-edit-form'
         }
       ];
+    },
+    activeConfig() {
+      return this.tabsConfig.find(c => c.label === this.tab);
     }
   },
   created: async function() {
@@ -172,6 +208,41 @@ export default {
       this.snackbar.text = text;
       this.snackbar.color = color;
       this.snackbar.show = true;
+    },
+    filterCosts(entries) {
+      if (!entries) return [];
+      
+      const query = (this.search || "").toLowerCase();
+      const target = dateToYearMonth(this.date);
+
+      return entries.filter(cost => {
+        // Search Filter
+        const matchesSearch = !query || 
+          (cost.name && cost.name.toLowerCase().includes(query)) ||
+          (cost.description && cost.description.toLowerCase().includes(query));
+
+        if (!matchesSearch) return false;
+
+        // Date Filter
+        if (!target) return true; // No date selected
+
+        const from = cost.from;
+        const to = cost.to;
+
+        if (!from) return true; // Safe fallback
+
+        const targetVal = target.year * 12 + target.month;
+        const fromVal = from.year * 12 + from.month;
+        
+        if (targetVal < fromVal) return false; // Target is before start
+
+        if (to) {
+          const toVal = to.year * 12 + to.month;
+          if (targetVal > toVal) return false; // Target is after end
+        }
+
+        return true;
+      });
     }
   }
 };

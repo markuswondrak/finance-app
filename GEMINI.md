@@ -40,9 +40,7 @@ Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 ## Recent Changes
 - 019-landing-page-redesign: Added Vue.js 3.3+ (Frontend) + Vuetify 3.3+, Chart.js (vue-chartjs), Vue Router 4.2+
 - 018-wealth-overview-redesign: Added Go 1.24.0 (Backend), Vue.js 3.3.4 (Frontend) + Gin, GORM (Backend); Vuetify 3.3.15, Chart.js 4.4.0 (Frontend)
-- 016-wealth-forecast-table: Added Go 1.17+ (Backend), Vue.js 3.3+ (Frontend) + Gin (Go), Vuetify 3.3+, Chart.js (interaction)
 
 
 <!-- MANUAL ADDITIONS START -->
-- Use FontAwesome (FA6) icons instead of Material Design Icons (MDI). Icons are configured in `frontend/src/plugins/vuetify.js` to automatically prepend `fa-solid`. For brands, use `fa-brands fa-name`.
 <!-- MANUAL ADDITIONS END -->

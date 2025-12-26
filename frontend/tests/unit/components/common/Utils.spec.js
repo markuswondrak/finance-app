@@ -509,6 +509,7 @@ describe('Utils.js', () => {
 
         const component = {
           form,
+          costToForm: mockCostToForm,
           $refs: {
             editform: {
               success: vi.fn()

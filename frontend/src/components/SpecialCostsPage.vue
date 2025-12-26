@@ -8,6 +8,16 @@
           transition="scale-transition"
           class="mx-auto"
         >
+          <!-- Action Bar -->
+          <table-action-bar
+            v-model:search="search"
+            v-model:date="date"
+          >
+            <template #action>
+               <special-cost-form btn-text="Neue Sonderkosten Hinzufügen" @refresh="loadEntries" />
+            </template>
+          </table-action-bar>
+
           <BaseTable>
             <thead>
               <tr>
@@ -43,12 +53,6 @@
                 </td>
               </tr>
             </tbody>
-
-            <template #actions>
-              <v-card-actions>
-                <special-cost-form btn-text="Neue Sonderkosten Hinzufügen" @refresh="loadEntries" />
-              </v-card-actions>
-            </template>
           </BaseTable>
         </v-skeleton-loader>
       </v-col>
@@ -62,6 +66,8 @@
 <script>
 import LoadablePage from "./common/LoadablePage";
 import { getSpecialCosts, deleteSpecialCost } from "../services/specialcosts";
+import TableActionBar from "./common/TableActionBar.vue";
+import { dateToYearMonth } from "@/services/dateAdapter";
 
 import {
   CommonForm,
@@ -92,11 +98,14 @@ export default {
   components: {
     BaseTable,
     SpecialCostForm,
-    DeleteButton
+    DeleteButton,
+    TableActionBar
   },
   data() {
     return {
       entries: [],
+      search: "",
+      date: null,
       snackbar: false,
       snackbarText: "",
       snackbarColor: "success"
@@ -122,7 +131,27 @@ export default {
     },
     filteredEntries() {
       if (!this.entries) return [];
-      return this.entries.filter(entry => this.isFuture(entry.dueDate));
+      
+      const query = (this.search || "").toLowerCase();
+      const target = dateToYearMonth(this.date);
+
+      return this.entries.filter(cost => {
+        // Search Filter
+        const matchesSearch = !query || 
+           (cost.name && cost.name.toLowerCase().includes(query));
+        
+        if (!matchesSearch) return false;
+
+        // Date Filter
+        if (target) {
+           // Exact match
+           if (!cost.dueDate) return false;
+           return cost.dueDate.year === target.year && 
+                  cost.dueDate.month === target.month;
+        }
+
+        return true;
+      });
     }
   },
   methods: {
@@ -144,16 +173,6 @@ export default {
       this.snackbarText = text;
       this.snackbarColor = color;
       this.snackbar = true;
-    },
-    isFuture(dateObj) {
-      if (!dateObj) return false;
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth() + 1; // 1-based
-      
-      if (dateObj.year > currentYear) return true;
-      if (dateObj.year === currentYear && dateObj.month >= currentMonth) return true;
-      return false;
     },
     formatAmount(val) {
       const formatted = toCurrency(Math.abs(val));

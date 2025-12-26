@@ -34,12 +34,6 @@
         </td>
       </tr>
     </tbody>
-
-    <template #actions>
-      <v-card-actions>
-        <component :is="formComponent" btn-text="Neue Kosten Hinzufügen" btn-color="primary" @saved="$emit('saved')" />
-      </v-card-actions>
-    </template>
   </BaseTable>
 </template>
 

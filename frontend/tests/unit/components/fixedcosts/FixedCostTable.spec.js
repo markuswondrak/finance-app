@@ -75,22 +75,6 @@ describe('FixedCostTable.vue', () => {
     expect(rows.length).toBe(mockEntries.length);
   });
 
-  it('should render add new costs button', () => {
-    const wrapper = mount(FixedCostTable, {
-      global: {
-        plugins: [vuetify],
-      },
-      props: {
-        entries: mockEntries,
-        cols: mockCols,
-        formComponent: 'MonthlyCostEditForm'
-      }
-    });
-
-    const cardActions = wrapper.findComponent({ name: 'VCardActions' });
-    expect(cardActions.exists()).toBe(true);
-  });
-
   it('should use dynamic form component', () => {
     const wrapper = mount(FixedCostTable, {
       global: {
