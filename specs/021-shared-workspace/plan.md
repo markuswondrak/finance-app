@@ -5,7 +5,7 @@
 
 ## Summary
 
-Transition the application from a user-centric data model to a workspace-centric model. This allows multiple users to access and manage the same financial data (fixed costs, etc.) with peer-to-peer permissions. The implementation includes workspace creation/naming, a one-time use invite system with email notifications via Mailjet, a destructive join flow with high-friction warnings, and user offboarding/revocation logic.
+Transition the application from a user-centric data model to a workspace-centric model. **Crucially, the Workspace becomes the primary source of truth for all financial data, including FixedCosts, CurrentBalance, and WealthProfile configurations.** This allows multiple users to access and manage the same financial data with peer-to-peer permissions. The implementation includes workspace creation/naming, a one-time use invite system with email notifications via Mailjet, a destructive join flow with high-friction warnings, and user offboarding/revocation logic.
 
 ## Technical Context
 
@@ -16,12 +16,29 @@ Transition the application from a user-centric data model to a workspace-centric
 **Target Platform**: Linux (Docker/Cloud Run)
 **Project Type**: Web application (Frontend + Backend)
 **Performance Goals**: API latency < 200ms for workspace operations; real-time access revocation.
+**Resources**:
+- **Email Template**: Utilizing the existing template at `/backend/templates/invite_email.html` for workspace invitations.
+- **UI Base**: Functionality will be integrated into the existing user profile settings page at `frontend/src/components/settings/UserSettingsPage.vue`.
 **Constraints**: 
 - 60% test coverage mandate (Constitution IV).
 - Fintech Dark Mode aesthetic (Constitution VII).
 - Page-Centric Frontend Architecture (Constitution VIII).
 - Data loss must be confirmed and transactional (Constitution VI).
 **Scale/Scope**: Support multiple users per workspace; infinite horizontal scaling of workspaces.
+
+## Migration Strategy
+
+Since this is a breaking change for the database structure, a solid migration strategy is required to ensure no data loss and seamless access for existing users:
+
+1.  **Schema Evolution**: Introduce `workspaces` table and `workspace_users` junction table. Add `workspace_id` foreign key to `fixed_costs`, `wealth_profiles`, etc.
+2.  **Data Migration (Rollout)**:
+    -   Create a database migration script that runs on deployment.
+    -   For every existing user in `users` table:
+        -   Create a new default `Workspace` (e.g., named "My Workspace").
+        -   Associate the user as the `OWNER` of this new workspace.
+        -   Update all their existing records (costs, settings, etc.) to reference this new `workspace_id`.
+3.  **Backward Compatibility**: The application logic will be updated to query by `workspace_id` instead of `user_id`.
+4.  **User Experience**: Users will log in and see their data exactly as before, transparently scoped to their new personal workspace. They can then choose to invite others or rename their workspace.
 
 ## Constitution Check
 
