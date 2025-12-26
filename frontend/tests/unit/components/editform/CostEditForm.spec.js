@@ -135,7 +135,7 @@ describe('CostEditForm.vue', () => {
     const buttons = wrapper.findAllComponents({ name: 'VBtn' });
     const activatorButton = buttons.at(0);
     expect(activatorButton.props().icon).toBe(false);
-    // VBtn variant="flat" by default for text buttons now
+    // VBtn static styling for text buttons
     expect(activatorButton.props().variant).toBe('flat');
     expect(activatorButton.props().color).toBe('success');
     expect(activatorButton.props().rounded).toBe('pill');

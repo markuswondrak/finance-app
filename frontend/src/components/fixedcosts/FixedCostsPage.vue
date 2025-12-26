@@ -18,7 +18,6 @@
                 v-if="activeConfig"
                 :is="activeConfig.formComponent" 
                 btn-text="Neue Kosten Hinzufügen" 
-                btn-color="success" 
                 @saved="handleSaved" 
               />
             </template>

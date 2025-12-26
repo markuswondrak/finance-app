@@ -4,8 +4,8 @@
       <template v-slot:activator="{ props }">
         <v-btn 
           :icon="!btnText" 
-          :variant="btnText ? (btnVariant || 'flat') : 'text'" 
-          :color="btnText ? (btnColor || 'success') : undefined"
+          :variant="btnText ? 'flat' : 'text'" 
+          :color="btnText ? 'success' : undefined"
           :rounded="btnText ? 'pill' : undefined"
           :class="{ 'px-6': !!btnText }"
           small 
@@ -44,7 +44,7 @@
 </template>
 <script>
 export default {
-  props: ["title", "changed", "btnText", "icon", "successMsg", "name", "btnColor", "btnVariant"],
+  props: ["title", "changed", "btnText", "icon", "successMsg", "name"],
   data() {
     return {
       valid: false,

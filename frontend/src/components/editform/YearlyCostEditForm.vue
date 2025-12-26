@@ -4,8 +4,6 @@
     :title="title('Jährliche Kosten')"
     :changed="changed"
     :btn-text="btnText"
-    :btn-color="btnColor"
-    :btn-variant="btnVariant"
     :name="form.name"
     @save="saveCost"
     @open="form = costToForm(cost)"
@@ -79,7 +77,7 @@ export default {
     FromToDateFields,
     IncomingSelect
   },
-  props: ["btnText", "btnColor", "btnVariant"],
+  props: ["btnText"],
   data() {
     return {
       items: toSelectItems(monthMap)
