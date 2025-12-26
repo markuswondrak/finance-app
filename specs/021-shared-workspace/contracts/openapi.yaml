@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: Workspace Management API
+  version: 1.0.0
+paths:
+  /api/workspaces/invites:
+    post:
+      summary: Generate an invite link and send email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '201':
+          description: Invite created and email sent
+  /api/workspaces/join:
+    post:
+      summary: Join a workspace using a token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                confirm_purge:
+                  type: boolean
+                  description: Must be true if user has existing data
+      responses:
+        '200':
+          description: Successfully joined workspace
+        '400':
+          description: Invalid token or missing purge confirmation
+  /api/workspaces/members/{user_id}:
+    delete:
+      summary: Remove a member from the workspace
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Member removed
+  /api/workspaces/leave:
+    post:
+      summary: Voluntarily leave the current workspace
+      responses:
+        '204':
+          description: Left workspace, user reset to empty state

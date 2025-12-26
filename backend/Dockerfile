@@ -34,6 +34,9 @@ WORKDIR /
 # Copy the binary from the builder stage
 COPY --from=builder /app/server /server
 
+# Copy templates for email services
+COPY --from=builder /app/templates /templates
+
 # Cloud Run defaults to port 8080
 EXPOSE 8080
 
