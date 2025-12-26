@@ -5,6 +5,8 @@
     :successMsg="successMsg('Sonderkosten')"
     :changed="changed"
     :btn-text="btnText"
+    :btn-color="btnColor"
+    :btn-variant="btnVariant"
     :icon="icon"
     :name="form.name"
     @save="saveCost"
@@ -80,7 +82,7 @@ export default {
     BaseTextField,
     IncomingSelect
   },
-  props: ["btnText", "icon"],
+  props: ["btnText", "icon", "btnColor", "btnVariant"],
   computed: {
     // These computed properties are added for testing compatibility (T012)
     type() {

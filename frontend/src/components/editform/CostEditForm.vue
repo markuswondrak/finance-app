@@ -2,7 +2,15 @@
   <span>
     <v-dialog v-model="dialog" max-width="800" persistent @after-enter="triggerFocus">
       <template v-slot:activator="{ props }">
-        <v-btn :icon="!btnText" :variant="!!btnText ? 'text' : undefined" small v-bind="props">
+        <v-btn 
+          :icon="!btnText" 
+          :variant="btnText ? (btnVariant || 'flat') : 'text'" 
+          :color="btnText ? (btnColor || 'success') : undefined"
+          :rounded="btnText ? 'pill' : undefined"
+          :class="{ 'px-6': !!btnText }"
+          small 
+          v-bind="props"
+        >
           <v-icon v-if="!btnText" size="small">{{ btnIcon }}</v-icon>
           <span v-if="!!btnText">{{ btnText }}</span>
         </v-btn>
@@ -36,7 +44,7 @@
 </template>
 <script>
 export default {
-  props: ["title", "changed", "btnText", "icon", "successMsg", "name"],
+  props: ["title", "changed", "btnText", "icon", "successMsg", "name", "btnColor", "btnVariant"],
   data() {
     return {
       valid: false,

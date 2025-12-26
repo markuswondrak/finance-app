@@ -114,9 +114,8 @@ describe('CostEditForm.vue', () => {
     const buttons = wrapper.findAllComponents({ name: 'VBtn' });
     const activatorButton = buttons.at(0);
     expect(activatorButton.props().icon).toBe(true);
-    // VBtn variant="text" if !!btnText is true. Here btnText is null.
-    // So variant should be undefined or 'default'.
-    expect(activatorButton.props().variant).not.toBe('text'); 
+    // VBtn variant="text" for icon-only buttons
+    expect(activatorButton.props().variant).toBe('text'); 
   });
 
   it('should render text button when btnText is provided', () => {
@@ -136,7 +135,10 @@ describe('CostEditForm.vue', () => {
     const buttons = wrapper.findAllComponents({ name: 'VBtn' });
     const activatorButton = buttons.at(0);
     expect(activatorButton.props().icon).toBe(false);
-    expect(activatorButton.props().variant).toBe('text');
+    // VBtn variant="flat" by default for text buttons now
+    expect(activatorButton.props().variant).toBe('flat');
+    expect(activatorButton.props().color).toBe('success');
+    expect(activatorButton.props().rounded).toBe('pill');
   });
 
   it('should display title in dialog', async () => {
