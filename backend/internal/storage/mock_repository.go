@@ -2,6 +2,7 @@ package storage
 
 import (
 	"errors"
+	"sort"
 	"wondee/finance-app-backend/internal/models"
 	"gorm.io/gorm"
 )
@@ -21,6 +22,18 @@ func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
 			filtered = append(filtered, c)
 		}
 	}
+
+	sort.Slice(filtered, func(i, j int) bool {
+		isIncomeI := filtered[i].Amount >= 0
+		isIncomeJ := filtered[j].Amount >= 0
+
+		if isIncomeI != isIncomeJ {
+			return isIncomeI
+		}
+
+		return filtered[i].Name < filtered[j].Name
+	})
+
 	return &filtered
 }
 
@@ -58,6 +71,24 @@ func (m *MockRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost {
 			filtered = append(filtered, c)
 		}
 	}
+
+	sort.Slice(filtered, func(i, j int) bool {
+		d1 := filtered[i].DueDate
+		d2 := filtered[j].DueDate
+
+		if d1 == nil {
+			return true
+		}
+		if d2 == nil {
+			return false
+		}
+
+		if d1.Year != d2.Year {
+			return d1.Year < d2.Year
+		}
+		return d1.Month < d2.Month
+	})
+
 	return &filtered
 }
 

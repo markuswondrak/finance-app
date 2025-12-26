@@ -1,12 +1,31 @@
 package storage
 
 import (
+	"sort"
 	"wondee/finance-app-backend/internal/models"
 )
 
 func (r *GormRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost {
 	var specialCosts []models.SpecialCost
 	r.DB.Where("user_id = ?", userID).Find(&specialCosts)
+
+	sort.Slice(specialCosts, func(i, j int) bool {
+		d1 := specialCosts[i].DueDate
+		d2 := specialCosts[j].DueDate
+
+		if d1 == nil {
+			return true
+		}
+		if d2 == nil {
+			return false
+		}
+
+		if d1.Year != d2.Year {
+			return d1.Year < d2.Year
+		}
+		return d1.Month < d2.Month
+	})
+
 	return &specialCosts
 }
 

@@ -1,12 +1,25 @@
 package storage
 
 import (
+	"sort"
 	"wondee/finance-app-backend/internal/models"
 )
 
 func (r *GormRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
 	var costs []models.FixedCost
 	r.DB.Where("user_id = ?", userID).Find(&costs)
+
+	sort.Slice(costs, func(i, j int) bool {
+		isIncomeI := costs[i].Amount >= 0
+		isIncomeJ := costs[j].Amount >= 0
+
+		if isIncomeI != isIncomeJ {
+			return isIncomeI
+		}
+
+		return costs[i].Name < costs[j].Name
+	})
+
 	return &costs
 }
 
