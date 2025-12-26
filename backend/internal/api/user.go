@@ -32,5 +32,40 @@ func (s *Server) UpdateCurrentAmount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"amount": *req.Amount})
-}
+		c.JSON(http.StatusOK, gin.H{"amount": *req.Amount})
+
+	}
+
+	
+
+	func (s *Server) DeleteCurrentUser(c *gin.Context) {
+
+		userID := s.getUserID(c)
+
+		if userID == 0 {
+
+			c.Status(http.StatusUnauthorized)
+
+			return
+
+		}
+
+	
+
+		err := s.Repo.Delete(userID)
+
+		if err != nil {
+
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+
+			return
+
+		}
+
+	
+
+		c.Status(http.StatusNoContent)
+
+	}
+
+	

@@ -22,6 +22,16 @@ export const AuthService = {
       window.location.href = '/';
     }
   },
+
+  async deleteAccount() {
+    try {
+      await axios.delete('/api/user', { withCredentials: true });
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Delete account failed', error);
+      throw error;
+    }
+  },
   
   login() {
     window.location.href = `${API_URL}/google/login`;

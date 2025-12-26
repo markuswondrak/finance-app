@@ -138,6 +138,22 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 			return
 		}
+
+		// Create default wealth profile for new user
+		defaultProfile := &models.WealthProfile{
+			UserID:                user.ID,
+			ForecastDurationYears: 10,
+			RateWorstCase:         3.0,
+			RateAverageCase:       5.0,
+			RateBestCase:          7.0,
+			CurrentWealth:         0.0,
+			CreatedAt:             time.Now(),
+			UpdatedAt:             time.Now(),
+		}
+		if err := h.Repo.UpsertWealthProfile(defaultProfile); err != nil {
+			// Log warning but continue login
+			fmt.Printf("Warning: Failed to create default wealth profile for user %d: %v\n", user.ID, err)
+		}
 	} else {
 		// Update existing user info
 		user.Name = googleUser.Name

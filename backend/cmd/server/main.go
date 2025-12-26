@@ -116,6 +116,7 @@ func main() {
 		apiGroup.DELETE("/specialcosts/:id", server.DeleteSpecialCosts)
 
 		apiGroup.PUT("/user/current-amount", server.UpdateCurrentAmount)
+		apiGroup.DELETE("/user", server.DeleteCurrentUser)
 
 		apiGroup.GET("/wealth-profile", server.GetWealthProfile)
 		apiGroup.PUT("/wealth-profile", server.UpsertWealthProfile)

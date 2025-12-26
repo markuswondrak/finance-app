@@ -3,6 +3,7 @@ import Overview from '../components/overview/OverviewPage.vue'
 import FixedCosts from '../components/fixedcosts/FixedCostsPage.vue'
 import SpecialCosts from '../components/SpecialCostsPage.vue'
 import WealthOverviewPage from '../components/wealth/WealthOverviewPage.vue'
+import UserSettingsPage from '../components/settings/UserSettingsPage.vue'
 import LandingPage from '../components/landing/LandingPage.vue'
 import { AuthService } from '../services/auth'
 
@@ -30,6 +31,11 @@ const routes = [
   { 
     path: '/specialcosts', 
     component: SpecialCosts,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/settings', 
+    component: UserSettingsPage,
     meta: { requiresAuth: true }
   }
 ]

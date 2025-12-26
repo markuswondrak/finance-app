@@ -27,6 +27,21 @@ func (m *MockRepository) UpsertWealthProfile(profile *models.WealthProfile) erro
 	return args.Error(0)
 }
 
+// Add other repository methods as needed for interface satisfaction (placeholders)
+func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost { return nil }
+func (m *MockRepository) SaveFixedObject(cost *models.FixedCost) {}
+func (m *MockRepository) DeleteFixedCost(id int, userID uint) {}
+func (m *MockRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost { return nil }
+func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost) {}
+func (m *MockRepository) DeleteSpecialCost(id int, userID uint) {}
+func (m *MockRepository) GetUser() (*models.User, error) { return nil, nil }
+func (m *MockRepository) UpdateUserCurrentAmount(amount int) error { return nil }
+func (m *MockRepository) Create(user *models.User) error { return nil }
+func (m *MockRepository) GetByEmail(email string) (*models.User, error) { return nil, nil }
+func (m *MockRepository) GetByID(id uint) (*models.User, error) { return nil, nil }
+func (m *MockRepository) Update(user *models.User) error { return nil }
+func (m *MockRepository) Delete(id uint) error { return nil }
+
 func TestGetWealthProfile_ReturnsDefaults_WhenNotFound(t *testing.T) {
 	mockRepo := new(MockRepository)
 	service := services.NewWealthProfileService(mockRepo)

@@ -165,7 +165,50 @@ func (m *MockRepository) Update(user *models.User) error {
 			return nil
 		}
 	}
-	return errors.New("user not found")
+	return nil
+}
+
+func (m *MockRepository) Delete(id uint) error {
+	var newUsers []models.User
+	found := false
+	for _, u := range m.Users {
+		if u.ID != id {
+			newUsers = append(newUsers, u)
+		} else {
+			found = true
+		}
+	}
+	if !found {
+		return errors.New("user not found")
+	}
+	m.Users = newUsers
+
+	// Clean up related data in mock
+	var newFixed []models.FixedCost
+	for _, c := range m.FixedCosts {
+		if c.UserID != id {
+			newFixed = append(newFixed, c)
+		}
+	}
+	m.FixedCosts = newFixed
+
+	var newSpecial []models.SpecialCost
+	for _, c := range m.SpecialCosts {
+		if c.UserID != id {
+			newSpecial = append(newSpecial, c)
+		}
+	}
+	m.SpecialCosts = newSpecial
+
+	var newProfiles []models.WealthProfile
+	for _, p := range m.WealthProfiles {
+		if p.UserID != id {
+			newProfiles = append(newProfiles, p)
+		}
+	}
+	m.WealthProfiles = newProfiles
+
+	return nil
 }
 
 func (m *MockRepository) GetWealthProfile(userID uint) (*models.WealthProfile, error) {

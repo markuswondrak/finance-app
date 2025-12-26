@@ -99,7 +99,10 @@
                 :key="index"
                 :value="index"
                 class="menu-item mx-2 rounded mb-1"
-                @click="item.action"
+                :to="item.disabled ? null : item.to"
+                :disabled="item.disabled"
+                :style="item.disabled ? 'opacity: 0.5; pointer-events: none;' : ''"
+                @click="!item.disabled && item.action ? item.action() : null"
               >
                 <template v-slot:prepend>
                   <v-icon :icon="item.icon" size="small" class="mr-3 text-grey-lighten-1"></v-icon>
@@ -204,8 +207,8 @@ const handleImageError = () => {
 }
 
 const menuItems = [
-    { title: 'Profile Settings', icon: 'fa-user-gear', action: () => {} },
-    { title: 'Subscription', icon: 'fa-credit-card', action: () => {} },
+    { title: 'Profile Settings', icon: 'fa-user-gear', to: '/settings' },
+    { title: 'Subscription', icon: 'fa-credit-card', to: '/subscription', disabled: true },
 ];
 </script>
 

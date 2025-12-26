@@ -2,6 +2,8 @@ package storage
 
 import (
 	"wondee/finance-app-backend/internal/models"
+
+	"gorm.io/gorm"
 )
 
 type UserRepository interface {
@@ -11,6 +13,7 @@ type UserRepository interface {
 	GetByEmail(email string) (*models.User, error)
 	GetByID(id uint) (*models.User, error)
 	Update(user *models.User) error
+	Delete(id uint) error
 }
 
 func (r *GormRepository) GetUser() (*models.User, error) {
@@ -58,4 +61,27 @@ func (r *GormRepository) GetByID(id uint) (*models.User, error) {
 
 func (r *GormRepository) Update(user *models.User) error {
 	return r.DB.Save(user).Error
+}
+
+func (r *GormRepository) Delete(id uint) error {
+	// GORM will handle cascading deletes if configured in models, 
+	// or we can manually delete related data if needed.
+	// models.WealthProfile has OnDelete:CASCADE on UserID.
+	// FixedCost and SpecialCost also need to be checked.
+	
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		// Delete related records that might not have CASCADE set up in DB
+		if err := tx.Where("user_id = ?", id).Delete(&models.FixedCost{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("user_id = ?", id).Delete(&models.SpecialCost{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("user_id = ?", id).Delete(&models.WealthProfile{}).Error; err != nil {
+			return err
+		}
+		
+		// Finally delete the user
+		return tx.Delete(&models.User{}, id).Error
+	})
 }
