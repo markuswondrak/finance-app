@@ -47,6 +47,32 @@ resource "google_secret_manager_secret_version" "jwt_secret_val" {
   secret_data = var.jwt_secret
 }
 
+# Mailjet API Key
+resource "google_secret_manager_secret" "mailjet_api_key" {
+  secret_id = "finanz-mailjet-api-key"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "mailjet_api_key_val" {
+  secret = google_secret_manager_secret.mailjet_api_key.id
+  secret_data = var.mailjet_api_key
+}
+
+# Mailjet Secret Key
+resource "google_secret_manager_secret" "mailjet_secret_key" {
+  secret_id = "finanz-mailjet-secret-key"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "mailjet_secret_key_val" {
+  secret = google_secret_manager_secret.mailjet_secret_key.id
+  secret_data = var.mailjet_secret_key
+}
+
 # ==========================================
 # 4. BACKEND SERVICE (Cloud Run)
 # ==========================================
@@ -116,6 +142,32 @@ resource "google_cloud_run_v2_service" "backend" {
           }
         }
       }
+      env {
+        name = "MAILJET_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.mailjet_api_key.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "MAILJET_SECRET_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.mailjet_secret_key.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name  = "MAILJET_FROM_EMAIL"
+        value = "noreply-invite@wondee.info"
+      }
+      env {
+        name  = "MAILJET_FROM_NAME"
+        value = "Finanz App"
+      }
     }
     vpc_access {
       connector = google_vpc_access_connector.connector.id
@@ -140,6 +192,18 @@ resource "google_secret_manager_secret_iam_member" "backend_client_secret_access
 
 resource "google_secret_manager_secret_iam_member" "backend_jwt_secret_access" {
   secret_id = google_secret_manager_secret.jwt_secret.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.backend_sa.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "backend_mailjet_api_key_access" {
+  secret_id = google_secret_manager_secret.mailjet_api_key.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.backend_sa.email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "backend_mailjet_secret_key_access" {
+  secret_id = google_secret_manager_secret.mailjet_secret_key.id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${google_service_account.backend_sa.email}"
 }

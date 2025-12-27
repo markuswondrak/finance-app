@@ -47,3 +47,15 @@ variable "jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "mailjet_api_key" {
+  description = "Mailjet API Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "mailjet_secret_key" {
+  description = "Mailjet Secret Key"
+  type        = string
+  sensitive   = true
+}

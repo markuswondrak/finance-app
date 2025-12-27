@@ -47,9 +47,9 @@ type JsonFixedCost struct {
 
 func (s *Server) GetFixedCosts(c *gin.Context) {
 
-        userID := s.getUserID(c)
+        workspaceID := s.getWorkspaceID(c)
 
-        c.IndentedJSON(http.StatusOK, s.createFixedCosts(userID))
+        c.IndentedJSON(http.StatusOK, s.createFixedCosts(workspaceID))
 
 }
 
@@ -73,9 +73,9 @@ func (s *Server) DeleteFixedCosts(c *gin.Context) {
 
 
 
-        userID := s.getUserID(c)
+        workspaceID := s.getWorkspaceID(c)
 
-        s.Repo.DeleteFixedCost(id, userID)
+        s.Repo.DeleteFixedCost(id, workspaceID)
 
 }
 
@@ -184,6 +184,7 @@ func (s *Server) saveFixedCost(c *gin.Context, dueMonthConverter func(int) ([]in
 
 
         dbObject.UserID = s.getUserID(c)
+        dbObject.WorkspaceID = s.getWorkspaceID(c)
 
         s.Repo.SaveFixedObject(dbObject)
 
@@ -191,11 +192,11 @@ func (s *Server) saveFixedCost(c *gin.Context, dueMonthConverter func(int) ([]in
 
 
 
-func (s *Server) createFixedCosts(userID uint) Response {
+func (s *Server) createFixedCosts(workspaceID uint) Response {
 
 
 
-        costs := s.Repo.LoadFixedCosts(userID)
+        costs := s.Repo.LoadFixedCosts(workspaceID)
 
         totalAnnualBalance := 0
 

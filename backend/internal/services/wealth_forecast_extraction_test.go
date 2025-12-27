@@ -7,10 +7,13 @@ import (
 )
 
 func TestCalculateForecast_WithWealthExtraction(t *testing.T) {
+	var workspaceID uint = 1
+
 	mockRepo := &storage.MockRepository{
 		WealthProfiles: []models.WealthProfile{
 			{
 				UserID:                1,
+				WorkspaceID:           workspaceID,
 				CurrentWealth:         10000,
 				ForecastDurationYears: 1,
 				RateWorstCase:         0.0,
@@ -20,17 +23,18 @@ func TestCalculateForecast_WithWealthExtraction(t *testing.T) {
 		},
 		FixedCosts: []models.FixedCost{
 			{
-				UserID:   1,
-				Name:     "Pension Payout",
-				Amount:   500, // Positive amount = Extraction
-				IsSaving: true,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Pension Payout",
+				Amount:      500, // Positive amount = Extraction
+				IsSaving:    true,
 			},
 		},
 	}
 
 	service := NewWealthForecastService(mockRepo)
 
-	forecast, err := service.CalculateForecast(1)
+	forecast, err := service.CalculateForecast(1, workspaceID)
 
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
@@ -39,11 +43,11 @@ func TestCalculateForecast_WithWealthExtraction(t *testing.T) {
 	// Expected behavior:
 	// Extraction of 500 per month means Wealth reduces by 500 per month.
 	// Monthly change should be -500.
-	
+
 	// Note: The current implementation might calculate 'MonthlySaving' as an absolute sum.
 	// We want it to reflect the net flow.
 	// If the service sums up "Savings", extraction is negative saving.
-	
+
 	if forecast.MonthlySaving != -500 {
 		t.Errorf("Expected monthly saving/flow of -500, got %f", forecast.MonthlySaving)
 	}

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"wondee/finance-app-backend/internal/models"
 	"wondee/finance-app-backend/internal/storage"
+
 	"gorm.io/gorm"
 )
 
@@ -15,13 +16,13 @@ func NewWealthProfileService(repo storage.WealthProfileRepository) *WealthProfil
 	return &WealthProfileService{repo: repo}
 }
 
-func (s *WealthProfileService) GetProfile(userID uint) (*models.WealthProfile, error) {
-	profile, err := s.repo.GetWealthProfile(userID)
+func (s *WealthProfileService) GetProfile(workspaceID uint) (*models.WealthProfile, error) {
+	profile, err := s.repo.GetWealthProfile(workspaceID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Return defaults
 			return &models.WealthProfile{
-				UserID:                userID,
+				WorkspaceID:           workspaceID,
 				ForecastDurationYears: 10,
 				RateWorstCase:         3.0,
 				RateAverageCase:       5.0,

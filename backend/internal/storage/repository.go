@@ -2,6 +2,7 @@ package storage
 
 import (
 	"wondee/finance-app-backend/internal/models"
+
 	"gorm.io/gorm"
 )
 
@@ -9,13 +10,17 @@ import (
 type Repository interface {
 	UserRepository
 	WealthProfileRepository
-	LoadFixedCosts(userID uint) *[]models.FixedCost
+	WorkspaceRepository
+	InviteRepository
+	LoadFixedCosts(workspaceID uint) *[]models.FixedCost
+	LoadFixedCostsByUser(userID uint) *[]models.FixedCost
 	SaveFixedObject(cost *models.FixedCost)
-	DeleteFixedCost(id int, userID uint)
+	DeleteFixedCost(id int, workspaceID uint)
 
-	LoadSpecialCosts(userID uint) *[]models.SpecialCost
+	LoadSpecialCosts(workspaceID uint) *[]models.SpecialCost
+	LoadSpecialCostsByUser(userID uint) *[]models.SpecialCost
 	SaveSpecialCost(cost *models.SpecialCost)
-	DeleteSpecialCost(id int, userID uint)
+	DeleteSpecialCost(id int, workspaceID uint)
 }
 
 // GormRepository implements Repository using GORM

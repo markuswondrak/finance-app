@@ -14,6 +14,22 @@ type UserRepository interface {
 	GetByID(id uint) (*models.User, error)
 	Update(user *models.User) error
 	Delete(id uint) error
+	PurgeUserData(userID uint) error
+}
+
+func (r *GormRepository) PurgeUserData(userID uint) error {
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("user_id = ?", userID).Delete(&models.FixedCost{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("user_id = ?", userID).Delete(&models.SpecialCost{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("user_id = ?", userID).Delete(&models.WealthProfile{}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func (r *GormRepository) GetUser() (*models.User, error) {

@@ -42,26 +42,41 @@ func (m *MockRepository) Update(user *models.User) error {
 	return args.Error(0)
 }
 
-// Add other repository methods as needed for interface satisfaction (placeholders)
-func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost { return nil }
-func (m *MockRepository) SaveFixedObject(cost *models.FixedCost) {}
-func (m *MockRepository) DeleteFixedCost(id int, userID uint) {}
-func (m *MockRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost { return nil }
-func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost) {}
-func (m *MockRepository) DeleteSpecialCost(id int, userID uint) {}
-func (m *MockRepository) GetUser() (*models.User, error) { return nil, nil }
-func (m *MockRepository) UpdateUserCurrentAmount(amount int) error { return nil }
-func (m *MockRepository) Delete(id uint) error { return nil }
-func (m *MockRepository) GetWealthProfile(userID uint) (*models.WealthProfile, error) { return nil, nil }
+// Repository interface methods (placeholders)
+func (m *MockRepository) LoadFixedCosts(workspaceID uint) *[]models.FixedCost        { return nil }
+func (m *MockRepository) LoadFixedCostsByUser(userID uint) *[]models.FixedCost       { return nil }
+func (m *MockRepository) SaveFixedObject(cost *models.FixedCost)                     {}
+func (m *MockRepository) DeleteFixedCost(id int, workspaceID uint)                   {}
+func (m *MockRepository) LoadSpecialCosts(workspaceID uint) *[]models.SpecialCost    { return nil }
+func (m *MockRepository) LoadSpecialCostsByUser(userID uint) *[]models.SpecialCost   { return nil }
+func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost)                   {}
+func (m *MockRepository) DeleteSpecialCost(id int, workspaceID uint)                 {}
+func (m *MockRepository) GetUser() (*models.User, error)                             { return nil, nil }
+func (m *MockRepository) UpdateUserCurrentAmount(amount int) error                   { return nil }
+func (m *MockRepository) Delete(id uint) error                                       { return nil }
+func (m *MockRepository) GetWealthProfile(workspaceID uint) (*models.WealthProfile, error) {
+	return nil, nil
+}
 func (m *MockRepository) UpsertWealthProfile(profile *models.WealthProfile) error { return nil }
+func (m *MockRepository) PurgeUserData(userID uint) error                         { return nil }
 
+// Workspace methods
+func (m *MockRepository) CreateWorkspace(workspace *models.Workspace) error       { return nil }
+func (m *MockRepository) GetWorkspaceByID(id uint) (*models.Workspace, error)     { return nil, nil }
+func (m *MockRepository) UpdateWorkspace(workspace *models.Workspace) error       { return nil }
+
+// Invite methods
+func (m *MockRepository) CreateInvite(invite *models.Invite) error                { return nil }
+func (m *MockRepository) GetInviteByToken(token string) (*models.Invite, error)   { return nil, nil }
+func (m *MockRepository) UpdateInvite(invite *models.Invite) error                { return nil }
+func (m *MockRepository) DeleteInvite(token string) error                         { return nil }
 
 func TestLogin(t *testing.T) {
 	// Setup
 	gin.SetMode(gin.TestMode)
 	mockRepo := new(MockRepository)
 	authHandler := NewAuthHandler(mockRepo)
-	
+
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	// Need a request for Redirect to work
@@ -81,7 +96,7 @@ func TestMe_Unauthorized(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	mockRepo := new(MockRepository)
 	authHandler := NewAuthHandler(mockRepo)
-	
+
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request, _ = http.NewRequest("GET", "/auth/me", nil)

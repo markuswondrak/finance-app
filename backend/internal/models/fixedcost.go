@@ -7,14 +7,15 @@ import (
 )
 
 type FixedCost struct {
-	ID       int  `gorm:"primary_key"`
-	UserID   uint `json:"user_id"`
-	Name     string
-	Amount   int
-	From     *YearMonth
-	To       *YearMonth
-	DueMonth Months `gorm:"type:string"`
-	IsSaving bool
+	ID          int    `gorm:"primary_key"`
+	UserID      uint   `json:"user_id"`
+	WorkspaceID uint   `json:"workspace_id"`
+	Name        string
+	Amount      int
+	From        *YearMonth
+	To          *YearMonth
+	DueMonth    Months `gorm:"type:string"`
+	IsSaving    bool
 }
 
 type Months []int

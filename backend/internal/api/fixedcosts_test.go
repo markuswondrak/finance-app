@@ -59,18 +59,20 @@ func TestToDBStruct(t *testing.T) {
 }
 
 func TestCreateFixedCosts(t *testing.T) {
+	var workspaceID uint = 1
+
 	mockRepo := &storage.MockRepository{
 		FixedCosts: []models.FixedCost{
-			{ID: 1, UserID: 1, Name: "M1", Amount: 10, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, From: &models.YearMonth{Year: 2000, Month: 1}}, // Monthly
-			{ID: 2, UserID: 1, Name: "Q1", Amount: 20, DueMonth: []int{1, 4, 7, 10}, From: &models.YearMonth{Year: 2000, Month: 1}},                       // Quarterly
-			{ID: 3, UserID: 1, Name: "H1", Amount: 30, DueMonth: []int{1, 7}, From: &models.YearMonth{Year: 2000, Month: 1}},                              // HalfYearly
-			{ID: 4, UserID: 1, Name: "Y1", Amount: 40, DueMonth: []int{1}, From: &models.YearMonth{Year: 2000, Month: 1}},                                 // Yearly
-			{ID: 5, UserID: 2, Name: "M2", Amount: 50, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, From: &models.YearMonth{Year: 2000, Month: 1}}, // Another user
+			{ID: 1, UserID: 1, WorkspaceID: workspaceID, Name: "M1", Amount: 10, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, From: &models.YearMonth{Year: 2000, Month: 1}}, // Monthly
+			{ID: 2, UserID: 1, WorkspaceID: workspaceID, Name: "Q1", Amount: 20, DueMonth: []int{1, 4, 7, 10}, From: &models.YearMonth{Year: 2000, Month: 1}},                          // Quarterly
+			{ID: 3, UserID: 1, WorkspaceID: workspaceID, Name: "H1", Amount: 30, DueMonth: []int{1, 7}, From: &models.YearMonth{Year: 2000, Month: 1}},                                 // HalfYearly
+			{ID: 4, UserID: 1, WorkspaceID: workspaceID, Name: "Y1", Amount: 40, DueMonth: []int{1}, From: &models.YearMonth{Year: 2000, Month: 1}},                                    // Yearly
+			{ID: 5, UserID: 2, WorkspaceID: 2, Name: "M2", Amount: 50, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}, From: &models.YearMonth{Year: 2000, Month: 1}},           // Another workspace
 		},
 	}
 	server := NewServer(mockRepo)
 
-	resp := server.createFixedCosts(1)
+	resp := server.createFixedCosts(workspaceID)
 
 	if len(resp.Monthly) != 1 {
 		t.Errorf("Expected 1 monthly cost, got %d", len(resp.Monthly))

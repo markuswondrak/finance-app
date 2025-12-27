@@ -7,10 +7,13 @@ import (
 )
 
 func TestCalculateForecast(t *testing.T) {
+	var workspaceID uint = 1
+
 	mockRepo := &storage.MockRepository{
 		WealthProfiles: []models.WealthProfile{
 			{
 				UserID:                1,
+				WorkspaceID:           workspaceID,
 				CurrentWealth:         10000,
 				ForecastDurationYears: 5,
 				RateWorstCase:         0.0,
@@ -20,23 +23,25 @@ func TestCalculateForecast(t *testing.T) {
 		},
 		FixedCosts: []models.FixedCost{
 			{
-				UserID:   1,
-				Name:     "Saving",
-				Amount:   -500,
-				IsSaving: true,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Saving",
+				Amount:      -500,
+				IsSaving:    true,
 			},
 			{
-				UserID:   1,
-				Name:     "Rent",
-				Amount:   -1000,
-				IsSaving: false,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Rent",
+				Amount:      -1000,
+				IsSaving:    false,
 			},
 		},
 	}
 
 	service := NewWealthForecastService(mockRepo)
 
-	forecast, err := service.CalculateForecast(1)
+	forecast, err := service.CalculateForecast(1, workspaceID)
 
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
@@ -69,12 +74,14 @@ func TestCalculateForecast(t *testing.T) {
 }
 
 func TestCalculateForecast_WithSpecialSavingsAndFromSavings(t *testing.T) {
+	var workspaceID uint = 2
 	specialSavingDate := models.AddMonths(models.CurrentYearMonth(), 2)
 
 	mockRepo := &storage.MockRepository{
 		WealthProfiles: []models.WealthProfile{
 			{
 				UserID:                1,
+				WorkspaceID:           workspaceID,
 				CurrentWealth:         10000,
 				ForecastDurationYears: 2, // 1 year for simplicity
 				RateWorstCase:         0.0,
@@ -84,34 +91,37 @@ func TestCalculateForecast_WithSpecialSavingsAndFromSavings(t *testing.T) {
 		},
 		FixedCosts: []models.FixedCost{
 			{
-				UserID:   1,
-				Name:     "Saving",
-				Amount:   -100,
-				IsSaving: true,
-				From:     models.AddMonths(models.CurrentYearMonth(), 12),
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Saving",
+				Amount:      -100,
+				IsSaving:    true,
+				From:        models.AddMonths(models.CurrentYearMonth(), 12),
 			},
 		}, // No monthly savings
 		SpecialCosts: []models.SpecialCost{
 			{
-				UserID:   1,
-				Name:     "Bonus",
-				Amount:   -5000, // Negative for Saving (Wealth Increase)
-				IsSaving: true,
-				DueDate:  specialSavingDate,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Bonus",
+				Amount:      -5000, // Negative for Saving (Wealth Increase)
+				IsSaving:    true,
+				DueDate:     specialSavingDate,
 			},
 			{
-				UserID:   1,
-				Name:     "Car",
-				Amount:   20000,
-				IsSaving: false, // Expense, should be IGNORED per current logic
-				DueDate:  specialSavingDate,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Car",
+				Amount:      20000,
+				IsSaving:    false, // Expense, should be IGNORED per current logic
+				DueDate:     specialSavingDate,
 			},
 		},
 	}
 
 	service := NewWealthForecastService(mockRepo)
 
-	forecast, err := service.CalculateForecast(1)
+	forecast, err := service.CalculateForecast(1, workspaceID)
 
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
@@ -144,7 +154,7 @@ func TestCalculateForecast_NoProfile(t *testing.T) {
 	mockRepo := &storage.MockRepository{}
 	service := NewWealthForecastService(mockRepo)
 
-	_, err := service.CalculateForecast(999)
+	_, err := service.CalculateForecast(999, 999)
 	if err == nil {
 		t.Error("Expected error for missing profile")
 	}

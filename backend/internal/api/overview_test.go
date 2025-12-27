@@ -7,10 +7,13 @@ import (
 )
 
 func TestCreateOverview(t *testing.T) {
+	var workspaceID uint = 1
+
 	mockRepo := &storage.MockRepository{
 		Users: []models.User{
 			{
 				ID:            1,
+				WorkspaceID:   workspaceID,
 				CurrentAmount: 1234,
 			},
 		},
@@ -19,7 +22,7 @@ func TestCreateOverview(t *testing.T) {
 	}
 	server := NewServer(mockRepo)
 
-	overview := server.createOverview(1)
+	overview := server.createOverview(1, workspaceID)
 
 	if overview.CurrentAmount != 1234 {
 		t.Errorf("Expected CurrentAmount 1234, got %d", overview.CurrentAmount)
@@ -27,30 +30,34 @@ func TestCreateOverview(t *testing.T) {
 }
 
 func TestCreateOverviewDetail(t *testing.T) {
+	var workspaceID uint = 1
 	dueDate := models.CurrentYearMonth()
+
 	mockRepo := &storage.MockRepository{
 		FixedCosts: []models.FixedCost{
 			{
-				ID:       10,
-				UserID:   1,
-				Name:     "Rent",
-				Amount:   -500,
-				DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				ID:          10,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Rent",
+				Amount:      -500,
+				DueMonth:    []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 			},
 		},
 		SpecialCosts: []models.SpecialCost{
 			{
-				ID:      20,
-				UserID:  1,
-				Name:    "Car",
-				Amount:  -1000,
-				DueDate: dueDate,
+				ID:          20,
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Car",
+				Amount:      -1000,
+				DueDate:     dueDate,
 			},
 		},
 	}
 	server := NewServer(mockRepo)
 
-	detail := server.createOverviewDetail(0, 1)
+	detail := server.createOverviewDetail(0, workspaceID)
 
 	foundSpecial := false
 	for _, c := range detail.SpecialCosts {

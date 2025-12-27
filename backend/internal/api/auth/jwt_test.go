@@ -10,10 +10,11 @@ import (
 func TestJWT(t *testing.T) {
 	secret := "testsecret"
 	userID := uint(1)
+	var workspaceID uint = 1
 	expiry := 24 * time.Hour
 
 	// Test Generate
-	tokenString, err := GenerateJWT(userID, secret, expiry)
+	tokenString, err := GenerateJWT(userID, workspaceID, secret, expiry)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, tokenString)
 
@@ -21,6 +22,7 @@ func TestJWT(t *testing.T) {
 	claims, err := ValidateJWT(tokenString, secret)
 	assert.NoError(t, err)
 	assert.Equal(t, userID, claims.UserID)
-	
+	assert.Equal(t, workspaceID, claims.WorkspaceID)
+
 	// Test Expired (mocking time might be needed for robust test, but simple check here)
 }

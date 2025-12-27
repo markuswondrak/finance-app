@@ -15,15 +15,15 @@ func NewWealthForecastService(repo storage.Repository) *WealthForecastService {
 	return &WealthForecastService{Repo: repo}
 }
 
-func (s *WealthForecastService) CalculateForecast(userID uint) (*models.ForecastResponse, error) {
+func (s *WealthForecastService) CalculateForecast(userID uint, workspaceID uint) (*models.ForecastResponse, error) {
 	// 1. Get Wealth Profile
-	profile, err := s.Repo.GetWealthProfile(userID)
+	profile, err := s.Repo.GetWealthProfile(workspaceID)
 	if err != nil {
 		return nil, err
 	}
 
 	// 2. Get Saving Fixed Costs
-	fixedCosts := s.Repo.LoadFixedCosts(userID)
+	fixedCosts := s.Repo.LoadFixedCosts(workspaceID)
 	monthlySaving := 0.0
 	var fixedCostsWithDependency []models.FixedCost
 	if fixedCosts != nil {
@@ -42,7 +42,7 @@ func (s *WealthForecastService) CalculateForecast(userID uint) (*models.Forecast
 	fmt.Println("--- fixed costs with dependency", fixedCostsWithDependency)
 
 	// 3. Get Special Costs (Savings)
-	specialCosts := s.Repo.LoadSpecialCosts(userID)
+	specialCosts := s.Repo.LoadSpecialCosts(workspaceID)
 	specialSavingsMap := make(map[models.YearMonth]float64)
 	if specialCosts != nil {
 		for _, cost := range *specialCosts {

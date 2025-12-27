@@ -22,32 +22,37 @@ func TestSurplusStatisticsStructure(t *testing.T) {
 }
 
 func TestCalculateSurplusStatistics(t *testing.T) {
+	var workspaceID uint = 1
+
 	mockRepo := &storage.MockRepository{
 		FixedCosts: []models.FixedCost{
 			{
-				UserID:   1,
-				Name:     "Salary",
-				Amount:   3000,
-				DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Salary",
+				Amount:      3000,
+				DueMonth:    []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 			},
 			{
-				UserID:   1,
-				Name:     "Rent",
-				Amount:   -1000,
-				DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Rent",
+				Amount:      -1000,
+				DueMonth:    []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 			},
 			{
-				UserID:   1,
-				Name:     "Insurance",
-				Amount:   -1200, // Yearly
-				DueMonth: []int{1},
+				UserID:      1,
+				WorkspaceID: workspaceID,
+				Name:        "Insurance",
+				Amount:      -1200, // Yearly
+				DueMonth:    []int{1},
 			},
 		},
 	}
 
 	server := NewServer(mockRepo)
 	current := &models.YearMonth{Year: 2023, Month: 6}
-	stats := server.CalculateSurplusStatistics(current, 1)
+	stats := server.CalculateSurplusStatistics(current, workspaceID)
 
 	expectedIncome := 3000.0
 	// Rent (1000) + Insurance (1200/12 = 100) = 1100
@@ -66,30 +71,35 @@ func TestCalculateSurplusStatistics(t *testing.T) {
 }
 
 func TestCalculateSurplusHistory(t *testing.T) {
+	var workspaceID uint = 1
+
 	// Rent changes from 1000 to 1200 in April
 	rentOld := models.FixedCost{
-		UserID:   1,
-		Name:     "Rent Old",
-		Amount:   -1000,
-		From:     &models.YearMonth{Year: 2023, Month: 1},
-		To:       &models.YearMonth{Year: 2023, Month: 3},
-		DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+		UserID:      1,
+		WorkspaceID: workspaceID,
+		Name:        "Rent Old",
+		Amount:      -1000,
+		From:        &models.YearMonth{Year: 2023, Month: 1},
+		To:          &models.YearMonth{Year: 2023, Month: 3},
+		DueMonth:    []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 	}
 	rentNew := models.FixedCost{
-		UserID:   1,
-		Name:     "Rent New",
-		Amount:   -1200,
-		From:     &models.YearMonth{Year: 2023, Month: 4},
-		To:       nil,
-		DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+		UserID:      1,
+		WorkspaceID: workspaceID,
+		Name:        "Rent New",
+		Amount:      -1200,
+		From:        &models.YearMonth{Year: 2023, Month: 4},
+		To:          nil,
+		DueMonth:    []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 	}
 	salary := models.FixedCost{
-		UserID:   1,
-		Name:     "Salary",
-		Amount:   3000,
-		From:     nil,
-		To:       nil,
-		DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+		UserID:      1,
+		WorkspaceID: workspaceID,
+		Name:        "Salary",
+		Amount:      3000,
+		From:        nil,
+		To:          nil,
+		DueMonth:    []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 	}
 
 	mockRepo := &storage.MockRepository{
@@ -98,7 +108,7 @@ func TestCalculateSurplusHistory(t *testing.T) {
 
 	server := NewServer(mockRepo)
 	current := &models.YearMonth{Year: 2023, Month: 6} // June
-	stats := server.CalculateSurplusStatistics(current, 1)
+	stats := server.CalculateSurplusStatistics(current, workspaceID)
 
 	if len(stats.History) != 6 {
 		t.Errorf("Expected 6 history points, got %d", len(stats.History))

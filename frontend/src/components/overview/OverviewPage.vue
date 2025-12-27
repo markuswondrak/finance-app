@@ -150,6 +150,13 @@ export default {
     }
   },
   created: async function() {
+    // Check for pending invite
+    const pendingToken = localStorage.getItem('pending_invite_token');
+    if (pendingToken) {
+       this.$router.push(`/invite/${pendingToken}`);
+       return;
+    }
+
     await this.loadData();
 
     var storageShowChart = localStorage.getItem("finance-config.showChart");

@@ -41,7 +41,8 @@ type OverviewDetail struct {
 
 func (s *Server) GetOverview(c *gin.Context) {
 	userID := s.getUserID(c)
-	c.IndentedJSON(http.StatusOK, s.createOverview(userID))
+	workspaceID := s.getWorkspaceID(c)
+	c.IndentedJSON(http.StatusOK, s.createOverview(userID, workspaceID))
 }
 
 func (s *Server) GetOverviewDetail(c *gin.Context) {
@@ -52,20 +53,21 @@ func (s *Server) GetOverviewDetail(c *gin.Context) {
 		return
 	}
 
-	userID := s.getUserID(c)
+	// userID := s.getUserID(c) // Not used if using workspaceID for costs
+	workspaceID := s.getWorkspaceID(c)
 	c.IndentedJSON(
 		http.StatusOK,
-		s.createOverviewDetail(n, userID),
+		s.createOverviewDetail(n, workspaceID),
 	)
 }
 
-func (s *Server) createOverviewDetail(n int, userID uint) OverviewDetail {
+func (s *Server) createOverviewDetail(n int, workspaceID uint) OverviewDetail {
 	if n > MAX_ENTRIES {
 		return OverviewDetail{}
 	}
 
-	relevantFixedCostsMap := s.createRelevantMap(userID)
-	specialCostMap := s.createSpecialCostMap(userID)
+	relevantFixedCostsMap := s.createRelevantMap(workspaceID)
+	specialCostMap := s.createSpecialCostMap(workspaceID)
 
 	yearMonth := models.AddMonths(models.CurrentYearMonth(), n)
 
@@ -116,7 +118,7 @@ func determineDisplayType(dueMonth []int) string {
 	}
 }
 
-func (s *Server) createOverview(userID uint) Overview {
+func (s *Server) createOverview(userID uint, workspaceID uint) Overview {
 	// TODO retrieve current amount
 
 	currentAmount := 0
@@ -126,8 +128,8 @@ func (s *Server) createOverview(userID uint) Overview {
 
 	entries := make([]OverviewEntry, MAX_ENTRIES)
 
-	relevantFixedCostsMap := s.createRelevantMap(userID)
-	specialCostMap := s.createSpecialCostMap(userID)
+	relevantFixedCostsMap := s.createRelevantMap(workspaceID)
+	specialCostMap := s.createSpecialCostMap(workspaceID)
 
 	tmpAmount := currentAmount
 	tmpYearMonth := models.CurrentYearMonth()
@@ -165,9 +167,9 @@ func (s *Server) createOverview(userID uint) Overview {
 
 }
 
-func (s *Server) createRelevantMap(userID uint) map[int][]models.FixedCost {
+func (s *Server) createRelevantMap(workspaceID uint) map[int][]models.FixedCost {
 	result := make(map[int][]models.FixedCost)
-	for _, cost := range *s.Repo.LoadFixedCosts(userID) {
+	for _, cost := range *s.Repo.LoadFixedCosts(workspaceID) {
 		for _, dueMonth := range cost.DueMonth {
 			if result[dueMonth] == nil {
 				result[dueMonth] = []models.FixedCost{cost}
@@ -181,9 +183,9 @@ func (s *Server) createRelevantMap(userID uint) map[int][]models.FixedCost {
 	return result
 }
 
-func (s *Server) createSpecialCostMap(userID uint) map[models.YearMonth][]models.SpecialCost {
+func (s *Server) createSpecialCostMap(workspaceID uint) map[models.YearMonth][]models.SpecialCost {
 	result := make(map[models.YearMonth][]models.SpecialCost)
-	for _, cost := range *s.Repo.LoadSpecialCosts(userID) {
+	for _, cost := range *s.Repo.LoadSpecialCosts(workspaceID) {
 		if cost.DueDate == nil {
 			continue
 		}

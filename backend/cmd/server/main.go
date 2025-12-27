@@ -18,6 +18,7 @@ import (
 	"wondee/finance-app-backend/internal/api/middleware"
 	"wondee/finance-app-backend/internal/models"
 	"wondee/finance-app-backend/internal/storage"
+	"wondee/finance-app-backend/internal/storage/migrations"
 )
 
 func ConnectDataBase() *gorm.DB {
@@ -49,7 +50,19 @@ func ConnectDataBase() *gorm.DB {
 		panic("Failed to connect to database!")
 	}
 
-	err = database.AutoMigrate(&models.FixedCost{}, &models.SpecialCost{}, &models.User{}, &models.WealthProfile{})
+	// Step 1: Pre-migrate - add workspace_id columns as nullable to preserve existing data
+	if err := migrations.PreMigrateWorkspaces(database); err != nil {
+		panic(fmt.Sprintf("Failed to run pre-migration: %v", err))
+	}
+
+	// Step 2: Backfill - create workspaces for existing users and link their data
+	if err := migrations.BackfillWorkspaces(database); err != nil {
+		panic(fmt.Sprintf("Failed to run backfill migration: %v", err))
+	}
+
+	// Step 3: AutoMigrate - now safe to add NOT NULL constraints since data is populated
+	// Order matters: Workspace must be created before tables that reference it
+	err = database.AutoMigrate(&models.Workspace{}, &models.User{}, &models.FixedCost{}, &models.SpecialCost{}, &models.WealthProfile{}, &models.Invite{})
 
 	if err != nil {
 		panic(err)
@@ -124,6 +137,10 @@ func main() {
 		apiGroup.GET("/wealth/forecast", server.GetWealthForecast)
 
 		apiGroup.GET("/statistics/surplus", server.GetSurplusStatistics)
+
+		apiGroup.GET("/workspace", server.GetWorkspace)
+		apiGroup.POST("/workspaces/invite", server.InviteMember)
+		apiGroup.POST("/workspaces/join", server.JoinWorkspace)
 	}
 
 	port := getEnv("PORT", "8082")

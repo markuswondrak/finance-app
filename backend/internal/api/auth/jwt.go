@@ -8,13 +8,15 @@ import (
 )
 
 type Claims struct {
-	UserID uint `json:"user_id"`
+	UserID      uint `json:"user_id"`
+	WorkspaceID uint `json:"workspace_id"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(userID uint, secret string, expiry time.Duration) (string, error) {
+func GenerateJWT(userID uint, workspaceID uint, secret string, expiry time.Duration) (string, error) {
 	claims := &Claims{
-		UserID: userID,
+		UserID:      userID,
+		WorkspaceID: workspaceID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiry)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

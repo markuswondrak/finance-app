@@ -2,17 +2,18 @@ package storage
 
 import (
 	"wondee/finance-app-backend/internal/models"
+
 	"gorm.io/gorm"
 )
 
 type WealthProfileRepository interface {
-	GetWealthProfile(userID uint) (*models.WealthProfile, error)
+	GetWealthProfile(workspaceID uint) (*models.WealthProfile, error)
 	UpsertWealthProfile(profile *models.WealthProfile) error
 }
 
-func (r *GormRepository) GetWealthProfile(userID uint) (*models.WealthProfile, error) {
+func (r *GormRepository) GetWealthProfile(workspaceID uint) (*models.WealthProfile, error) {
 	var profile models.WealthProfile
-	err := r.DB.Where("user_id = ?", userID).First(&profile).Error
+	err := r.DB.Where("workspace_id = ?", workspaceID).First(&profile).Error
 	if err != nil {
 		return nil, err
 	}
@@ -21,8 +22,8 @@ func (r *GormRepository) GetWealthProfile(userID uint) (*models.WealthProfile, e
 
 func (r *GormRepository) UpsertWealthProfile(profile *models.WealthProfile) error {
 	var existing models.WealthProfile
-	err := r.DB.Where("user_id = ?", profile.UserID).First(&existing).Error
-	
+	err := r.DB.Where("workspace_id = ?", profile.WorkspaceID).First(&existing).Error
+
 	if err == nil {
 		// Update existing profile
 		profile.ID = existing.ID
@@ -32,6 +33,6 @@ func (r *GormRepository) UpsertWealthProfile(profile *models.WealthProfile) erro
 		// Create new profile
 		return r.DB.Create(profile).Error
 	}
-	
+
 	return err
 }

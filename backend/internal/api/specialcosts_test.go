@@ -37,16 +37,18 @@ func TestToDBSpecialCost(t *testing.T) {
 }
 
 func TestCreateSpecialCosts(t *testing.T) {
+	var workspaceID uint = 1
+
 	mockRepo := &storage.MockRepository{
 		SpecialCosts: []models.SpecialCost{
-			{ID: 1, UserID: 1, Name: "S1", Amount: 100, DueDate: &models.YearMonth{Year: 2023, Month: 1}},
-			{ID: 2, UserID: 1, Name: "S2", Amount: 200, DueDate: &models.YearMonth{Year: 2023, Month: 2}},
-			{ID: 3, UserID: 2, Name: "S3", Amount: 300, DueDate: &models.YearMonth{Year: 2023, Month: 3}},
+			{ID: 1, UserID: 1, WorkspaceID: workspaceID, Name: "S1", Amount: 100, DueDate: &models.YearMonth{Year: 2023, Month: 1}},
+			{ID: 2, UserID: 1, WorkspaceID: workspaceID, Name: "S2", Amount: 200, DueDate: &models.YearMonth{Year: 2023, Month: 2}},
+			{ID: 3, UserID: 2, WorkspaceID: 2, Name: "S3", Amount: 300, DueDate: &models.YearMonth{Year: 2023, Month: 3}},
 		},
 	}
 	server := NewServer(mockRepo)
 
-	result := server.createSpecialCosts(1)
+	result := server.createSpecialCosts(workspaceID)
 
 	if len(result) != 2 {
 		t.Errorf("Expected 2 special costs, got %d", len(result))

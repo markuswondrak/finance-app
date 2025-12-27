@@ -123,16 +123,24 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 	// Create or Update User
 	user, err := h.Repo.GetByEmail(googleUser.Email)
 	if err != nil {
-		// Assume error means user not found (simplified) or generic DB error.
-		// In a robust app, verify specific error type.
+		// Create new workspace first
+		workspace := &models.Workspace{
+			Name: fmt.Sprintf("%s's Workspace", googleUser.Name),
+		}
+		if err := h.Repo.CreateWorkspace(workspace); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create workspace"})
+			return
+		}
+
 		// Create new user
 		user = &models.User{
-			GoogleID:  googleUser.ID,
-			Email:     googleUser.Email,
-			Name:      googleUser.Name,
-			AvatarURL: googleUser.Picture,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			GoogleID:    googleUser.ID,
+			Email:       googleUser.Email,
+			Name:        googleUser.Name,
+			AvatarURL:   googleUser.Picture,
+			WorkspaceID: workspace.ID,
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
 		}
 		if err := h.Repo.Create(user); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
@@ -142,6 +150,7 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 		// Create default wealth profile for new user
 		defaultProfile := &models.WealthProfile{
 			UserID:                user.ID,
+			WorkspaceID:           workspace.ID,
 			ForecastDurationYears: 10,
 			RateWorstCase:         3.0,
 			RateAverageCase:       5.0,
@@ -159,12 +168,23 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 		user.Name = googleUser.Name
 		user.AvatarURL = googleUser.Picture
 		user.UpdatedAt = time.Now()
+		
+		// Ensure user has a workspace (migration fallback)
+		if user.WorkspaceID == 0 {
+			workspace := &models.Workspace{
+				Name: fmt.Sprintf("%s's Workspace", user.Name),
+			}
+			if err := h.Repo.CreateWorkspace(workspace); err == nil {
+				user.WorkspaceID = workspace.ID
+			}
+		}
+
 		h.Repo.Update(user)
 	}
 
 	// Generate JWT
 	secret := os.Getenv("JWT_SECRET")
-	tokenString, err := GenerateJWT(user.ID, secret, 24*time.Hour)
+	tokenString, err := GenerateJWT(user.ID, user.WorkspaceID, secret, 24*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return

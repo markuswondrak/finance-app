@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sort"
 	"wondee/finance-app-backend/internal/models"
+
 	"gorm.io/gorm"
 )
 
@@ -13,12 +14,89 @@ type MockRepository struct {
 	SpecialCosts   []models.SpecialCost
 	Users          []models.User
 	WealthProfiles []models.WealthProfile
+	Workspaces     []models.Workspace
+	Invites        []models.Invite
+	nextWorkspaceID uint
+	nextInviteID    uint
 }
 
-func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
+func (m *MockRepository) CreateWorkspace(workspace *models.Workspace) error {
+	if workspace.ID == 0 {
+		m.nextWorkspaceID++
+		workspace.ID = m.nextWorkspaceID
+	}
+	m.Workspaces = append(m.Workspaces, *workspace)
+	return nil
+}
+
+func (m *MockRepository) GetWorkspaceByID(id uint) (*models.Workspace, error) {
+	for _, w := range m.Workspaces {
+		if w.ID == id {
+			return &w, nil
+		}
+	}
+	return nil, errors.New("workspace not found")
+}
+
+func (m *MockRepository) UpdateWorkspace(workspace *models.Workspace) error {
+	for i, w := range m.Workspaces {
+		if w.ID == workspace.ID {
+			m.Workspaces[i] = *workspace
+			return nil
+		}
+	}
+	return errors.New("workspace not found")
+}
+
+func (m *MockRepository) CreateInvite(invite *models.Invite) error {
+	if invite.ID == 0 {
+		m.nextInviteID++
+		invite.ID = m.nextInviteID
+	}
+	m.Invites = append(m.Invites, *invite)
+	return nil
+}
+
+func (m *MockRepository) GetInviteByToken(token string) (*models.Invite, error) {
+	for _, i := range m.Invites {
+		if i.Token == token && !i.IsUsed {
+			return &i, nil
+		}
+	}
+	return nil, errors.New("invite not found or used")
+}
+
+func (m *MockRepository) UpdateInvite(invite *models.Invite) error {
+	for i, inv := range m.Invites {
+		if inv.ID == invite.ID {
+			m.Invites[i] = *invite
+			return nil
+		}
+	}
+	return errors.New("invite not found")
+}
+
+func (m *MockRepository) DeleteInvite(token string) error {
+	var newInvites []models.Invite
+	found := false
+	for _, i := range m.Invites {
+		if i.Token == token {
+			found = true
+			continue
+		}
+		newInvites = append(newInvites, i)
+	}
+	if !found {
+		return errors.New("invite not found")
+	}
+	m.Invites = newInvites
+	return nil
+}
+
+func (m *MockRepository) LoadFixedCosts(workspaceID uint) *[]models.FixedCost {
 	var filtered []models.FixedCost
 	for _, c := range m.FixedCosts {
-		if c.UserID == userID {
+		if c.WorkspaceID == workspaceID {
 			filtered = append(filtered, c)
 		}
 	}
@@ -34,6 +112,16 @@ func (m *MockRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
 		return filtered[i].Name < filtered[j].Name
 	})
 
+	return &filtered
+}
+
+func (m *MockRepository) LoadFixedCostsByUser(userID uint) *[]models.FixedCost {
+	var filtered []models.FixedCost
+	for _, c := range m.FixedCosts {
+		if c.UserID == userID {
+			filtered = append(filtered, c)
+		}
+	}
 	return &filtered
 }
 
@@ -54,20 +142,20 @@ func (m *MockRepository) SaveFixedObject(cost *models.FixedCost) {
 	}
 }
 
-func (m *MockRepository) DeleteFixedCost(id int, userID uint) {
+func (m *MockRepository) DeleteFixedCost(id int, workspaceID uint) {
 	var newCosts []models.FixedCost
 	for _, c := range m.FixedCosts {
-		if c.ID != id || c.UserID != userID {
+		if c.ID != id || c.WorkspaceID != workspaceID {
 			newCosts = append(newCosts, c)
 		}
 	}
 	m.FixedCosts = newCosts
 }
 
-func (m *MockRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost {
+func (m *MockRepository) LoadSpecialCosts(workspaceID uint) *[]models.SpecialCost {
 	var filtered []models.SpecialCost
 	for _, c := range m.SpecialCosts {
-		if c.UserID == userID {
+		if c.WorkspaceID == workspaceID {
 			filtered = append(filtered, c)
 		}
 	}
@@ -92,6 +180,16 @@ func (m *MockRepository) LoadSpecialCosts(userID uint) *[]models.SpecialCost {
 	return &filtered
 }
 
+func (m *MockRepository) LoadSpecialCostsByUser(userID uint) *[]models.SpecialCost {
+	var filtered []models.SpecialCost
+	for _, c := range m.SpecialCosts {
+		if c.UserID == userID {
+			filtered = append(filtered, c)
+		}
+	}
+	return &filtered
+}
+
 func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost) {
 	found := false
 	for i, c := range m.SpecialCosts {
@@ -109,14 +207,42 @@ func (m *MockRepository) SaveSpecialCost(cost *models.SpecialCost) {
 	}
 }
 
-func (m *MockRepository) DeleteSpecialCost(id int, userID uint) {
+func (m *MockRepository) DeleteSpecialCost(id int, workspaceID uint) {
 	var newCosts []models.SpecialCost
 	for _, c := range m.SpecialCosts {
-		if c.ID != id || c.UserID != userID {
+		if c.ID != id || c.WorkspaceID != workspaceID {
 			newCosts = append(newCosts, c)
 		}
 	}
 	m.SpecialCosts = newCosts
+}
+
+func (m *MockRepository) PurgeUserData(userID uint) error {
+	var newFixed []models.FixedCost
+	for _, c := range m.FixedCosts {
+		if c.UserID != userID {
+			newFixed = append(newFixed, c)
+		}
+	}
+	m.FixedCosts = newFixed
+
+	var newSpecial []models.SpecialCost
+	for _, c := range m.SpecialCosts {
+		if c.UserID != userID {
+			newSpecial = append(newSpecial, c)
+		}
+	}
+	m.SpecialCosts = newSpecial
+
+	var newProfiles []models.WealthProfile
+	for _, p := range m.WealthProfiles {
+		if p.UserID != userID {
+			newProfiles = append(newProfiles, p)
+		}
+	}
+	m.WealthProfiles = newProfiles
+
+	return nil
 }
 
 func (m *MockRepository) GetUser() (*models.User, error) {
@@ -211,9 +337,9 @@ func (m *MockRepository) Delete(id uint) error {
 	return nil
 }
 
-func (m *MockRepository) GetWealthProfile(userID uint) (*models.WealthProfile, error) {
+func (m *MockRepository) GetWealthProfile(workspaceID uint) (*models.WealthProfile, error) {
 	for _, p := range m.WealthProfiles {
-		if p.UserID == userID {
+		if p.WorkspaceID == workspaceID {
 			return &p, nil
 		}
 	}
@@ -223,7 +349,7 @@ func (m *MockRepository) GetWealthProfile(userID uint) (*models.WealthProfile, e
 func (m *MockRepository) UpsertWealthProfile(profile *models.WealthProfile) error {
 	found := false
 	for i, p := range m.WealthProfiles {
-		if p.UserID == profile.UserID {
+		if p.WorkspaceID == profile.WorkspaceID {
 			m.WealthProfiles[i] = *profile
 			found = true
 			break

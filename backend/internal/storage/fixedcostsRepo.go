@@ -5,9 +5,9 @@ import (
 	"wondee/finance-app-backend/internal/models"
 )
 
-func (r *GormRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
+func (r *GormRepository) LoadFixedCosts(workspaceID uint) *[]models.FixedCost {
 	var costs []models.FixedCost
-	r.DB.Where("user_id = ?", userID).Find(&costs)
+	r.DB.Where("workspace_id = ?", workspaceID).Find(&costs)
 
 	sort.Slice(costs, func(i, j int) bool {
 		isIncomeI := costs[i].Amount >= 0
@@ -23,6 +23,12 @@ func (r *GormRepository) LoadFixedCosts(userID uint) *[]models.FixedCost {
 	return &costs
 }
 
+func (r *GormRepository) LoadFixedCostsByUser(userID uint) *[]models.FixedCost {
+	var costs []models.FixedCost
+	r.DB.Where("user_id = ?", userID).Find(&costs)
+	return &costs
+}
+
 func (r *GormRepository) SaveFixedObject(cost *models.FixedCost) {
 	if cost.ID == 0 {
 		r.DB.Create(cost)
@@ -31,6 +37,6 @@ func (r *GormRepository) SaveFixedObject(cost *models.FixedCost) {
 	}
 }
 
-func (r *GormRepository) DeleteFixedCost(id int, userID uint) {
-	r.DB.Where("user_id = ?", userID).Delete(&models.FixedCost{}, id)
+func (r *GormRepository) DeleteFixedCost(id int, workspaceID uint) {
+	r.DB.Where("workspace_id = ?", workspaceID).Delete(&models.FixedCost{}, id)
 }
