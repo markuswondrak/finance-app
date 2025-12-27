@@ -34,6 +34,11 @@ export const AuthService = {
   },
   
   login() {
-    window.location.href = `${API_URL}/google/login`;
+    const token = localStorage.getItem('pending_invite_token');
+    let url = `${API_URL}/google/login`;
+    if (token) {
+      url += `?invite_token=${token}`;
+    }
+    window.location.href = url;
   }
 };

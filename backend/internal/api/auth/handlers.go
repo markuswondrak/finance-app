@@ -71,6 +71,13 @@ func (h *AuthHandler) getOAuthConfig(c *gin.Context) *oauth2.Config {
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
+	// Check for invite token in query
+	inviteToken := c.Query("invite_token")
+	if inviteToken != "" {
+		// Store invite token in cookie for retrieval in callback
+		c.SetCookie("pending_invite_token", inviteToken, 600, "/", "", false, true)
+	}
+
 	b := make([]byte, 16)
 	rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
@@ -120,16 +127,39 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 		return
 	}
 
+	// Retrieve pending invite token if any
+	inviteToken, _ := c.Cookie("pending_invite_token")
+	// Clear the cookie immediately
+	c.SetCookie("pending_invite_token", "", -1, "/", "", false, true)
+
 	// Create or Update User
 	user, err := h.Repo.GetByEmail(googleUser.Email)
 	if err != nil {
-		// Create new workspace first
-		workspace := &models.Workspace{
-			Name: fmt.Sprintf("%s's Workspace", googleUser.Name),
+		var workspaceID uint
+		
+		// Check if we have a valid invite
+		if inviteToken != "" {
+			invite, err := h.Repo.GetInviteByToken(inviteToken)
+			if err == nil && time.Now().Before(invite.ExpiresAt) {
+				// Use the invited workspace
+				workspaceID = invite.WorkspaceID
+				
+				// Mark invite as used
+				invite.IsUsed = true
+				h.Repo.UpdateInvite(invite)
+			}
 		}
-		if err := h.Repo.CreateWorkspace(workspace); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create workspace"})
-			return
+
+		// If no valid invite, create a new workspace
+		if workspaceID == 0 {
+			workspace := &models.Workspace{
+				Name: fmt.Sprintf("%s's Workspace", googleUser.Name),
+			}
+			if err := h.Repo.CreateWorkspace(workspace); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create workspace"})
+				return
+			}
+			workspaceID = workspace.ID
 		}
 
 		// Create new user
@@ -138,7 +168,7 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 			Email:       googleUser.Email,
 			Name:        googleUser.Name,
 			AvatarURL:   googleUser.Picture,
-			WorkspaceID: workspace.ID,
+			WorkspaceID: workspaceID,
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		}
@@ -147,10 +177,13 @@ func (h *AuthHandler) Callback(c *gin.Context) {
 			return
 		}
 
-		// Create default wealth profile for new user
+		// Create default wealth profile for new user ONLY if they created their own workspace
+		// If they joined a workspace, they might not need a default profile immediately, 
+		// or we can create one linked to that workspace if not exists.
+		// For now, let's create it to be safe, but link to the workspaceID.
 		defaultProfile := &models.WealthProfile{
 			UserID:                user.ID,
-			WorkspaceID:           workspace.ID,
+			WorkspaceID:           workspaceID,
 			ForecastDurationYears: 10,
 			RateWorstCase:         3.0,
 			RateAverageCase:       5.0,

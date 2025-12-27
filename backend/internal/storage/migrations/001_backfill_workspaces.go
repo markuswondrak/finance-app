@@ -95,5 +95,14 @@ func BackfillWorkspaces(db *gorm.DB) error {
 		}
 	}
 
+	// Fix Sequence: After manual ID insertion, the postgres sequence must be updated
+	// to avoid "duplicate key value" errors on next insert.
+	// This command sets the sequence to the Max(ID) in the table.
+	sql := `SELECT setval(pg_get_serial_sequence('workspaces', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM workspaces;`
+	if err := db.Exec(sql).Error; err != nil {
+		// Log warning but don't fail, as this might be non-postgres or already correct
+		fmt.Printf("Warning: Failed to reset workspace sequence (might be expected on non-Postgres): %v\n", err)
+	}
+
 	return nil
 }
