@@ -9,8 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"wondee/finance-app-backend/internal/api"
-	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/cost"
 	"wondee/finance-app-backend/internal/storage"
+	"wondee/finance-app-backend/internal/user"
 )
 
 // CostsResponse mirrors the API response structure
@@ -29,20 +30,20 @@ func TestWorkspaceAccess_Integration(t *testing.T) {
     var otherWorkspaceID uint = 2
     
     // User 1 in Workspace A
-    user1 := models.User{ID: 1, WorkspaceID: workspaceID}
+    user1 := user.User{ID: 1, WorkspaceID: workspaceID}
     // User 2 in Workspace A
-    user2 := models.User{ID: 2, WorkspaceID: workspaceID}
+    user2 := user.User{ID: 2, WorkspaceID: workspaceID}
     // User 3 in Workspace B
-    user3 := models.User{ID: 3, WorkspaceID: otherWorkspaceID}
+    user3 := user.User{ID: 3, WorkspaceID: otherWorkspaceID}
     
     // Cost created by User 1 in Workspace A
-    cost1 := models.FixedCost{ID: 1, UserID: 1, WorkspaceID: workspaceID, Name: "Shared Cost", Amount: 100, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}}
+    cost1 := cost.FixedCost{ID: 1, UserID: 1, WorkspaceID: workspaceID, Name: "Shared Cost", Amount: 100, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}}
     // Cost created by User 3 in Workspace B
-    cost3 := models.FixedCost{ID: 2, UserID: 3, WorkspaceID: otherWorkspaceID, Name: "Private Cost", Amount: 50, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}}
+    cost3 := cost.FixedCost{ID: 2, UserID: 3, WorkspaceID: otherWorkspaceID, Name: "Private Cost", Amount: 50, DueMonth: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}}
 
 	mockRepo := &storage.MockRepository{
-		Users:      []models.User{user1, user2, user3},
-		FixedCosts: []models.FixedCost{cost1, cost3},
+		Users:      []user.User{user1, user2, user3},
+		FixedCosts: []cost.FixedCost{cost1, cost3},
 	}
 	server := api.NewServer(mockRepo)
     
@@ -53,7 +54,7 @@ func TestWorkspaceAccess_Integration(t *testing.T) {
         c.Set("workspace_id", workspaceID)
 		c.Next()
 	})
-	routerUser2.GET("/api/costs", server.GetFixedCosts)
+	routerUser2.GET("/api/costs", server.FixedCostHandler.GetFixedCosts)
 
     t.Run("User 2 sees User 1's cost in same workspace", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/costs", nil)

@@ -10,14 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"wondee/finance-app-backend/internal/api"
-	"wondee/finance-app-backend/internal/models"
 	"wondee/finance-app-backend/internal/storage"
+	"wondee/finance-app-backend/internal/user"
+	"wondee/finance-app-backend/internal/wealth"
 )
 
 func setupTestRouter() (*gin.Engine, *storage.MockRepository) {
 	gin.SetMode(gin.TestMode)
 	mockRepo := &storage.MockRepository{
-		Users: []models.User{{ID: 1, Email: "test@example.com"}},
+		Users: []user.User{{ID: 1, Email: "test@example.com"}},
 	}
 	server := api.NewServer(mockRepo)
 
@@ -29,8 +30,8 @@ func setupTestRouter() (*gin.Engine, *storage.MockRepository) {
 
 	apiGroup := router.Group("/api")
 	{
-		apiGroup.GET("/wealth-profile", server.GetWealthProfile)
-		apiGroup.PUT("/wealth-profile", server.UpsertWealthProfile)
+		apiGroup.GET("/wealth-profile", server.ProfileHandler.GetWealthProfile)
+		apiGroup.PUT("/wealth-profile", server.ProfileHandler.UpsertWealthProfile)
 	}
 
 	return router, mockRepo
@@ -45,7 +46,7 @@ func TestWealthProfile_Integration(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		var profile models.WealthProfile
+		var profile wealth.WealthProfile
 		err := json.Unmarshal(w.Body.Bytes(), &profile)
 		assert.NoError(t, err)
 		assert.Equal(t, 10, profile.ForecastDurationYears)
@@ -53,7 +54,7 @@ func TestWealthProfile_Integration(t *testing.T) {
 	})
 
 	t.Run("Upsert Profile - Success", func(t *testing.T) {
-		newProfile := models.WealthProfile{
+		newProfile := wealth.WealthProfile{
 			CurrentWealth:         10000,
 			ForecastDurationYears: 20,
 			RateWorstCase:         2,
@@ -73,14 +74,14 @@ func TestWealthProfile_Integration(t *testing.T) {
 		wGet := httptest.NewRecorder()
 		router.ServeHTTP(wGet, reqGet)
 		
-		var savedProfile models.WealthProfile
+		var savedProfile wealth.WealthProfile
 		json.Unmarshal(wGet.Body.Bytes(), &savedProfile)
 		assert.Equal(t, 10000.0, savedProfile.CurrentWealth)
 		assert.Equal(t, 20, savedProfile.ForecastDurationYears)
 	})
 
 	t.Run("Upsert Profile - Validation Fail", func(t *testing.T) {
-		invalidProfile := models.WealthProfile{
+		invalidProfile := wealth.WealthProfile{
 			CurrentWealth:         -1,
 			ForecastDurationYears: 20,
 		}

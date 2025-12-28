@@ -2,7 +2,7 @@ package storage
 
 import (
 	"testing"
-	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/cost"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -12,11 +12,11 @@ func TestDataIsolation(t *testing.T) {
 	var workspace2ID uint = 2
 
 	repo := &MockRepository{
-		FixedCosts: []models.FixedCost{
+		FixedCosts: []cost.FixedCost{
 			{ID: 1, UserID: 1, WorkspaceID: workspace1ID, Name: "Workspace 1 Cost", Amount: 100},
 			{ID: 2, UserID: 2, WorkspaceID: workspace2ID, Name: "Workspace 2 Cost", Amount: 200},
 		},
-		SpecialCosts: []models.SpecialCost{
+		SpecialCosts: []cost.SpecialCost{
 			{ID: 1, UserID: 1, WorkspaceID: workspace1ID, Name: "Workspace 1 Special", Amount: 500},
 			{ID: 2, UserID: 2, WorkspaceID: workspace2ID, Name: "Workspace 2 Special", Amount: 1000},
 		},

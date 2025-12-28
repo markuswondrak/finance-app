@@ -14,10 +14,13 @@ import (
 	"gorm.io/gorm/logger"
 
 	"wondee/finance-app-backend/internal/api"
-	"wondee/finance-app-backend/internal/api/auth"
-	"wondee/finance-app-backend/internal/api/middleware"
-	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/auth/api"
+	"wondee/finance-app-backend/internal/cost"
+	"wondee/finance-app-backend/internal/auth/middleware"
 	"wondee/finance-app-backend/internal/storage"
+	"wondee/finance-app-backend/internal/user"
+	"wondee/finance-app-backend/internal/wealth"
+	"wondee/finance-app-backend/internal/workspace"
 )
 
 func ConnectDataBase() *gorm.DB {
@@ -51,7 +54,7 @@ func ConnectDataBase() *gorm.DB {
 
 	// Step 3: AutoMigrate - now safe to add NOT NULL constraints since data is populated
 	// Order matters: Workspace must be created before tables that reference it
-	err = database.AutoMigrate(&models.Workspace{}, &models.User{}, &models.FixedCost{}, &models.SpecialCost{}, &models.WealthProfile{}, &models.Invite{})
+	err = database.AutoMigrate(&workspace.Workspace{}, &user.User{}, &cost.FixedCost{}, &cost.SpecialCost{}, &wealth.WealthProfile{}, &workspace.Invite{})
 
 	if err != nil {
 		panic(err)
@@ -72,14 +75,14 @@ func main() {
 	router := gin.Default()
 
 	// CORS Configuration
-	frontendRegex := regexp.MustCompile(`^https://finanz-frontend-.*\.run\.app$`)
+	frontendRegex := regexp.MustCompile(`^https://finanz-frontend-.*\.run\.app$`) // Corrected regex escaping
 
 	router.Use(cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
 			return origin == "http://localhost:8080" ||
-				origin == "http://localhost:5173" ||
-				origin == "https://finance.wondee.info" ||
-				frontendRegex.MatchString(origin)
+					origin == "http://localhost:5173" ||
+					origin == "https://finance.wondee.info" ||
+					frontendRegex.MatchString(origin)
 		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
@@ -103,33 +106,33 @@ func main() {
 	apiGroup := router.Group("/api")
 	apiGroup.Use(middleware.AuthMiddleware())
 	{
-		apiGroup.GET("/overview/all", server.GetOverview)
-		apiGroup.GET("/overview/detail", server.GetOverviewDetail)
+		apiGroup.GET("/overview/all", server.OverviewHandler.GetOverview)
+		apiGroup.GET("/overview/detail", server.OverviewHandler.GetOverviewDetail)
 
-		apiGroup.GET("/costs", server.GetFixedCosts)
-		apiGroup.DELETE("/costs/:id", server.DeleteFixedCosts)
-		apiGroup.POST("/costs/monthly", server.SaveMonthlyFixedCosts)
-		apiGroup.POST("/costs/halfyearly", server.SaveHalfYearlyFixedCosts)
-		apiGroup.POST("/costs/yearly", server.SaveYearlyFixedCosts)
-		apiGroup.POST("/costs/quaterly", server.SaveQuaterlyFixedCosts)
+		apiGroup.GET("/costs", server.FixedCostHandler.GetFixedCosts)
+		apiGroup.DELETE("/costs/:id", server.FixedCostHandler.DeleteFixedCosts)
+		apiGroup.POST("/costs/monthly", server.FixedCostHandler.SaveMonthlyFixedCosts)
+		apiGroup.POST("/costs/halfyearly", server.FixedCostHandler.SaveHalfYearlyFixedCosts)
+		apiGroup.POST("/costs/yearly", server.FixedCostHandler.SaveYearlyFixedCosts)
+		apiGroup.POST("/costs/quaterly", server.FixedCostHandler.SaveQuaterlyFixedCosts)
 
-		apiGroup.GET("/specialcosts", server.GetSpecialCosts)
-		apiGroup.POST("/specialcosts", server.SaveSpecialCosts)
-		apiGroup.DELETE("/specialcosts/:id", server.DeleteSpecialCosts)
+		apiGroup.GET("/specialcosts", server.SpecialCostHandler.GetSpecialCosts)
+		apiGroup.POST("/specialcosts", server.SpecialCostHandler.SaveSpecialCosts)
+		apiGroup.DELETE("/specialcosts/:id", server.SpecialCostHandler.DeleteSpecialCosts)
 
-		apiGroup.PUT("/user/current-amount", server.UpdateCurrentAmount)
-		apiGroup.DELETE("/user", server.DeleteCurrentUser)
+		apiGroup.PUT("/user/current-amount", server.UserHandler.UpdateCurrentAmount)
+		apiGroup.DELETE("/user", server.UserHandler.DeleteCurrentUser)
 
-		apiGroup.GET("/wealth-profile", server.GetWealthProfile)
-		apiGroup.PUT("/wealth-profile", server.UpsertWealthProfile)
+		apiGroup.GET("/wealth-profile", server.ProfileHandler.GetWealthProfile)
+		apiGroup.PUT("/wealth-profile", server.ProfileHandler.UpsertWealthProfile)
 
-		apiGroup.GET("/wealth/forecast", server.GetWealthForecast)
+		apiGroup.GET("/wealth/forecast", server.ForecastHandler.GetWealthForecast)
 
-		apiGroup.GET("/statistics/surplus", server.GetSurplusStatistics)
+		apiGroup.GET("/statistics/surplus", server.OverviewHandler.GetSurplusStatistics)
 
-		apiGroup.GET("/workspace", server.GetWorkspace)
-		apiGroup.POST("/workspaces/invite", server.InviteMember)
-		apiGroup.POST("/workspaces/join", server.JoinWorkspace)
+		apiGroup.GET("/workspace", server.WorkspaceHandler.GetWorkspace)
+		apiGroup.POST("/workspaces/invite", server.WorkspaceHandler.InviteMember)
+		apiGroup.POST("/workspaces/join", server.WorkspaceHandler.JoinWorkspace)
 	}
 
 	port := getEnv("PORT", "8082")

@@ -2,34 +2,68 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	cost_api "wondee/finance-app-backend/internal/cost/api"
+	cost_repo "wondee/finance-app-backend/internal/cost/repository"
+	overview_api "wondee/finance-app-backend/internal/overview/api"
 	"wondee/finance-app-backend/internal/storage"
-	"wondee/finance-app-backend/internal/services"
+	user_api "wondee/finance-app-backend/internal/user/api"
+	user_service "wondee/finance-app-backend/internal/user/service"
+	wealth_api "wondee/finance-app-backend/internal/wealth/api"
+	wealth_service "wondee/finance-app-backend/internal/wealth/service"
+	workspace_api "wondee/finance-app-backend/internal/workspace/api"
+	workspace_service "wondee/finance-app-backend/internal/workspace/service"
 )
 
 // Server holds the repository and service dependencies
 type Server struct {
-	Repo             storage.Repository
-	WealthService    *services.WealthProfileService
-	ForecastService  *services.WealthForecastService
-	WorkspaceService *services.WorkspaceService
-	InviteService    *services.InviteService
-	UserService      *services.UserService
+	Repo               storage.Repository
+	UserService        *user_service.UserService
+	OverviewHandler    *overview_api.Handler
+	FixedCostHandler   *cost_api.FixedCostHandler
+	SpecialCostHandler *cost_api.SpecialCostHandler
+	UserHandler        *user_api.Handler
+	ProfileHandler     *wealth_api.ProfileHandler
+	ForecastHandler    *wealth_api.ForecastHandler
+	WorkspaceHandler   *workspace_api.Handler
 }
 
 func NewServer(repo storage.Repository) *Server {
-	// Note: EmailService dependency is needed for InviteService. 
-	// Ideally passed to NewServer or initialized here.
-	// For simplicity, initializing here, but MockRepo tests might need MockEmailService if InviteService uses it.
-	// We made InviteService.EmailService public or passed in NewInviteService.
-	emailService := services.NewEmailService()
-	
+	// Create cost repository from the underlying DB connection
+	var costRepo cost_repo.Repository
+	if gormRepo, ok := repo.(*storage.GormRepository); ok {
+		costRepo = &cost_repo.PostgresRepository{DB: gormRepo.DB}
+	} else if mockRepo, ok := repo.(cost_repo.Repository); ok {
+		// MockRepository implements cost_repo.Repository
+		costRepo = mockRepo
+	}
+	return NewServerWithDeps(repo, costRepo)
+}
+
+func NewServerWithDeps(repo storage.Repository, costRepo cost_repo.Repository) *Server {
+	profileService := wealth_service.NewProfileService(repo)
+	forecastService := wealth_service.NewForecastService(repo, costRepo)
+
+	// Workspace services
+	emailService := workspace_service.NewEmailService()
+	workspaceService := workspace_service.NewWorkspaceService(repo)
+	inviteService := workspace_service.NewInviteService(repo, emailService)
+	userService := user_service.NewUserService(costRepo)
+
 	return &Server{
-		Repo:             repo,
-		WealthService:    services.NewWealthProfileService(repo),
-		ForecastService:  services.NewWealthForecastService(repo),
-		WorkspaceService: services.NewWorkspaceService(repo),
-		InviteService:    services.NewInviteService(repo, emailService),
-		UserService:      services.NewUserService(repo),
+		Repo:               repo,
+		UserService:        userService,
+		OverviewHandler:    &overview_api.Handler{Repo: repo, CostRepo: costRepo},
+		FixedCostHandler:   &cost_api.FixedCostHandler{Repo: costRepo},
+		SpecialCostHandler: &cost_api.SpecialCostHandler{Repo: costRepo},
+		UserHandler:        &user_api.Handler{Repo: repo},
+		ProfileHandler:     &wealth_api.ProfileHandler{Service: profileService},
+		ForecastHandler:    &wealth_api.ForecastHandler{Service: forecastService},
+		WorkspaceHandler: &workspace_api.Handler{
+			Repo:             repo,
+			WorkspaceService: workspaceService,
+			InviteService:    inviteService,
+			UserService:      userService,
+		},
 	}
 }
 

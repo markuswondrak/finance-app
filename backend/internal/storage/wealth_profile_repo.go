@@ -1,18 +1,18 @@
 package storage
 
 import (
-	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/wealth"
 
 	"gorm.io/gorm"
 )
 
 type WealthProfileRepository interface {
-	GetWealthProfile(workspaceID uint) (*models.WealthProfile, error)
-	UpsertWealthProfile(profile *models.WealthProfile) error
+	GetWealthProfile(workspaceID uint) (*wealth.WealthProfile, error)
+	UpsertWealthProfile(profile *wealth.WealthProfile) error
 }
 
-func (r *GormRepository) GetWealthProfile(workspaceID uint) (*models.WealthProfile, error) {
-	var profile models.WealthProfile
+func (r *GormRepository) GetWealthProfile(workspaceID uint) (*wealth.WealthProfile, error) {
+	var profile wealth.WealthProfile
 	err := r.DB.Where("workspace_id = ?", workspaceID).First(&profile).Error
 	if err != nil {
 		return nil, err
@@ -20,8 +20,8 @@ func (r *GormRepository) GetWealthProfile(workspaceID uint) (*models.WealthProfi
 	return &profile, nil
 }
 
-func (r *GormRepository) UpsertWealthProfile(profile *models.WealthProfile) error {
-	var existing models.WealthProfile
+func (r *GormRepository) UpsertWealthProfile(profile *wealth.WealthProfile) error {
+	var existing wealth.WealthProfile
 	err := r.DB.Where("workspace_id = ?", profile.WorkspaceID).First(&existing).Error
 
 	if err == nil {

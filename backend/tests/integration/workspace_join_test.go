@@ -11,8 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"wondee/finance-app-backend/internal/api"
-	"wondee/finance-app-backend/internal/models"
+	"wondee/finance-app-backend/internal/cost"
 	"wondee/finance-app-backend/internal/storage"
+	"wondee/finance-app-backend/internal/user"
+	"wondee/finance-app-backend/internal/workspace"
 )
 
 func TestDestructiveJoin_Integration(t *testing.T) {
@@ -21,13 +23,13 @@ func TestDestructiveJoin_Integration(t *testing.T) {
     var workspaceID uint = 1
     var targetWorkspaceID uint = 2
 
-    user1 := models.User{ID: 1, Email: "user1@example.com", WorkspaceID: workspaceID}
+    user1 := user.User{ID: 1, Email: "user1@example.com", WorkspaceID: workspaceID}
 
     // User 1 has data
-    fixedCost := models.FixedCost{ID: 1, UserID: 1, WorkspaceID: workspaceID, Name: "Rent", Amount: 1000}
+    fixedCost := cost.FixedCost{ID: 1, UserID: 1, WorkspaceID: workspaceID, Name: "Rent", Amount: 1000}
 
     inviteToken := "valid-token"
-    invite := models.Invite{
+    invite := workspace.Invite{
         Token:       inviteToken,
         WorkspaceID: targetWorkspaceID,
         InvitedBy:   2,
@@ -35,10 +37,10 @@ func TestDestructiveJoin_Integration(t *testing.T) {
     }
 
 	mockRepo := &storage.MockRepository{
-		Users:      []models.User{user1},
-		FixedCosts: []models.FixedCost{fixedCost},
-        Invites:    []models.Invite{invite},
-        Workspaces: []models.Workspace{
+		Users:      []user.User{user1},
+		FixedCosts: []cost.FixedCost{fixedCost},
+        Invites:    []workspace.Invite{invite},
+        Workspaces: []workspace.Workspace{
             {ID: workspaceID, Name: "Old Workspace"},
             {ID: targetWorkspaceID, Name: "Target Workspace"},
         },
@@ -52,7 +54,7 @@ func TestDestructiveJoin_Integration(t *testing.T) {
         c.Set("workspace_id", workspaceID)
 		c.Next()
 	})
-	router.POST("/api/workspaces/join", server.JoinWorkspace)
+	router.POST("/api/workspaces/join", server.WorkspaceHandler.JoinWorkspace)
 
 	t.Run("Join with data - Returns Warning", func(t *testing.T) {
 		reqBody := map[string]interface{}{

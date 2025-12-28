@@ -10,20 +10,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"wondee/finance-app-backend/internal/api"
-	"wondee/finance-app-backend/internal/models"
 	"wondee/finance-app-backend/internal/storage"
+	"wondee/finance-app-backend/internal/user"
+	"wondee/finance-app-backend/internal/workspace"
 )
 
 func setupInviteTestRouter() (*gin.Engine, *storage.MockRepository) {
 	gin.SetMode(gin.TestMode)
 
 	var workspaceID uint = 1
-	user1 := models.User{ID: 1, Email: "owner@example.com", Name: "Owner", WorkspaceID: workspaceID}
-	workspace := models.Workspace{ID: workspaceID, Name: "Owner's Workspace", Users: []models.User{user1}}
-	
+	user1 := user.User{ID: 1, Email: "owner@example.com", Name: "Owner", WorkspaceID: workspaceID}
+	ws := workspace.Workspace{ID: workspaceID, Name: "Owner's Workspace", Users: []user.User{user1}}
+
 	mockRepo := &storage.MockRepository{
-		Users:      []models.User{user1},
-		Workspaces: []models.Workspace{workspace},
+		Users:      []user.User{user1},
+		Workspaces: []workspace.Workspace{ws},
 	}
 	server := api.NewServer(mockRepo)
 
@@ -37,8 +38,8 @@ func setupInviteTestRouter() (*gin.Engine, *storage.MockRepository) {
 
 	apiGroup := router.Group("/api")
 	{
-		apiGroup.POST("/workspaces/invite", server.InviteMember)
-		apiGroup.POST("/workspaces/join", server.JoinWorkspace)
+		apiGroup.POST("/workspaces/invite", server.WorkspaceHandler.InviteMember)
+		apiGroup.POST("/workspaces/join", server.WorkspaceHandler.JoinWorkspace)
 	}
 
 	return router, mockRepo
