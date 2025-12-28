@@ -1,16 +1,14 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.2.0 → 1.3.0
-Updated: 2025-12-21
-Rationale: Expanded scope to include Wealth Management and enforced Page-Centric Frontend Architecture
+Version Change: 1.3.0 → 1.4.0
+Updated: 2025-12-28
+Rationale: Added Backend Architecture section documenting domain-oriented (vertical slice) structure
 
-Modified Principles:
-  - I. Simplicity First - Expanded scope to include wealth accumulation management
-  - V. API-First Design - Added 'wealth' to example resources
+Modified Principles: None
 
 Added Sections:
-  - VIII. Frontend Architecture - Defined mandatory page-centric folder structure
+  - IX. Backend Architecture - Defined mandatory domain-oriented folder structure
 
 Removed Sections: N/A
 
@@ -144,6 +142,61 @@ The frontend follows a **Page-Centric Component Structure**.
 
 **Rationale**: This structure scales better than grouping by type (e.g., all buttons together). It ensures that deleting a feature (page) allows for safe deletion of its dependencies without checking the entire codebase.
 
+### IX. Backend Architecture
+
+The backend follows a **Domain-Oriented (Vertical Slice) Architecture**.
+
+**Directory Structure**:
+```
+backend/internal/
+├── api/                    # Server wiring (central orchestrator)
+│   └── server.go           # Dependency injection and handler registration
+├── auth/                   # Authentication domain
+│   ├── api/                # HTTP handlers
+│   ├── middleware/         # Auth middleware
+│   └── jwt.go              # JWT logic
+├── user/                   # User domain
+│   ├── api/                # HTTP handlers
+│   ├── service/            # Business logic
+│   └── model.go            # User entity
+├── wealth/                 # Wealth management domain
+│   ├── api/                # HTTP handlers (profile, forecast)
+│   ├── service/            # Business logic
+│   ├── profile.go          # WealthProfile entity
+│   └── forecast.go         # Forecast entities
+├── workspace/              # Workspace/collaboration domain
+│   ├── api/                # HTTP handlers
+│   ├── service/            # Business logic (workspace, invite, email)
+│   ├── workspace.go        # Workspace entity
+│   └── invite.go           # Invite entity
+├── cost/                   # Cost management domain
+│   ├── api/                # HTTP handlers (fixed, special)
+│   ├── repository/         # Data access
+│   ├── fixed_cost_model.go
+│   └── special_cost_model.go
+├── overview/               # Dashboard/overview domain
+│   ├── api/                # HTTP handlers
+│   └── model/              # Statistics entities
+├── platform/               # Shared infrastructure
+│   ├── types/              # Shared value objects (YearMonth)
+│   └── db/                 # Database configuration
+└── storage/                # Repository implementations (GORM)
+```
+
+**Organization Rules**:
+- **Domain Packages**: Each domain contains its own handlers, services, and models
+- **Handler Pattern**: All HTTP handlers are standalone structs with injected dependencies (not methods on a central Server)
+- **Service Layer**: Business logic resides in `service/` subdirectories
+- **Repository Pattern**: Data access through repository interfaces; implementations in `storage/` or domain `repository/`
+- **Colocation**: Domain-specific code lives within its domain package
+
+**Naming Conventions**:
+- Handlers: `Handler` struct with methods like `GetX`, `CreateX`, `DeleteX`
+- Services: `XService` struct with `NewXService` constructor
+- Models: Singular entity names (e.g., `User`, `Workspace`, `FixedCost`)
+
+**Rationale**: Vertical slice architecture groups code by feature/domain rather than by technical layer. This makes it easier to understand, modify, and delete features without affecting unrelated code. Each domain is a self-contained unit with clear boundaries.
+
 ## Technology Standards
 
 ### Backend Stack
@@ -237,7 +290,7 @@ Constitution follows semantic versioning (MAJOR.MINOR.PATCH):
 ### Compliance Review
 
 - All pull requests must reference this constitution
-- Architecture decisions must align with Core Principles I-VIII
+- Architecture decisions must align with Core Principles I-IX
 - Complexity must be justified (favor simplicity)
 - Test coverage verified on every build
 - UX changes reviewed for user-friendliness
@@ -249,4 +302,4 @@ Constitution follows semantic versioning (MAJOR.MINOR.PATCH):
 - Constitution applies ONLY to vue-frontend branch and future branches derived from it
 - Upon merge to master, this constitution supersedes all prior practices
 
-**Version**: 1.3.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-21
+**Version**: 1.4.0 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-28
