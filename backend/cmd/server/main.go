@@ -18,7 +18,6 @@ import (
 	"wondee/finance-app-backend/internal/api/middleware"
 	"wondee/finance-app-backend/internal/models"
 	"wondee/finance-app-backend/internal/storage"
-	"wondee/finance-app-backend/internal/storage/migrations"
 )
 
 func ConnectDataBase() *gorm.DB {
@@ -48,16 +47,6 @@ func ConnectDataBase() *gorm.DB {
 
 	if err != nil {
 		panic("Failed to connect to database!")
-	}
-
-	// Step 1: Pre-migrate - add workspace_id columns as nullable to preserve existing data
-	if err := migrations.PreMigrateWorkspaces(database); err != nil {
-		panic(fmt.Sprintf("Failed to run pre-migration: %v", err))
-	}
-
-	// Step 2: Backfill - create workspaces for existing users and link their data
-	if err := migrations.BackfillWorkspaces(database); err != nil {
-		panic(fmt.Sprintf("Failed to run backfill migration: %v", err))
 	}
 
 	// Step 3: AutoMigrate - now safe to add NOT NULL constraints since data is populated
