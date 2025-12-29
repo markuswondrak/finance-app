@@ -79,7 +79,12 @@
       <v-col cols="12" md="7" lg="8">
         <v-card color="surface" variant="flat" class="pa-6 rounded-xl h-100 d-flex align-center justify-center">
            <div style="height: 400px; width: 100%;">
-             <Line :data="chartData" :options="chartOptions" />
+             <ClientOnly>
+               <Line :data="chartData" :options="chartOptions" />
+               <template #placeholder>
+                 <div class="chart-placeholder" />
+               </template>
+             </ClientOnly>
            </div>
         </v-card>
       </v-col>
@@ -88,7 +93,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -101,17 +106,20 @@ import {
   Filler
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
+import ClientOnly from '@/components/common/ClientOnly.vue'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-)
+if (!import.meta.env.SSR) {
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+  )
+}
 
 const monthlySavings = ref(200);
 const returnRate = ref(5.0);
@@ -230,5 +238,12 @@ const chartOptions = {
 <style scoped>
 .savings-calculator {
   background: rgba(0,0,0,0.2);
+}
+
+.chart-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(74, 222, 128, 0.05) 100%);
+  border-radius: 8px;
 }
 </style>

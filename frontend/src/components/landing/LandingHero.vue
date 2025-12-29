@@ -45,7 +45,12 @@
       <v-col cols="12" md="6" lg="6" class="position-relative">
         <div class="chart-3d-container">
           <div class="chart-3d-card glass-card">
-            <Line :data="chartData" :options="chartOptions" class="chart-canvas" />
+            <ClientOnly>
+              <Line :data="chartData" :options="chartOptions" class="chart-canvas" />
+              <template #placeholder>
+                <div class="chart-placeholder" />
+              </template>
+            </ClientOnly>
           </div>
         </div>
       </v-col>
@@ -55,7 +60,8 @@
 
 <script setup>
 import { Line } from 'vue-chartjs'
-import { AuthService } from '@/services/auth';
+import { AuthService } from '@/services/auth'
+import ClientOnly from '@/components/common/ClientOnly.vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -68,16 +74,18 @@ import {
   Filler
 } from 'chart.js'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-)
+if (!import.meta.env.SSR) {
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    Filler
+  )
+}
 
 const login = () => {
   AuthService.login();
@@ -180,5 +188,12 @@ const chartOptions = {
     transform: none !important;
     height: 300px;
   }
+}
+
+.chart-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(74, 222, 128, 0.05) 100%);
+  border-radius: 8px;
 }
 </style>

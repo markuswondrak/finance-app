@@ -27,6 +27,17 @@ export default defineConfig({
       },
     },
   },
+  ssgOptions: {
+    script: 'async',
+    formatting: 'minify',
+    crittersOptions: {
+      preload: 'swap',
+    },
+    includedRoutes: () => ['/'],
+  },
+  ssr: {
+    noExternal: ['vuetify'],
+  },
   test: {
     globals: true,
     environment: 'jsdom',
