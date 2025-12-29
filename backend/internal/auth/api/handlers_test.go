@@ -64,9 +64,10 @@ func (m *MockRepository) UpsertWealthProfile(profile *wealth.WealthProfile) erro
 func (m *MockRepository) PurgeUserData(userID uint) error                         { return nil }
 
 // Workspace methods
-func (m *MockRepository) CreateWorkspace(ws *workspace.Workspace) error           { return nil }
-func (m *MockRepository) GetWorkspaceByID(id uint) (*workspace.Workspace, error)  { return nil, nil }
-func (m *MockRepository) UpdateWorkspace(ws *workspace.Workspace) error           { return nil }
+func (m *MockRepository) CreateWorkspace(ws *workspace.Workspace) error                  { return nil }
+func (m *MockRepository) GetWorkspaceByID(id uint) (*workspace.Workspace, error)         { return nil, nil }
+func (m *MockRepository) UpdateWorkspace(ws *workspace.Workspace) error                  { return nil }
+func (m *MockRepository) UpdateWorkspaceCurrentAmount(workspaceID uint, amount int) error { return nil }
 
 // Invite methods
 func (m *MockRepository) CreateInvite(invite *workspace.Invite) error             { return nil }
