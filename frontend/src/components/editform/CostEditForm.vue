@@ -59,8 +59,14 @@ export default {
     dialog(val) {
       if (val) {
         this.$emit('open');
+        document.addEventListener('keydown', this.handleEscape);
+      } else {
+        document.removeEventListener('keydown', this.handleEscape);
       }
     }
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.handleEscape);
   },
   computed: {
     btnIcon() {
@@ -97,6 +103,11 @@ export default {
     resetValidation() {
       if (this.$refs.form) {
         this.$refs.form.resetValidation();
+      }
+    },
+    handleEscape(e) {
+      if (e.key === 'Escape' && !this.saving) {
+        this.dialog = false;
       }
     }
   }
