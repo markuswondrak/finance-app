@@ -117,7 +117,7 @@ describe('MonthlyCostEditForm.vue', () => {
     });
 
     it('should save cost to API with correct mapping', async () => {
-        global.fetch.mockResolvedValue({});
+        global.fetch.mockResolvedValue({ ok: true });
 
         const wrapper = mount(MonthlyCostEditForm, {
             global: {
@@ -147,13 +147,13 @@ describe('MonthlyCostEditForm.vue', () => {
     });
 
     it('should call success on editform after save', async () => {
-        global.fetch.mockResolvedValue({});
+        global.fetch.mockResolvedValue({ ok: true });
 
         const successSpy = vi.fn();
         const LocalStub = {
             name: 'CostEditForm',
             template: '<div><slot></slot></div>',
-            methods: { 
+            methods: {
                 success: successSpy,
                 resetValidation: vi.fn()
             },
@@ -161,7 +161,7 @@ describe('MonthlyCostEditForm.vue', () => {
         };
 
         const wrapper = mount(MonthlyCostEditForm, {
-            global: { 
+            global: {
                 plugins: [vuetify],
                 stubs: {
                     CostEditForm: LocalStub
@@ -174,5 +174,38 @@ describe('MonthlyCostEditForm.vue', () => {
 
         expect(successSpy).toHaveBeenCalled();
         expect(wrapper.emitted('saved')).toBeTruthy();
+    });
+
+    it('should call error on editform when API returns error', async () => {
+        global.fetch.mockResolvedValue({ ok: false, status: 500 });
+
+        const successSpy = vi.fn();
+        const errorSpy = vi.fn();
+        const LocalStub = {
+            name: 'CostEditForm',
+            template: '<div><slot></slot></div>',
+            methods: {
+                success: successSpy,
+                error: errorSpy,
+                resetValidation: vi.fn()
+            },
+            emits: ['save']
+        };
+
+        const wrapper = mount(MonthlyCostEditForm, {
+            global: {
+                plugins: [vuetify],
+                stubs: {
+                    CostEditForm: LocalStub
+                }
+            },
+            props: { cost: null }
+        });
+
+        await wrapper.vm.saveCost();
+
+        expect(successSpy).not.toHaveBeenCalled();
+        expect(errorSpy).toHaveBeenCalled();
+        expect(wrapper.emitted('saved')).toBeFalsy();
     });
 });

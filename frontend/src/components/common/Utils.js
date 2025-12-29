@@ -134,11 +134,16 @@ export const CommonForm = (costToForm, formToCost, endpoint) => ({
 
       const cost = formToCost(this.form)
 
-      await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         method: 'post', body: JSON.stringify(cost), headers: {
           'Content-Type': 'application/json'
         }
       })
+
+      if (!response.ok) {
+        this.$refs.editform.error();
+        return;
+      }
 
       const isEdit = !!this.cost;
       this.$refs.editform.success(isEdit);

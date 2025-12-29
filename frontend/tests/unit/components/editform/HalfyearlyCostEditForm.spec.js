@@ -21,7 +21,7 @@ describe('HalfyearlyCostEditForm.vue', () => {
     });
 
     it('should call success on editform after save', async () => {
-        global.fetch.mockResolvedValue({});
+        global.fetch.mockResolvedValue({ ok: true });
 
         const successSpy = vi.fn();
         const CostEditFormStub = {
