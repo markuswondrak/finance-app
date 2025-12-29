@@ -31,6 +31,9 @@ tests/
 
 ## Commands
 
+- Run frontend tests: `pnpm -C frontend test --run`
+- Run specific frontend test: `pnpm -C frontend test <path-to-spec> --run`
+
 # Add commands for Backend: Go 1.17+, Frontend: Vue.js 3.3+
 
 ## Code Style

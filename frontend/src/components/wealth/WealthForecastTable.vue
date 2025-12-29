@@ -42,6 +42,7 @@
 
 <script>
 import { computed } from 'vue';
+import { useDisplay } from 'vuetify';
 import BaseTable from '@/components/common/BaseTable.vue';
 import { toCurrency } from '@/components/common/Utils';
 
@@ -62,14 +63,23 @@ export default {
   },
   emits: ['row-hover', 'row-leave'],
   setup(props) {
+    const { width } = useDisplay();
+
     const tableData = computed(() => {
       if (!props.forecast || !props.forecast.points) return [];
       return props.forecast.points;
     });
 
+    const formatCurrency = (val) => {
+      // Create dependency on width to force update on resize
+      // eslint-disable-next-line no-unused-vars
+      const w = width.value;
+      return toCurrency(val, true);
+    };
+
     return {
       tableData,
-      toCurrency
+      toCurrency: formatCurrency
     };
   }
 };

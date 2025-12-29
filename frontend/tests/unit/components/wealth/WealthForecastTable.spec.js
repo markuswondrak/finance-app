@@ -44,6 +44,32 @@ describe('WealthForecastTable.vue', () => {
     // 'toCurrency' uses Intl.NumberFormat('de-DE'...). Node environment usually has it.
     expect(wrapper.text()).toContain('1.000,00'); 
   });
+
+  it('shortens currency on small screens', async () => {
+    // Mock window.innerWidth
+    const originalWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 500 });
+    window.dispatchEvent(new Event('resize'));
+
+    const forecast = {
+      points: [
+        { year: 2025, invested: 1500, worst: 900, average: 1100, best: 12000 }
+      ]
+    };
+    const wrapper = mount(WealthForecastTable, {
+      global: { plugins: [vuetify] },
+      props: { loading: false, forecast }
+    });
+
+    // 1500 -> 1T€, 900 -> 900€, 1100 -> 1T€, 12000 -> 12T€
+    const text = wrapper.text();
+    expect(text).toContain('1T€');
+    expect(text).toContain('900€');
+    expect(text).toContain('12T€');
+
+    // Restore
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: originalWidth });
+  });
   
   it('emits hover event', async () => {
      const forecast = {

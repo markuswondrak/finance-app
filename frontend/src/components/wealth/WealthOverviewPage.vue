@@ -93,6 +93,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useDisplay } from 'vuetify';
 import BaseHighlightCard from '@/components/common/BaseHighlightCard.vue';
 import WealthForecastChart from './WealthForecastChart.vue';
 import WealthForecastTable from '@/components/wealth/WealthForecastTable.vue';
@@ -102,6 +103,7 @@ import EditReturnModal from './EditReturnModal.vue';
 import { wealthService } from '@/services/wealthService';
 import { toCurrency } from '@/components/common/Utils';
 
+const { width } = useDisplay();
 const loading = ref(true);
 const profile = ref(null);
 const forecast = ref(null);
@@ -122,7 +124,9 @@ const snackbar = ref({
 
 // Formatted values for cards
 const formattedCurrentWealth = computed(() => {
-  return profile.value ? toCurrency(profile.value.current_wealth) : '—';
+  // eslint-disable-next-line no-unused-vars
+  const w = width.value;
+  return profile.value ? toCurrency(profile.value.current_wealth, true) : '—';
 });
 
 const formattedDuration = computed(() => {
@@ -154,7 +158,9 @@ const endPortfolioInsight = computed(() => {
   if (!forecast.value || !forecast.value.points || forecast.value.points.length === 0) return '';
   
   const lastPoint = forecast.value.points[forecast.value.points.length - 1];
-  return `Endwert: ${toCurrency(lastPoint.average)}`;
+  // eslint-disable-next-line no-unused-vars
+  const w = width.value;
+  return `Endwert: ${toCurrency(lastPoint.average, true)}`;
 });
 
 const returnSpreadInsight = computed(() => {
@@ -162,7 +168,9 @@ const returnSpreadInsight = computed(() => {
   
   const lastPoint = forecast.value.points[forecast.value.points.length - 1];
   const spread = lastPoint.best - lastPoint.worst;
-  return `Abweichung: ±${toCurrency(spread / 2)}`;
+  // eslint-disable-next-line no-unused-vars
+  const w = width.value;
+  return `Abweichung: ±${toCurrency(spread / 2, true)}`;
 });
 
 const loadData = async () => {
