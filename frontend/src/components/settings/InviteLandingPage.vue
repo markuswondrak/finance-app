@@ -2,12 +2,12 @@
   <v-container class="fill-height justify-center">
     <v-card class="pa-8 text-center glass-card" elevation="4" max-width="500" rounded="xl">
       <div class="mb-6">
-        <v-icon icon="fa-users" size="64" color="primary"></v-icon>
+        <v-icon icon="fa-users" size="64" color="success"></v-icon>
       </div>
       <h1 class="text-h4 mb-4 font-weight-bold">Einladung zum Workspace</h1>
       
       <div v-if="loading">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        <v-progress-circular indeterminate color="success"></v-progress-circular>
       </div>
       
       <div v-else-if="error">
@@ -26,7 +26,7 @@
 
         <v-btn
           v-if="!user"
-          color="primary"
+          color="success"
           size="large"
           prepend-icon="fab fa-google"
           @click="login"
@@ -34,10 +34,10 @@
         >
           Anmelden mit Google
         </v-btn>
-        
+
         <v-btn
           v-else
-          color="primary"
+          color="success"
           size="large"
           :loading="joining"
           @click="joinWorkspace"
@@ -45,6 +45,21 @@
         >
           Workspace beitreten
         </v-btn>
+
+        <div v-if="user?.workspace_id" class="mt-6">
+          <p class="text-body-2 text-medium-emphasis mb-2">
+            Wenn Sie überspringen, wird die Einladung abgelehnt.
+          </p>
+          <v-btn
+            variant="text"
+            color="success"
+            size="small"
+            :loading="declining"
+            @click="skipToOwnWorkspace"
+          >
+            Überspringen
+          </v-btn>
+        </div>
       </div>
     </v-card>
 
@@ -74,6 +89,7 @@ const token = route.params.token;
 
 const showDestructiveModal = ref(false);
 const forceJoin = ref(false);
+const declining = ref(false);
 
 onMounted(async () => {
   try {
@@ -120,5 +136,16 @@ const confirmDestructiveJoin = () => {
 const cancelDestructiveJoin = () => {
     showDestructiveModal.value = false;
     forceJoin.value = false;
+};
+
+const skipToOwnWorkspace = async () => {
+    declining.value = true;
+    try {
+        await workspaceService.declineInvite(token);
+    } catch (e) {
+        // Ignore errors - we still want to navigate away
+    }
+    localStorage.removeItem('pending_invite_token');
+    router.push('/overview');
 };
 </script>

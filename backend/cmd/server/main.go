@@ -133,6 +133,7 @@ func main() {
 		apiGroup.GET("/workspace", server.WorkspaceHandler.GetWorkspace)
 		apiGroup.POST("/workspaces/invite", server.WorkspaceHandler.InviteMember)
 		apiGroup.POST("/workspaces/join", server.WorkspaceHandler.JoinWorkspace)
+		apiGroup.POST("/workspaces/decline", server.WorkspaceHandler.DeclineInvite)
 	}
 
 	port := getEnv("PORT", "8082")

@@ -144,6 +144,29 @@ func (h *Handler) GetWorkspace(c *gin.Context) {
 	c.JSON(http.StatusOK, workspace)
 }
 
+func (h *Handler) DeclineInvite(c *gin.Context) {
+	var req struct {
+		Token string `json:"token" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	invite, err := h.InviteService.ValidateInvite(req.Token)
+	if err != nil {
+		// Even if expired or invalid, we don't care - just acknowledge
+		c.JSON(http.StatusOK, gin.H{"message": "Invite declined"})
+		return
+	}
+
+	// Mark invite as used so it can't be used again
+	invite.IsUsed = true
+	h.Repo.UpdateInvite(invite)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Invite declined"})
+}
+
 func (h *Handler) RemoveMember(c *gin.Context) {
 	memberIDStr := c.Param("id")
 	memberID, err := strconv.Atoi(memberIDStr)

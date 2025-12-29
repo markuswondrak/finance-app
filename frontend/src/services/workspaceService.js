@@ -52,5 +52,21 @@ export const workspaceService = {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Failed to remove member: ${response.statusText}`);
     }
+  },
+
+  async declineInvite(token) {
+    const response = await fetch('/api/workspaces/decline', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to decline invite: ${response.statusText}`);
+    }
+    return await response.json();
   }
 };
