@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"wondee/finance-app-backend/internal/storage"
 	"wondee/finance-app-backend/internal/user"
+	"wondee/finance-app-backend/internal/workspace"
 )
 
 func TestUpdateCurrentAmount(t *testing.T) {
@@ -17,7 +18,14 @@ func TestUpdateCurrentAmount(t *testing.T) {
 	mockRepo := &storage.MockRepository{
 		Users: []user.User{
 			{
+				ID:          1,
+				WorkspaceID: 1,
+			},
+		},
+		Workspaces: []workspace.Workspace{
+			{
 				ID:            1,
+				Name:          "Test Workspace",
 				CurrentAmount: 500,
 			},
 		},
@@ -26,9 +34,10 @@ func TestUpdateCurrentAmount(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 
-	// Middleware to inject user_id for testing
+	// Middleware to inject user_id and workspace_id for testing
 	r.Use(func(c *gin.Context) {
 		c.Set("user_id", uint(1))
+		c.Set("workspace_id", uint(1))
 		c.Next()
 	})
 
@@ -48,9 +57,9 @@ func TestUpdateCurrentAmount(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}
 
-	// Check if repo was updated
-	u, _ := mockRepo.GetByID(1)
-	if u.CurrentAmount != 1000 {
-		t.Errorf("Expected repo to be updated to 1000, got %d", u.CurrentAmount)
+	// Check if workspace was updated
+	ws, _ := mockRepo.GetWorkspaceByID(1)
+	if ws.CurrentAmount != 1000 {
+		t.Errorf("Expected workspace to be updated to 1000, got %d", ws.CurrentAmount)
 	}
 }

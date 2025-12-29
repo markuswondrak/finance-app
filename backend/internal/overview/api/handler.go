@@ -48,9 +48,8 @@ type OverviewDetail struct {
 }
 
 func (h *Handler) GetOverview(c *gin.Context) {
-	userID := h.getUserID(c)
 	workspaceID := h.getWorkspaceID(c)
-	c.IndentedJSON(http.StatusOK, h.createOverview(userID, workspaceID))
+	c.IndentedJSON(http.StatusOK, h.createOverview(workspaceID))
 }
 
 func (h *Handler) GetOverviewDetail(c *gin.Context) {
@@ -125,10 +124,10 @@ func determineDisplayType(dueMonth []int) string {
 	}
 }
 
-func (h *Handler) createOverview(userID uint, workspaceID uint) Overview {
+func (h *Handler) createOverview(workspaceID uint) Overview {
 	currentAmount := 0
-	if user, err := h.Repo.GetByID(userID); err == nil {
-		currentAmount = user.CurrentAmount
+	if workspace, err := h.Repo.GetWorkspaceByID(workspaceID); err == nil {
+		currentAmount = workspace.CurrentAmount
 	}
 
 	entries := make([]OverviewEntry, MAX_ENTRIES)
@@ -203,14 +202,6 @@ func (h *Handler) createSpecialCostMap(workspaceID uint) map[types.YearMonth][]c
 	}
 
 	return result
-}
-
-func (h *Handler) getUserID(c *gin.Context) uint {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		return 0
-	}
-	return userID.(uint)
 }
 
 func (h *Handler) getWorkspaceID(c *gin.Context) uint {

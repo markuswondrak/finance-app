@@ -8,6 +8,7 @@ type WorkspaceRepository interface {
 	CreateWorkspace(ws *workspace.Workspace) error
 	GetWorkspaceByID(id uint) (*workspace.Workspace, error)
 	UpdateWorkspace(ws *workspace.Workspace) error
+	UpdateWorkspaceCurrentAmount(workspaceID uint, amount int) error
 }
 
 func (r *GormRepository) CreateWorkspace(ws *workspace.Workspace) error {
@@ -25,4 +26,8 @@ func (r *GormRepository) GetWorkspaceByID(id uint) (*workspace.Workspace, error)
 
 func (r *GormRepository) UpdateWorkspace(ws *workspace.Workspace) error {
 	return r.DB.Save(ws).Error
+}
+
+func (r *GormRepository) UpdateWorkspaceCurrentAmount(workspaceID uint, amount int) error {
+	return r.DB.Model(&workspace.Workspace{}).Where("id = ?", workspaceID).Update("current_amount", amount).Error
 }

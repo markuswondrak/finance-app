@@ -5,17 +5,17 @@ import (
 	"wondee/finance-app-backend/internal/cost"
 	"wondee/finance-app-backend/internal/platform/types"
 	"wondee/finance-app-backend/internal/storage"
-	"wondee/finance-app-backend/internal/user"
+	"wondee/finance-app-backend/internal/workspace"
 )
 
 func TestCreateOverview(t *testing.T) {
 	var workspaceID uint = 1
 
 	mockRepo := &storage.MockRepository{
-		Users: []user.User{
+		Workspaces: []workspace.Workspace{
 			{
-				ID:            1,
-				WorkspaceID:   workspaceID,
+				ID:            workspaceID,
+				Name:          "Test Workspace",
 				CurrentAmount: 1234,
 			},
 		},
@@ -24,7 +24,7 @@ func TestCreateOverview(t *testing.T) {
 	}
 	handler := &Handler{Repo: mockRepo, CostRepo: mockRepo}
 
-	overview := handler.createOverview(1, workspaceID)
+	overview := handler.createOverview(workspaceID)
 
 	if overview.CurrentAmount != 1234 {
 		t.Errorf("Expected CurrentAmount 1234, got %d", overview.CurrentAmount)

@@ -23,6 +23,14 @@ func (h *Handler) getUserID(c *gin.Context) uint {
 	return userID.(uint)
 }
 
+func (h *Handler) getWorkspaceID(c *gin.Context) uint {
+	workspaceID, exists := c.Get("workspace_id")
+	if !exists {
+		return 0
+	}
+	return workspaceID.(uint)
+}
+
 func (h *Handler) UpdateCurrentAmount(c *gin.Context) {
 	var req UpdateUserRequest
 
@@ -31,15 +39,13 @@ func (h *Handler) UpdateCurrentAmount(c *gin.Context) {
 		return
 	}
 
-	userID := h.getUserID(c)
-	user, err := h.Repo.GetByID(userID)
-	if err != nil {
+	workspaceID := h.getWorkspaceID(c)
+	if workspaceID == 0 {
 		c.Status(http.StatusUnauthorized)
 		return
 	}
 
-	user.CurrentAmount = *req.Amount
-	err = h.Repo.Update(user)
+	err := h.Repo.UpdateWorkspaceCurrentAmount(workspaceID, *req.Amount)
 	if err != nil {
 		c.Status(http.StatusInternalServerError)
 		return

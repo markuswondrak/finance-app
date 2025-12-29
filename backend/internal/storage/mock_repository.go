@@ -51,6 +51,16 @@ func (m *MockRepository) UpdateWorkspace(ws *workspace.Workspace) error {
 	return errors.New("workspace not found")
 }
 
+func (m *MockRepository) UpdateWorkspaceCurrentAmount(workspaceID uint, amount int) error {
+	for i, w := range m.Workspaces {
+		if w.ID == workspaceID {
+			m.Workspaces[i].CurrentAmount = amount
+			return nil
+		}
+	}
+	return errors.New("workspace not found")
+}
+
 func (m *MockRepository) CreateInvite(invite *workspace.Invite) error {
 	if invite.ID == 0 {
 		m.nextInviteID++
