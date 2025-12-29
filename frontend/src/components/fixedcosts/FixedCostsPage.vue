@@ -23,7 +23,7 @@
             </template>
           </table-action-bar>
 
-          <v-card variant="outlined" class="glass border card-accent-primary" rounded="lg">
+          <v-card variant="outlined" class="glass border card-accent-primary" rounded="lg" style="overflow: visible;">
             <v-tabs v-model="tab" grow>
               <v-tab
                 v-for="config in tabsConfig"
@@ -253,5 +253,12 @@ strong.red {
 }
 .tabs {
   width: 100%;
+}
+
+/* Override mobile sticky offset - the parent card handles the scroll context */
+@media (max-width: 600px) {
+  :deep(table > thead > tr > th) {
+    top: 0 !important;
+  }
 }
 </style>
