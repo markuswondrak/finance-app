@@ -9,7 +9,7 @@ src/__debug*
 server
 
 # Database data
-db/
+./db/
 
 # Ignore git directory
 .git
