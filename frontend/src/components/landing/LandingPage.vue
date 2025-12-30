@@ -2,6 +2,7 @@
   <v-container fluid class="pa-0 landing-page">
     <LandingHero />
     <CostTrackingFeature />
+    <SaveToSpendFeature />
     <WealthFeature />
     <SavingsCalculator />
     <LandingCTA />
@@ -12,6 +13,7 @@
 <script setup>
 import LandingHero from './LandingHero.vue';
 import CostTrackingFeature from './CostTrackingFeature.vue';
+import SaveToSpendFeature from './SaveToSpendFeature.vue';
 import WealthFeature from './WealthFeature.vue';
 import SavingsCalculator from './SavingsCalculator.vue';
 import LandingCTA from './LandingCTA.vue';
