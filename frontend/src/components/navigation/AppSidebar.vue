@@ -170,7 +170,8 @@ const navigationItems = ref([
   { title: 'Vermögen', to: '/wealth-overview', icon: 'fa-piggy-bank' },
   { title: 'Spielraum', to: '/save-to-spend', icon: 'fa-wallet' },
   { title: 'Fixkosten', to: '/fixedcosts', icon: 'fa-money-check-dollar' },
-  { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' }
+  { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' },
+  { title: 'Hilfe', to: '/help', icon: 'fa-circle-question' }
 ])
 
 // User Logic

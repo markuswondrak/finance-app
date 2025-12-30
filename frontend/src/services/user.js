@@ -24,4 +24,26 @@ export const userService = {
 
     return await response.json();
   },
+
+  /**
+   * Updates the user's onboarding completion status.
+   * @param {boolean} completed - Whether onboarding has been completed.
+   * @returns {Promise<object>} The updated user object from the API.
+   * @throws {Error} If the network request fails or returns a non-200 status.
+   */
+  async updateOnboardingStatus(completed) {
+    const response = await fetch('/api/user/onboarding-status', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ completed }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update onboarding status: ${response.statusText}`);
+    }
+
+    return await response.json();
+  },
 };

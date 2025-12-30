@@ -376,3 +376,13 @@ func (m *MockRepository) UpsertWealthProfile(profile *wealth.WealthProfile) erro
 	}
 	return nil
 }
+
+func (m *MockRepository) UpdateOnboardingStatus(userID uint, completed bool) (*user.User, error) {
+	for i, u := range m.Users {
+		if u.ID == userID {
+			m.Users[i].OnboardingCompleted = completed
+			return &m.Users[i], nil
+		}
+	}
+	return nil, errors.New("user not found")
+}

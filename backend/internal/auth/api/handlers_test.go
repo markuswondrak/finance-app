@@ -75,6 +75,11 @@ func (m *MockRepository) GetInviteByToken(token string) (*workspace.Invite, erro
 func (m *MockRepository) UpdateInvite(invite *workspace.Invite) error             { return nil }
 func (m *MockRepository) DeleteInvite(token string) error                         { return nil }
 
+// User onboarding method
+func (m *MockRepository) UpdateOnboardingStatus(userID uint, completed bool) (*user.User, error) {
+	return nil, nil
+}
+
 func TestLogin(t *testing.T) {
 	// Setup
 	gin.SetMode(gin.TestMode)

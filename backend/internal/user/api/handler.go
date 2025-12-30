@@ -15,6 +15,10 @@ type UpdateUserRequest struct {
 	Amount *int `json:"amount" binding:"required"`
 }
 
+type OnboardingStatusRequest struct {
+	Completed *bool `json:"completed" binding:"required"`
+}
+
 func (h *Handler) getUserID(c *gin.Context) uint {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -69,4 +73,27 @@ func (h *Handler) DeleteCurrentUser(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func (h *Handler) UpdateOnboardingStatus(c *gin.Context) {
+	userID := h.getUserID(c)
+
+	if userID == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	var req OnboardingStatusRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: completed field is required"})
+		return
+	}
+
+	user, err := h.Repo.UpdateOnboardingStatus(userID, *req.Completed)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update onboarding status"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

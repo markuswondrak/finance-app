@@ -131,6 +131,7 @@ func main() {
 		apiGroup.DELETE("/specialcosts/:id", server.SpecialCostHandler.DeleteSpecialCosts)
 
 		apiGroup.PUT("/user/current-amount", server.UserHandler.UpdateCurrentAmount)
+		apiGroup.PATCH("/user/onboarding-status", server.UserHandler.UpdateOnboardingStatus)
 		apiGroup.DELETE("/user", server.UserHandler.DeleteCurrentUser)
 
 		apiGroup.GET("/wealth-profile", server.ProfileHandler.GetWealthProfile)

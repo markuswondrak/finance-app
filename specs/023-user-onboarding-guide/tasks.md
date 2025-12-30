@@ -25,8 +25,8 @@
 
 **Purpose**: Verify prerequisites and project structure
 
-- [ ] T001 Verify onboarding images exist in frontend/src/assets/onboarding/ (7 images: welcome.png, overview.png, wealth.png, save-to-spend.png, fixed-costs.png, special-costs.png, navigation.png)
-- [ ] T002 [P] Create help components directory at frontend/src/components/help/
+- [x] T001 Verify onboarding images exist in frontend/src/assets/onboarding/ (7 images: welcome.png, overview.png, wealth.png, save-to-spend.png, fixed-costs.png, special-costs.png, navigation.png)
+- [x] T002 [P] Create help components directory at frontend/src/components/help/
 
 ---
 
@@ -38,26 +38,26 @@
 
 ### Backend Model & Repository
 
-- [ ] T003 Add OnboardingCompleted field to User struct in backend/internal/user/model.go
-- [ ] T004 Add UpdateOnboardingStatus method to UserRepository interface in backend/internal/storage/userRepo.go
-- [ ] T005 Implement UpdateOnboardingStatus in UserRepoGorm in backend/internal/storage/userRepo.go
+- [x] T003 Add OnboardingCompleted field to User struct in backend/internal/user/model.go
+- [x] T004 Add UpdateOnboardingStatus method to UserRepository interface in backend/internal/storage/userRepo.go
+- [x] T005 Implement UpdateOnboardingStatus in UserRepoGorm in backend/internal/storage/userRepo.go
 
 ### Backend API Endpoint
 
-- [ ] T006 Create OnboardingStatusRequest struct in backend/internal/user/api/handler.go
-- [ ] T007 Implement UpdateOnboardingStatus handler in backend/internal/user/api/handler.go
-- [ ] T008 Register PATCH /api/user/onboarding-status route in backend/internal/api/server.go
+- [x] T006 Create OnboardingStatusRequest struct in backend/internal/user/api/handler.go
+- [x] T007 Implement UpdateOnboardingStatus handler in backend/internal/user/api/handler.go
+- [x] T008 Register PATCH /api/user/onboarding-status route in backend/cmd/server/main.go
 
 ### Backend Tests
 
-- [ ] T009 Create onboarding integration test file at backend/internal/user/api/handler_test.go
-- [ ] T010 [P] Write test for successful onboarding status update (200 response)
-- [ ] T011 [P] Write test for unauthorized request (401 response)
-- [ ] T012 [P] Write test for invalid request body (400 response)
+- [x] T009 Create onboarding integration test file at backend/internal/user/api/handler_test.go
+- [x] T010 [P] Write test for successful onboarding status update (200 response)
+- [x] T011 [P] Write test for unauthorized request (401 response)
+- [x] T012 [P] Write test for invalid request body (400 response)
 
 ### Frontend Service
 
-- [ ] T013 Add updateOnboardingStatus method to userService in frontend/src/services/user.js
+- [x] T013 Add updateOnboardingStatus method to userService in frontend/src/services/user.js
 
 **Checkpoint**: Backend API ready - run `go test ./backend/internal/user/api/...` to verify
 
@@ -71,14 +71,14 @@
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Create OnboardingWizard.vue component skeleton in frontend/src/components/help/OnboardingWizard.vue
-- [ ] T015 [US1] Define GUIDE_STEPS constant with 7 steps (welcome, overview, wealth, save-to-spend, fixed-costs, special-costs, navigation) in OnboardingWizard.vue
-- [ ] T016 [US1] Implement v-dialog with v-window for step navigation in OnboardingWizard.vue
-- [ ] T017 [US1] Add Next/Back/Skip buttons with proper navigation logic in OnboardingWizard.vue
-- [ ] T018 [US1] Import and display screenshot images for each step in OnboardingWizard.vue
-- [ ] T019 [US1] Call updateOnboardingStatus API on wizard complete or skip in OnboardingWizard.vue
-- [ ] T020 [US1] Add auto-trigger logic to show wizard when user.onboarding_completed is false in frontend/src/App.vue
-- [ ] T021 [US1] Emit close event and update local user state after wizard completion in App.vue
+- [x] T014 [US1] Create OnboardingWizard.vue component skeleton in frontend/src/components/help/OnboardingWizard.vue
+- [x] T015 [US1] Define GUIDE_STEPS constant with 7 steps (welcome, overview, wealth, save-to-spend, fixed-costs, special-costs, navigation) in OnboardingWizard.vue
+- [x] T016 [US1] Implement v-dialog with v-window for step navigation in OnboardingWizard.vue
+- [x] T017 [US1] Add Next/Back/Skip buttons with proper navigation logic in OnboardingWizard.vue
+- [x] T018 [US1] Import and display screenshot images for each step in OnboardingWizard.vue
+- [x] T019 [US1] Call updateOnboardingStatus API on wizard complete or skip in OnboardingWizard.vue
+- [x] T020 [US1] Add auto-trigger logic to show wizard when user.onboarding_completed is false in frontend/src/Layout.vue
+- [x] T021 [US1] Emit close event and update local user state after wizard completion in Layout.vue
 
 ### Tests for User Story 1
 
@@ -101,10 +101,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T028 [US2] Add German descriptions for each feature in GUIDE_STEPS constant in OnboardingWizard.vue
-- [ ] T029 [US2] Add keyActions array for each feature step in GUIDE_STEPS constant in OnboardingWizard.vue
-- [ ] T030 [US2] Style step content layout: title, icon, description, screenshot, key actions list in OnboardingWizard.vue
-- [ ] T031 [US2] Add responsive styling for mobile viewport in OnboardingWizard.vue
+- [x] T028 [US2] Add German descriptions for each feature in GUIDE_STEPS constant in OnboardingWizard.vue
+- [x] T029 [US2] Add keyActions array for each feature step in GUIDE_STEPS constant in OnboardingWizard.vue
+- [x] T030 [US2] Style step content layout: title, icon, description, screenshot, key actions list in OnboardingWizard.vue
+- [x] T031 [US2] Add responsive styling for mobile viewport in OnboardingWizard.vue
 
 ### Tests for User Story 2
 
@@ -124,11 +124,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T035 [US3] Create HelpPage.vue component in frontend/src/components/help/HelpPage.vue
-- [ ] T036 [US3] Add "Anleitung starten" button to open OnboardingWizard in HelpPage.vue
-- [ ] T037 [US3] Add /help route to router in frontend/src/router/index.js
-- [ ] T038 [US3] Add Help navigation item to AppSidebar in frontend/src/components/navigation/AppSidebar.vue
-- [ ] T039 [US3] Use fa-circle-question icon for Help nav item in AppSidebar.vue
+- [x] T035 [US3] Create HelpPage.vue component in frontend/src/components/help/HelpPage.vue
+- [x] T036 [US3] Add "Anleitung starten" button to open OnboardingWizard in HelpPage.vue
+- [x] T037 [US3] Add /help route to router in frontend/src/router/index.js
+- [x] T038 [US3] Add Help navigation item to AppSidebar in frontend/src/components/navigation/AppSidebar.vue
+- [x] T039 [US3] Use fa-circle-question icon for Help nav item in AppSidebar.vue
 
 ### Tests for User Story 3
 
@@ -148,9 +148,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T043 [US4] Enhance navigation step content with sidebar expansion instructions in OnboardingWizard.vue
-- [ ] T044 [US4] Add mobile hamburger menu instructions to navigation step in OnboardingWizard.vue
-- [ ] T045 [US4] Add "Hilfe jederzeit aufrufen" instruction pointing to new Help section in OnboardingWizard.vue
+- [x] T043 [US4] Enhance navigation step content with sidebar expansion instructions in OnboardingWizard.vue
+- [x] T044 [US4] Add mobile hamburger menu instructions to navigation step in OnboardingWizard.vue
+- [x] T045 [US4] Add "Hilfe jederzeit aufrufen" instruction pointing to new Help section in OnboardingWizard.vue
 
 ### Tests for User Story 4
 
@@ -165,13 +165,13 @@
 
 **Purpose**: Final quality checks and improvements
 
-- [ ] T048 Run all backend tests: go test ./backend/...
+- [x] T048 Run all backend tests: go test ./backend/...
 - [ ] T049 Run all frontend tests: cd frontend && npm test
 - [ ] T050 Verify responsive design on mobile viewport (320px-768px)
 - [ ] T051 Verify wizard loads in under 100ms (performance goal)
 - [ ] T052 Manual test: full onboarding flow for new user
 - [ ] T053 Manual test: Help section access for existing user
-- [ ] T054 Code review: check for German language consistency in all wizard content
+- [x] T054 Code review: check for German language consistency in all wizard content
 
 ---
 

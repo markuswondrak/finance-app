@@ -6,6 +6,7 @@ import SaveToSpendPage from '../components/spend/SaveToSpendPage.vue'
 import UserSettingsPage from '../components/settings/UserSettingsPage.vue'
 import LandingPage from '../components/landing/LandingPage.vue'
 import InviteLandingPage from '../components/settings/InviteLandingPage.vue'
+import HelpPage from '../components/help/HelpPage.vue'
 
 export const routes = [
   {
@@ -46,6 +47,11 @@ export const routes = [
   {
     path: '/settings',
     component: UserSettingsPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/help',
+    component: HelpPage,
     meta: { requiresAuth: true }
   }
 ]

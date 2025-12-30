@@ -17,6 +17,7 @@ type UserRepository interface {
 	Update(user *user.User) error
 	Delete(id uint) error
 	PurgeUserData(userID uint) error
+	UpdateOnboardingStatus(userID uint, completed bool) (*user.User, error)
 }
 
 func (r *GormRepository) PurgeUserData(userID uint) error {
@@ -82,11 +83,11 @@ func (r *GormRepository) Update(user *user.User) error {
 }
 
 func (r *GormRepository) Delete(id uint) error {
-	// GORM will handle cascading deletes if configured in models, 
+	// GORM will handle cascading deletes if configured in models,
 	// or we can manually delete related data if needed.
 	// wealth.WealthProfile has OnDelete:CASCADE on UserID.
 	// FixedCost and SpecialCost also need to be checked.
-	
+
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		// Delete related records that might not have CASCADE set up in DB
 		if err := tx.Where("user_id = ?", id).Delete(&cost.FixedCost{}).Error; err != nil {
@@ -98,8 +99,22 @@ func (r *GormRepository) Delete(id uint) error {
 		if err := tx.Where("user_id = ?", id).Delete(&wealth.WealthProfile{}).Error; err != nil {
 			return err
 		}
-		
+
 		// Finally delete the user
 		return tx.Delete(&user.User{}, id).Error
 	})
+}
+
+func (r *GormRepository) UpdateOnboardingStatus(userID uint, completed bool) (*user.User, error) {
+	var u user.User
+	if err := r.DB.First(&u, userID).Error; err != nil {
+		return nil, err
+	}
+
+	u.OnboardingCompleted = completed
+	if err := r.DB.Save(&u).Error; err != nil {
+		return nil, err
+	}
+
+	return &u, nil
 }

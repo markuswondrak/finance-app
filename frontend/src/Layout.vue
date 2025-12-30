@@ -27,14 +27,22 @@
         <a href="https://wondee.info" style="color: #4ADE80;">wondee.info</a>
       </span>
     </v-footer>
+
+    <!-- Onboarding Wizard -->
+    <OnboardingWizard
+      v-model="showOnboardingWizard"
+      @close="onOnboardingComplete"
+    />
   </v-app>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/navigation/AppSidebar.vue'
+import OnboardingWizard from '@/components/help/OnboardingWizard.vue'
+import { AuthService } from '@/services/auth'
 
 const { mobile } = useDisplay()
 const route = useRoute()
@@ -45,6 +53,25 @@ const hideNavigation = computed(() => route.meta.hideNavigation)
 // Navigation state
 const drawer = ref(!mobile.value) // Start open on desktop, closed on mobile
 const rail = ref(false)
+
+// Onboarding wizard state
+const showOnboardingWizard = ref(false)
+const user = ref(null)
+
+// Check if user needs onboarding on mount
+onMounted(async () => {
+  user.value = await AuthService.getUser()
+  if (user.value && user.value.onboarding_completed === false) {
+    showOnboardingWizard.value = true
+  }
+})
+
+const onOnboardingComplete = () => {
+  showOnboardingWizard.value = false
+  if (user.value) {
+    user.value.onboarding_completed = true
+  }
+}
 
 // Update drawer state when switching between mobile/desktop
 watch(mobile, (isMobile) => {
