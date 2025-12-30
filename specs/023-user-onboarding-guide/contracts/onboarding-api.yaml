@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: User Onboarding API
+  description: API endpoints for user onboarding guide feature
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: API base path
+
+paths:
+  /user/onboarding-status:
+    patch:
+      summary: Update user onboarding status
+      description: |
+        Marks the user's onboarding guide as completed or dismissed.
+        Called when user finishes or skips the onboarding wizard.
+      operationId: updateOnboardingStatus
+      tags:
+        - User
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingStatusRequest'
+            examples:
+              complete:
+                summary: Mark onboarding as completed
+                value:
+                  completed: true
+      responses:
+        '200':
+          description: Status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid request: completed field is required"
+        '401':
+          description: Unauthorized - user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Failed to update onboarding status"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: auth_token
+      description: HTTP-only JWT cookie set by /auth/google/callback
+
+  schemas:
+    OnboardingStatusRequest:
+      type: object
+      required:
+        - completed
+      properties:
+        completed:
+          type: boolean
+          description: Whether the user has completed or dismissed the onboarding guide
+          example: true
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint
+          description: User ID
+          example: 1
+        google_id:
+          type: string
+          description: Google OAuth ID
+          example: "118234567890123456789"
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "user@example.com"
+        name:
+          type: string
+          description: User display name
+          example: "Max Mustermann"
+        avatar_url:
+          type: string
+          format: uri
+          description: URL to user's profile picture
+          example: "https://lh3.googleusercontent.com/..."
+        current_amount:
+          type: integer
+          description: Current balance amount in cents
+          example: 150000
+        workspace_id:
+          type: integer
+          format: uint
+          description: ID of user's workspace
+          example: 1
+        onboarding_completed:
+          type: boolean
+          description: Whether user has completed the onboarding guide
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          description: User creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "An error occurred"
