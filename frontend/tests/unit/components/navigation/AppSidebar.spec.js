@@ -118,8 +118,8 @@ describe('AppSidebar.vue', () => {
     expect(wrapper.text()).toContain('Fixkosten')
     expect(wrapper.text()).toContain('Sonderkosten')
 
-    // Verify we have exactly 4 list items
+    // Verify we have exactly 6 list items
     const items = wrapper.findAllComponents({ name: 'v-list-item' })
-    expect(items.length).toBe(5)
+    expect(items.length).toBe(6)
   })
 })

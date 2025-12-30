@@ -41,6 +41,7 @@ tests/
 Backend: Go 1.17+, Frontend: Vue.js 3.3+: Follow standard conventions
 
 ## Recent Changes
+- 022-save-to-spend: Added Go 1.17+ (Backend), Vue.js 3.3+ (Frontend) + Gin, GORM (Backend); Vuetify 3.3+ (Frontend)
 - 019-landing-page-redesign: Added Vue.js 3.3+ (Frontend) + Vuetify 3.3+, Chart.js (vue-chartjs), Vue Router 4.2+
 - 018-wealth-overview-redesign: Added Go 1.24.0 (Backend), Vue.js 3.3.4 (Frontend) + Gin, GORM (Backend); Vuetify 3.3.15, Chart.js 4.4.0 (Frontend)
 

@@ -145,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { AuthService } from '@/services/auth';
 
 defineProps({
@@ -168,6 +168,7 @@ const emit = defineEmits(['update:modelValue', 'update:rail'])
 const navigationItems = ref([
   { title: 'Überblick', to: '/overview', icon: 'fa-chart-line' },
   { title: 'Vermögen', to: '/wealth-overview', icon: 'fa-piggy-bank' },
+  { title: 'Spielraum', to: '/save-to-spend', icon: 'fa-wallet' },
   { title: 'Fixkosten', to: '/fixedcosts', icon: 'fa-money-check-dollar' },
   { title: 'Sonderkosten', to: '/specialcosts', icon: 'fa-money-bill-wave' }
 ])
@@ -175,16 +176,6 @@ const navigationItems = ref([
 // User Logic
 const user = ref(null);
 const menu = ref(false);
-
-const initials = computed(() => {
-  if (!user.value || !user.value.name) return '?';
-  return user.value.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .substring(0, 2);
-});
 
 onMounted(async () => {
   user.value = await AuthService.getUser();

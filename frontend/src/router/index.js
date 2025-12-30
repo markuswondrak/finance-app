@@ -2,6 +2,7 @@ import Overview from '../components/overview/OverviewPage.vue'
 import FixedCosts from '../components/fixedcosts/FixedCostsPage.vue'
 import SpecialCosts from '../components/SpecialCostsPage.vue'
 import WealthOverviewPage from '../components/wealth/WealthOverviewPage.vue'
+import SaveToSpendPage from '../components/spend/SaveToSpendPage.vue'
 import UserSettingsPage from '../components/settings/UserSettingsPage.vue'
 import LandingPage from '../components/landing/LandingPage.vue'
 import InviteLandingPage from '../components/settings/InviteLandingPage.vue'
@@ -25,6 +26,11 @@ export const routes = [
   {
     path: '/wealth-overview',
     component: WealthOverviewPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/save-to-spend',
+    component: SaveToSpendPage,
     meta: { requiresAuth: true }
   },
   {

@@ -15,8 +15,9 @@ import (
 
 	"wondee/finance-app-backend/internal/api"
 	"wondee/finance-app-backend/internal/auth/api"
-	"wondee/finance-app-backend/internal/cost"
 	"wondee/finance-app-backend/internal/auth/middleware"
+	"wondee/finance-app-backend/internal/cost"
+	"wondee/finance-app-backend/internal/spend"
 	"wondee/finance-app-backend/internal/storage"
 	"wondee/finance-app-backend/internal/user"
 	"wondee/finance-app-backend/internal/wealth"
@@ -54,7 +55,16 @@ func ConnectDataBase() *gorm.DB {
 
 	// Step 3: AutoMigrate - now safe to add NOT NULL constraints since data is populated
 	// Order matters: Workspace must be created before tables that reference it
-	err = database.AutoMigrate(&workspace.Workspace{}, &user.User{}, &cost.FixedCost{}, &cost.SpecialCost{}, &wealth.WealthProfile{}, &workspace.Invite{})
+	err = database.AutoMigrate(
+		&workspace.Workspace{},
+		&user.User{},
+		&cost.FixedCost{},
+		&cost.SpecialCost{},
+		&wealth.WealthProfile{},
+		&workspace.Invite{},
+		&spend.MonthlyPaymentStatus{},
+		&spend.OneTimePendingCost{},
+	)
 
 	if err != nil {
 		panic(err)
@@ -134,6 +144,20 @@ func main() {
 		apiGroup.POST("/workspaces/invite", server.WorkspaceHandler.InviteMember)
 		apiGroup.POST("/workspaces/join", server.WorkspaceHandler.JoinWorkspace)
 		apiGroup.POST("/workspaces/decline", server.WorkspaceHandler.DeclineInvite)
+
+		// Save-to-Spend routes
+		if server.SpendHandler != nil {
+			apiGroup.GET("/save-to-spend", server.SpendHandler.GetSaveToSpend)
+			apiGroup.PUT("/save-to-spend/balance", server.SpendHandler.UpdateBalance)
+			apiGroup.POST("/save-to-spend/fixed-costs/:id/paid", server.SpendHandler.MarkFixedCostPaid)
+			apiGroup.POST("/save-to-spend/fixed-costs/:id/pending", server.SpendHandler.MarkFixedCostPending)
+			apiGroup.POST("/save-to-spend/fixed-costs/:id/include", server.SpendHandler.IncludeFixedCost)
+			apiGroup.POST("/save-to-spend/fixed-costs/:id/exclude", server.SpendHandler.ExcludeFixedCost)
+			apiGroup.POST("/save-to-spend/one-time-costs", server.SpendHandler.CreateOneTimeCost)
+			apiGroup.DELETE("/save-to-spend/one-time-costs/:id", server.SpendHandler.DeleteOneTimeCost)
+			apiGroup.POST("/save-to-spend/one-time-costs/:id/paid", server.SpendHandler.MarkOneTimeCostPaid)
+			apiGroup.POST("/save-to-spend/one-time-costs/:id/pending", server.SpendHandler.MarkOneTimeCostPending)
+		}
 	}
 
 	port := getEnv("PORT", "8082")

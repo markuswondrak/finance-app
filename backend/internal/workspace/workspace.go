@@ -7,11 +7,12 @@ import (
 )
 
 type Workspace struct {
-	ID            uint   `gorm:"primaryKey"`
-	Name          string `gorm:"not null"`
-	CurrentAmount int    `gorm:"default:0"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID                 uint   `gorm:"primaryKey"`
+	Name               string `gorm:"not null"`
+	CurrentAmount      int    `gorm:"default:0"`
+	SaveToSpendBalance int    `gorm:"default:0"` // Checking account balance for Save-to-Spend
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
 
 	// Relationships
 	Users      []user.User      `gorm:"foreignKey:WorkspaceID"`

@@ -111,21 +111,12 @@ func TestScan(t *testing.T) {
 }
 
 func TestValue(t *testing.T) {
-	ym := &YearMonth{2023, 10}
+	ym := YearMonth{2023, 10}
 	val, err := ym.Value()
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 	if val != "2023 10" {
 		t.Errorf("Expected '2023 10', got '%v'", val)
-	}
-
-	ym = nil
-	val, err = ym.Value()
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-	if val != nil {
-		t.Error("Expected nil value for nil YearMonth")
 	}
 }

@@ -38,11 +38,7 @@ func (this *YearMonth) Scan(value interface{}) error {
 	return nil
 }
 
-func (this *YearMonth) Value() (driver.Value, error) {
-	if this == nil {
-		return nil, nil
-	}
-
+func (this YearMonth) Value() (driver.Value, error) {
 	return strconv.Itoa(this.Year) + " " + strconv.Itoa(this.Month), nil
 }
 

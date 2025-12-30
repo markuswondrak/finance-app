@@ -7,10 +7,16 @@ import { h } from 'vue'
 
 // Font Awesome 6 iconset for Vuetify 3
 const fa6 = {
-  component: (props) => h('i', {
-    class: `fa-solid ${props.icon}`,
-    'aria-hidden': 'true',
-  }),
+  component: (props) => {
+    const icon = props.icon || ''
+    // Support explicit style prefixes (fa-regular, fa-brands)
+    const hasStylePrefix = icon.startsWith('fa-regular ') || icon.startsWith('fa-brands ')
+    const iconClass = hasStylePrefix ? icon : `fa-solid ${icon}`
+    return h('i', {
+      class: iconClass,
+      'aria-hidden': 'true',
+    })
+  },
 }
 
 // Custom dark theme with finance-focused colors
@@ -59,6 +65,11 @@ export default createVuetify({
   },
   icons: {
     defaultSet: 'fa6',
+    aliases: {
+      checkboxOn: 'fa-square-check',
+      checkboxOff: 'fa-regular fa-square',
+      checkboxIndeterminate: 'fa-square-minus',
+    },
     sets: {
       fa6,
     },
