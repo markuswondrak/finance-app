@@ -4,7 +4,7 @@
 
 A modern personal finance tracking application built with Vue.js 3 and Go. It helps users manage fixed costs, track special expenses, manage wealth accumulation, and visualize financial forecasts with a fintech-inspired dark theme.
 
-<img width="1440" height="734" alt="grafik" src="https://github.com/user-attachments/assets/b9a6a251-1abc-44cd-b7dc-3c6a06d0c634" />
+![Finance App Dashboard](frontend/src/assets/onboarding/welcome.png)
 
 Try it out here: https://finance.wondee.info/
 
@@ -14,7 +14,10 @@ Try it out here: https://finance.wondee.info/
 - **Fixed Costs Management:** Track recurring expenses (monthly, quarterly, half-yearly, yearly).
 - **Special Costs Tracking:** Manage one-time or irregular expenses.
 - **Wealth Management:** Track assets, configure wealth profiles, and forecast long-term accumulation.
+- **Save-to-Spend:** Monthly budgeting feature that tracks pending costs against available balance.
 - **Financial Forecasting:** Visual sparklines and charts for surplus trends and balance projections.
+- **Workspace Collaboration:** Multi-user workspaces with invite system for shared financial planning.
+- **User Onboarding:** Guided setup wizard for new users.
 - **Google Authentication:** Secure login using Google OAuth2.
 - **Dark Theme:** Modern, high-contrast UI designed for readability.
 - **Responsive Design:** Optimized for various screen sizes using Vuetify 3.
@@ -73,15 +76,23 @@ Try it out here: https://finance.wondee.info/
 ## Folder Description
 
 - **`frontend/`**: Vue.js 3 application using Vuetify 3, Vite, and Vitest.
-  - `src/components/`: Page-centric folder structure (e.g., `wealth/`, `overview/`) containing views and their specific sub-components, plus `commons/` for shared UI elements.
+  - `src/components/`: Page-centric folder structure (e.g., `wealth/`, `overview/`, `spend/`) containing views and their specific sub-components, plus `common/` for shared UI elements.
   - `src/services/`: API client and communication logic.
-  - `mockdata/`: Mock server and JSON data for local development.
-- **`backend/`**: Go REST API using the Gin framework and GORM.
+  - `src/composables/`: Vue composables for shared stateful logic.
+- **`backend/`**: Go REST API using the Gin framework and GORM with domain-oriented architecture.
   - `cmd/server/`: Entry point for the Go application.
-  - `internal/api/`: API handlers and routing logic.
-  - `internal/models/`: Database schema definitions.
-  - `internal/storage/`: Database interaction and repository patterns.
-  - `db/`: Database initialization scripts and data storage.
-- **`specs/`**: *Spec-kit* feature folder. Detailed documentation, design plans, and task lists for project features. Each feature has its own subfolder.
-- **`.github/workflows/`**: CI/CD pipelines for automated testing and building.
-- **`.gemini/`**: Configuration and instructions for AI-assisted development.
+  - `internal/api/`: Server wiring and central orchestration.
+  - `internal/auth/`: Authentication domain (JWT, middleware).
+  - `internal/user/`: User domain (handlers, services, models).
+  - `internal/workspace/`: Workspace and collaboration domain (invites, email).
+  - `internal/cost/`: Cost management domain (fixed costs, special costs).
+  - `internal/spend/`: Save-to-Spend domain (monthly payment tracking).
+  - `internal/wealth/`: Wealth management domain (profiles, forecasting).
+  - `internal/overview/`: Dashboard/statistics domain.
+  - `internal/platform/`: Shared infrastructure (types, database config).
+  - `internal/storage/`: Repository implementations (GORM).
+  - `db/`: Database initialization scripts and container setup.
+- **`specs/`**: Feature specification folder with documentation, design plans, and task lists.
+- **`.specify/`**: Speckit configuration and project memory (constitution, templates).
+- **`.github/workflows/`**: CI/CD pipelines for automated testing and deployment.
+- **`deploy/`**: Terraform infrastructure-as-code for GCP deployment.
