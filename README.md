@@ -6,7 +6,7 @@ A modern personal finance tracking application built with Vue.js 3 and Go. It he
 
 ![Finance App Dashboard](frontend/src/assets/onboarding/welcome.png)
 
-Try it out here: https://finance.wondee.info/
+Try it out here: https://finance.wondrax.cloud/
 
 ## Features
 
