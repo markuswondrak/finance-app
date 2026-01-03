@@ -43,7 +43,7 @@
       <v-footer v-if="!hideNavigation" app color="surface" class="justify-center">
         <span class="text-grey">
           &copy; 2025
-          <a href="https://wondee.info" style="color: #4ADE80;">wondee.info</a>
+          <a href="https://markus.wondrax.cloud" style="color: #4ADE80;">wondrax.cloud</a>
         </span>
       </v-footer>
 
